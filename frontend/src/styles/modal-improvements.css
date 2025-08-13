@@ -1,0 +1,173 @@
+/* Melhorias para modais e componentes de overlay */
+
+/* Dialog overlay com melhor contraste */
+[data-radix-dialog-overlay] {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Dialog content com melhor sombra e contraste */
+[data-radix-dialog-content] {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 100 !important;
+}
+
+/* Select content com z-index mais alto que o dialog */
+[data-radix-select-content] {
+  z-index: 150 !important;
+  background-color: white !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Select items com melhor hover */
+[data-radix-select-item] {
+  color: #111827 !important;
+}
+
+[data-radix-select-item]:hover {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+}
+
+[data-radix-select-item][data-highlighted] {
+  background-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+/* Tabs com melhor contraste */
+[data-radix-tabs-trigger] {
+  color: #6b7280 !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+[data-radix-tabs-trigger][data-state="active"] {
+  color: #1f2937 !important;
+  border-bottom-color: #3b82f6 !important;
+  background-color: white !important;
+}
+
+/* Checkbox com melhor visibilidade */
+[data-radix-checkbox-root] {
+  border: 1px solid #d1d5db !important;
+  background-color: white !important;
+}
+
+[data-radix-checkbox-root][data-state="checked"] {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+/* Input e textarea com melhor foco */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Botões com melhor contraste */
+button[data-variant="default"] {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+button[data-variant="default"]:hover {
+  background-color: #1d4ed8 !important;
+}
+
+button[data-variant="outline"] {
+  border: 1px solid #d1d5db !important;
+  background-color: white !important;
+  color: #374151 !important;
+}
+
+button[data-variant="outline"]:hover {
+  background-color: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+/* Cards com melhor sombra */
+.card {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Badges com melhor contraste */
+.badge {
+  font-weight: 500 !important;
+}
+
+.badge[data-variant="default"] {
+  background-color: #1f2937 !important;
+  color: white !important;
+}
+
+.badge[data-variant="secondary"] {
+  background-color: #f3f4f6 !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.badge[data-variant="destructive"] {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+
+/* Tabelas com melhor contraste */
+.table th {
+  background-color: #f9fafb !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.table td {
+  color: #111827 !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.table tr:hover {
+  background-color: #f9fafb !important;
+}
+
+/* Alertas com melhor visibilidade */
+.alert {
+  border: 1px solid #d1d5db !important;
+  background-color: #f9fafb !important;
+}
+
+.alert[data-variant="destructive"] {
+  border-color: #fca5a5 !important;
+  background-color: #fef2f2 !important;
+  color: #991b1b !important;
+}
+
+/* Scrollbars customizadas para melhor aparência */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animações suaves */
+* {
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}

@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(USER)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Patient {
+  id           String        @id @default(cuid())
+  fullName     String
+  cpf          String        @unique
+  birthDate    DateTime
+  whatsapp     String?
+  phone        String?
+  email        String?
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  zipCode      String?
+  observations String?
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+
+  @@map("patients")
+}
+
+model Partner {
+  id                 String                @id @default(cuid())
+  fullName           String
+  document           String                @unique
+  phone              String
+  email              String
+  street             String?
+  number             String?
+  complement         String?
+  neighborhood       String?
+  city               String?
+  state              String?
+  zipCode            String?
+  bank               String?
+  agency             String?
+  account            String?
+  pix                String?
+  partnershipType    PartnershipType
+  subleaseAmount     Decimal?
+  subleasePaymentDay Int?
+  percentageAmount   Decimal?
+  percentageRate     Decimal?
+  active             Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  appointments       Appointment[]
+  availability       PartnerAvailability[]
+  partnerServices    PartnerService[]
+
+  @@map("partners")
+}
+
+model PartnerAvailability {
+  id         String   @id @default(cuid())
+  partnerId  String
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+  breakStart String?
+  breakEnd   String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  partner    Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_availability")
+}
+
+model Room {
+  id                  String               @id @default(cuid())
+  name                String
+  description         String?
+  resources           String[]
+  active              Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  appointments        Appointment[]
+  productServiceRooms ProductServiceRoom[]
+
+  @@map("rooms")
+}
+
+model Category {
+  id              String           @id @default(cuid())
+  name            String
+  type            ServiceType
+  description     String?
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  productServices ProductService[]
+
+  @@map("categories")
+}
+
+model ProductService {
+  id                  String               @id @default(cuid())
+  name                String
+  type                ServiceType
+  categoryId          String
+  internalCode        String?
+  description         String?
+  salePrice           Decimal
+  costPrice           Decimal?
+  partnerPrice        Decimal?
+  durationMinutes     Int?
+  availableForBooking Boolean              @default(true)
+  requiresSpecialPrep Boolean              @default(false)
+  specialPrepDetails  String?
+  stockLevel          Int?
+  minStockLevel       Int?
+  active              Boolean              @default(true)
+  observations        String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  appointments        Appointment[]
+  partnerServices     PartnerService[]
+  productServiceRooms ProductServiceRoom[]
+  category            Category             @relation(fields: [categoryId], references: [id])
+
+  @@map("product_services")
+}
+
+model ProductServiceRoom {
+  id               String         @id @default(cuid())
+  productServiceId String
+  roomId           String
+  createdAt        DateTime       @default(now())
+  productService   ProductService @relation(fields: [productServiceId], references: [id], onDelete: Cascade)
+  room             Room           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([productServiceId, roomId])
+  @@map("product_service_rooms")
+}
+
+model PartnerService {
+  id               String         @id @default(cuid())
+  partnerId        String
+  productServiceId String
+  createdAt        DateTime       @default(now())
+  partner          Partner        @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  productService   ProductService @relation(fields: [productServiceId], references: [id], onDelete: Cascade)
+
+  @@unique([partnerId, productServiceId])
+  @@map("partner_services")
+}
+
+model Appointment {
+  id                 String            @id @default(cuid())
+  patientId          String
+  partnerId          String
+  productServiceId   String
+  roomId             String?
+  date               DateTime
+  startTime          String
+  endTime            String
+  type               AppointmentType   @default(NEW)
+  status             AppointmentStatus @default(SCHEDULED)
+  observations       String?
+  checkIn            DateTime?
+  checkOut           DateTime?
+  cancellationReason String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  partner            Partner           @relation(fields: [partnerId], references: [id])
+  patient            Patient           @relation(fields: [patientId], references: [id])
+  productService     ProductService    @relation(fields: [productServiceId], references: [id])
+  room               Room?             @relation(fields: [roomId], references: [id])
+
+  @@map("appointments")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum PartnershipType {
+  SUBLEASE
+  PERCENTAGE
+  PERCENTAGE_WITH_PRODUCTS
+}
+
+enum ServiceType {
+  PRODUCT
+  SERVICE
+}
+
+enum AppointmentType {
+  NEW
+  RETURN
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}

@@ -1,0 +1,6 @@
+export { ProductsPage } from './ProductsPage'
+export { ProductsList } from './components/ProductsList'
+export { ProductForm } from './components/ProductForm'
+export { CategoryForm } from './components/CategoryForm'
+export { ProductFilters } from './components/ProductFilters'
+export { StockControl } from './components/StockControl'

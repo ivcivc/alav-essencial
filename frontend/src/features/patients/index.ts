@@ -1,0 +1,5 @@
+export { PatientsPage } from './PatientsPage'
+export { PatientForm } from './components/PatientForm'
+export { PatientsList } from './components/PatientsList'
+export { PatientHistory } from './components/PatientHistory'
+export { QuickPatientModal } from './components/QuickPatientModal'

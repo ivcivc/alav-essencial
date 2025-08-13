@@ -1,0 +1,170 @@
+Desenvolvimento de um projeto para clinicas médicas
+
+##  Sobre o Projeto
+
+O **Clínica Essencial** é um sistema moderno de gestão para clínicas médicas que oferece funcionalidades completas para:
+
+- **Gestão de Pacientes** - Cadastro e histórico completo
+- **Gestão de Parceiros** - Profissionais ou parceiros que prestam serviços para a clinica
+- **Agendamentos** - Sistema completo com calendário e agenda por salas
+- **Produtos/Serviços** - Catálogo de produtos e serviços com controle de estoque para produtos
+- **Salas** - Gestão de consultórios e espaços
+- **Financeiro** - Contas a pagar e a receber e acerto com o paciente e parceiros (prestadores de serviços)
+- **Configurações** - Horários de funcionamento personalizáveis
+- **Relatórios** - Estatísticas e análises
+
+
+## 🛠️ Tecnologias Utilizadas
+
+#### Backend
+- **Node.js**: Runtime
+- **Fastify**: Framework web (escolhido por performance)
+- **Prisma**: ORM
+- **PostgreSQL**: Banco de dados principal
+  - Host: alav.cloud
+  - Porta: 5432
+  - Database: clinica_demo_2
+  - Username: ivan
+- **Redis**: Cache e sessões (opcional)
+- **JWT**: Autenticação
+
+### Frontend
+- ** shadcn 19 + vite + tailwind CSS 4
+- O sistema deve conter paleta de cores e tema claro e escuro
+- O sistema deve ser ajustado para funcionar tanto desktop quanto em celular
+
+### Importante
+Backend First Approach
+Todas as tarefas agora começam implementando o backend completo
+Cada módulo inclui criação de seeds de dados de teste no banco
+APIs são desenvolvidas e testadas antes do frontend
+Conexão Imediata Frontend-Backend
+Frontend sempre consome dados reais da API
+Nunca usa dados fake ou mockados no frontend
+React Query configurado para cache e sincronização
+Integração imediata entre frontend e backend
+Fluxo de Desenvolvimento
+Backend + Seeds → Criar API completa com dados de teste
+Frontend Conectado → Interface consumindo dados reais imediatamente
+Testes → Validar integração completa
+Benefícios desta Abordagem
+Dados Consistentes: Sempre trabalhando com dados reais
+Integração Contínua: Problemas de integração descobertos cedo
+Desenvolvimento Realista: Frontend desenvolvido com dados reais desde o início
+Menos Retrabalho: Não precisa refatorar depois para conectar APIs
+Agora cada módulo garante que o backend esteja funcionando com dados reais antes de conectar o frontend, eliminando a necessidade de dados fake no frontend.
+
+
+## 🎯 Funcionalidades Principais
+
+### 👥 Gestão de Pacientes
+- **Cadastro Completo** - Dados pessoais como nome completo, cpf, data nascimento, contatos (wastapp, fixo, e-mail), endereço e observações
+- **Histórico** - Agendamentos e atendimentos
+- **Busca Avançada** - Filtros e pesquisa
+- **Cadastro Rápido** - Modal para agendamentos - permitir o cadastro do paciente no momento do agendamento.
+
+### 🏥 Gestão de Salas
+- **Cadastro Completo** - nome da sala, descrição, recursos da sala (maca, armario, luz focal, etc)
+- **Status de Disponibilidade** - Ativo/Inativo
+
+### 🏥 Categoria de produto e serviço
+- **Cadastro Completo** - nome, tipo (produto/serviço), status (ativo, inativo), descrição (opcional)
+- **Status de Disponibilidade** - Ativo/Inativo
+
+### 🏥 Produtos e serviços
+- **Cadastro Completo** - nome, tipo (produto/serviço), categoria (permitir adicionar nova categoria), código interno, status (ativo, inativo), descrição, preços (preço de venda, preço de custo, preço do parceiro), configurações específicas ( duração em minutos, salas disponíveis - exibir todas as salas para selecionar (checkbox)), disponível para agendamento (checkbox), requer preparo especial (checkbox - se sim exibir um textarea para detalhar), observaçãoes (exemplo: agulhas descartaveis incluídas)
+- **Status de Disponibilidade** - Ativo/Inativo
+- **controle de estoque para produtos** - controle de estoque simples para os produtos
+
+
+### Módulo de Gestão de Parceiros (Profissionais):
+* **Cadastro de Parceiros:**
+    * **Campos:** Nome completo, CPF/CNPJ, telefone de contato, e-mail.
+    * Endereço (se aplicável).
+    * Dados bancários para repasses (incluir o pix)
+* **Configuração de Disponibilidade:**
+    * Interface visual para definir dias de atendimento (Segunda a Domingo).
+    * Horários de início e fim para cada dia da semana (com possibilidade de intervalos). Exemplo; segunda-feira das 8 as 11 horas e das 13 as 16hs.
+    * Bloqueio de datas/horários específicos (férias, imprevistos).
+    * ***Requisito Crítico:*** *Acesso facilitado e claro desta informação para a equipe de atendimento durante o agendamento.*
+* **Associação de Serviços:**
+    * Selecionar quais serviços da clínica o parceiro está habilitado e oferece.
+    * Definir valores específicos por serviço/parceiro, se necessário (para casos de porcentagem).
+* **Tipos de Parceria e Lógica Financeira:**
+    * **Sublocação:**
+        * Registrar valor da sublocação e dia de vencimento do pagamento à clínica.
+        * Sistema deve gerar lembrete/registro no contas a receber da clínica.
+        * Paciente paga diretamente ao parceiro; a clínica não intermedia o pagamento do paciente.
+    * **Porcentagem:**
+        * Registrar o valor fixo a ser pago pela clínica ao parceiro por cada serviço prestado.
+        * Paciente paga à clínica.
+        * Sistema deve calcular o valor a ser repassado ao parceiro e lançar no contas a pagar da clínica após o atendimento.
+    * **Porcentagem com Produto do Parceiro:**
+        * Parceiro utiliza espaço da clínica e seus próprios produtos.
+        * Paciente paga diretamente ao parceiro.
+        * Parceiro informa à clínica o valor do serviço e o lucro obtido.
+        * Sistema deve permitir o registro desse lucro e calcular o percentual (pré-combinado) a ser repassado pelo parceiro à clínica, lançando no contas a receber da clínica.
+
+
+### Configurações do sistema:
+* **Horários de funcionamento da clínica** - Configurar os horários de funcionamento da clinica por dia da semana. Importante para o agendamento (ao abrir a agenda). exemplo: segunda-feira da 7:00 as 12:oras e das 14:00hs a 18:00hs.
+* **Regras de agendamento** - Permitir movimentação de agendamentos concluídos
+Se ativado, administradores e recepcionistas poderão mover agendamentos já concluídos para outro dia/horário. Útil para ajustes administrativos, mas pode impactar o histórico de atendimentos.
+Permitir movimentação de agendamentos cancelados
+Se ativado, será possível mover agendamentos cancelados para outro dia/horário. Recomendado apenas para casos de reabertura ou correção de lançamentos.
+* **Notificação usuario** - por sms e whastapp
+
+### Módulo de Agendamento e Atendimento:
+* **Interface de Agendamento:**
+    * Calendário visual (diário, semanal, mensal) com filtros por profissional, sala, tipo de serviço.
+    * Visualização alternativa por salas (timeline de ocupação das salas).
+    * ***Requisito Crítico:*** *Exibição clara e imediata da disponibilidade dos profissionais (conforme cadastro no módulo de parceiros) para evitar erros de marcação.*
+    * Indicação de horários ocupados e livres.
+* **Funcionalidades de Agendamento:**
+    * Marcar nova consulta (selecionar paciente, serviço, profissional, sala – se aplicável, data, hora).
+    * Identificar se é consulta nova ou retorno.
+    * Desmarcar/Cancelar agendamento (com registro de motivo, se possível).
+    * Remarcar agendamento.
+    * Lista de espera para horários/profissionais concorridos (opcional).
+* **Lembretes Automáticos:**
+    * Configuração para envio de lembretes aos pacientes via WhatsApp, sms e/ou e-mail (X horas/dias antes da consulta).
+    * Confirmação de presença (opcional, com resposta do paciente atualizando o status do agendamento).
+* **Registro de Atendimento (Check-in/Checkout):**
+    * Marcar presença do paciente (check-in).
+    * Registrar observações do atendimento.
+    * Permitir o fechamento/pagamento do atendimento.
+    * Integração com o módulo financeiro para lançamento automático da receita (quando o paciente paga à clínica) e das comissões/repasses (para parceiros).
+* **atendimento:** - é importante que a recepcionista consigua acessar de forma facilitada a disponibilidade de horarios de um parceiro, bem como os horarios ocupados e suas especialidades. 
+* **Notificação:** - o usuario deve ser notificado 3 vezes (conforme configuração) da consulta.
+
+### Módulo Financeiro:
+* **Gestão de Contas:**
+    * Cadastro de contas bancárias e caixa interno da clínica.
+    * **Campos:** Nome da conta, banco, agência, número da conta, saldo inicial.
+    * ***Requisito Crítico para Saldo Inicial:*** *O sistema deve permitir que o saldo inicial de uma conta seja ajustado dinamicamente com base na data do primeiro lançamento. Ex: se o primeiro lançamento de uma conta nova é em 10/04/2025, o saldo inicial informado deve ser considerado para essa data. Se um lançamento é editado para uma data anterior a todos os outros existentes, o saldo inicial deve "mover-se" para essa nova data mais antiga.*
+* **Lançamentos Financeiros:**
+    * Registro de Contas a Pagar e Contas a Receber.
+    * **Campos:** Data de vencimento, data de pagamento/recebimento, descrição, valor, conta associada, paciente/fornecedor/parceiro associado, status (pendente, pago, vencido).
+    * Permitir lançamentos retroativos e futuros, com recálculo automático dos saldos subsequentes da conta.
+* **Classificação de Lançamentos:**
+    * Categorias de receitas (ex: Consulta Medicina, Sessão Acupuntura, Venda Produto X).
+    * Categorias de despesas (ex: Aluguel, Marketing, Materiais de consumo, Repasse Parceiro).
+    * Centros de custo/lucro (opcional, ex: por tipo de serviço, por parceiro).
+    * Talvez uma configuração da categoria para parceiros e sublocação. Isso para o moment do acerto de contas o lançamento conheça em qual conta deve lançar automaticamente.
+* **Acerto com Parceiros:**
+    * Geração automática de lançamentos no contas a pagar (para parceiros tipo "Porcentagem") ou contas a receber (para parceiros tipo "Sublocação" ou "Porcentagem com produto do parceiro") com base nos atendimentos registrados e no tipo de parceria.
+    * Relatório de repasses a serem feitos/recebidos por parceiro.
+* **Gestão de Pagamentos:**
+    * Formas de pagamento (Dinheiro, Cartão de Crédito/Débito, PIX, Boleto).
+    * Registro de pagamentos parciais.
+    
+* **Recálculo de Saldos:**
+    * Sempre que um lançamento for adicionado, editado, excluído, revertido ou cancelado, os saldos da conta afetada e os saldos futuros devem ser recalculados automaticamente.
+* **Relatórios Financeiros Básicos:**
+    * Fluxo de Caixa (diário, semanal, mensal).
+    * Demonstrativo de Resultados do Exercício (DRE) simplificado.
+    * Contas a pagar/receber por período.
+    * Contas a pagar/receber por conta (banco)
+
+
+### Dashboard:
