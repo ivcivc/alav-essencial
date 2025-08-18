@@ -14,6 +14,13 @@ import {
   AppointmentStatus
 } from './shared'
 
+// Importar types de notificação diretamente onde necessário
+import type {
+  NotificationChannel,
+  NotificationReminderType,
+  NotificationStatus
+} from './shared'
+
 // User Entity
 export interface User extends BaseEntity {
   email: string
@@ -76,6 +83,24 @@ export interface PartnerAvailability extends BaseEntity {
   breakStart?: string
   breakEnd?: string
   active: boolean
+}
+
+// Partner Blocked Date Entity
+export interface PartnerBlockedDate extends BaseEntity {
+  partnerId: string
+  blockedDate: string
+  startTime?: string
+  endTime?: string
+  reason?: string
+  active: boolean
+}
+
+// Partner with Relations
+export interface PartnerWithRelations extends Partner {
+  availability?: PartnerAvailability[]
+  blockedDates?: PartnerBlockedDate[]
+  partnerServices?: PartnerService[]
+  appointments?: Appointment[]
 }
 
 // Room Entity
@@ -176,6 +201,54 @@ export interface CategoryWithRelations extends Category {
   productServices?: ProductService[]
 }
 
+// Appointment specific types
+export interface AppointmentFilters {
+  page?: number
+  limit?: number
+  patientId?: string
+  partnerId?: string
+  roomId?: string
+  productServiceId?: string
+  status?: AppointmentStatus
+  type?: AppointmentType
+  date?: string
+  startDate?: string
+  endDate?: string
+}
+
+export interface CreateAppointmentData {
+  patientId: string
+  partnerId: string
+  productServiceId: string
+  roomId: string
+  date: string
+  startTime: string
+  endTime: string
+  type: AppointmentType
+  observations?: string
+}
+
+export interface UpdateAppointmentData {
+  patientId?: string
+  partnerId?: string
+  productServiceId?: string
+  roomId?: string
+  date?: string
+  startTime?: string
+  endTime?: string
+  type?: AppointmentType
+  status?: AppointmentStatus
+  observations?: string
+}
+
+export interface AppointmentListResponse {
+  appointments: Appointment[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
 
 
 // API Response types
@@ -201,4 +274,125 @@ export interface ApiError {
   code?: string
   details?: any
   success: false
+}
+
+// 🔔 ENTIDADES DE NOTIFICAÇÃO
+
+export interface NotificationConfiguration extends BaseEntity {
+  enabled: boolean
+  defaultChannel: string
+  firstReminderDays: number
+  secondReminderDays: number
+  thirdReminderHours: number
+  whatsappEnabled: boolean
+  smsEnabled: boolean
+  emailEnabled: boolean
+  retryAttempts: number
+  retryIntervalMinutes: number
+}
+
+export interface NotificationTemplate extends BaseEntity {
+  name: string
+  type: NotificationReminderType
+  channel: NotificationChannel
+  subject?: string
+  content: string
+  variables: any
+  active: boolean
+}
+
+export interface NotificationSchedule extends BaseEntity {
+  appointmentId: string
+  templateId: string
+  scheduledFor: Date
+  status: NotificationStatus
+  channel: NotificationChannel
+  retryCount: number
+  lastAttempt?: Date
+  errorMessage?: string
+}
+
+export interface NotificationLog extends BaseEntity {
+  appointmentId: string
+  channel: NotificationChannel
+  recipient: string
+  content: string
+  subject?: string
+  status: NotificationStatus
+  errorMessage?: string
+  providerData?: any
+  deliveredAt?: Date
+  readAt?: Date
+  sentAt: Date
+}
+
+// Extended notification entities with relations
+export interface NotificationTemplateWithSchedules extends NotificationTemplate {
+  notificationSchedules?: NotificationSchedule[]
+}
+
+export interface NotificationScheduleWithRelations extends NotificationSchedule {
+  appointment?: AppointmentWithRelations
+  template?: NotificationTemplate
+}
+
+export interface NotificationLogWithRelations extends NotificationLog {
+  appointment?: AppointmentWithRelations
+}
+
+// Provider status interface
+export interface NotificationProvidersStatus {
+  configured: NotificationChannel[]
+  available: NotificationChannel[]
+  whatsapp: boolean
+  sms: boolean
+  email: boolean
+}
+
+// Statistics interface
+export interface NotificationStatistics {
+  total: number
+  sent: number
+  failed: number
+  pending: number
+  byChannel: Record<string, number>
+}
+
+// Scheduler status interface
+export interface NotificationSchedulerStatus {
+  isRunning: boolean
+  nextExecution?: Date
+}
+
+// Form data interfaces
+export interface CreateNotificationTemplateData {
+  name: string
+  type: NotificationReminderType
+  channel: NotificationChannel
+  subject?: string
+  content: string
+  variables?: any
+  active: boolean
+}
+
+export interface UpdateNotificationTemplateData extends Partial<CreateNotificationTemplateData> {}
+
+export interface UpdateNotificationConfigurationData extends Partial<Omit<NotificationConfiguration, 'id' | 'createdAt' | 'updatedAt'>> {}
+
+export interface SendImmediateNotificationData {
+  appointmentId: string
+  type?: NotificationReminderType
+  customMessage?: string
+  channels?: NotificationChannel[]
+}
+
+// Filters for logs
+export interface NotificationLogFilters {
+  appointmentId?: string
+  channel?: NotificationChannel
+  status?: NotificationStatus
+  dateFrom?: Date
+  dateTo?: Date
+  page?: number
+  limit?: number
 }

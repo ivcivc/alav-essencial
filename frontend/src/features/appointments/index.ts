@@ -1,1 +1,9 @@
-// Appointment feature exports will be here
+export { AppointmentsPage } from './AppointmentsPage'
+export { AppointmentCalendar } from './components/AppointmentCalendar'
+export { AppointmentFilters } from './components/AppointmentFilters'
+export { RoomTimeline } from './components/RoomTimeline'
+export { PartnerAvailabilityView } from './components/PartnerAvailabilityView'
+export { AppointmentForm } from './components/AppointmentForm'
+export { AppointmentDetailsModal } from './components/AppointmentDetailsModal'
+export { QuickActions } from './components/QuickActions'
+export { WaitingList } from './components/WaitingList'

@@ -4,8 +4,11 @@ import { AuthProvider } from './contexts/AuthContext'
 import { AppLayout } from './components/layout/AppLayout'
 import { Dashboard } from './features/dashboard/Dashboard'
 import { PatientsPage } from './features/patients'
+import { PartnersPage } from './features/partners'
+import { AppointmentsPage } from './features/appointments'
 import { RoomsPage } from './features/rooms'
 import { ProductsPage } from './features/products'
+import { NotificationsPage } from './features/notifications'
 import { LoginForm, ProtectedRoute, AdminRoute } from './components/auth'
 import { Toaster } from './components/ui/toaster'
 import { queryClient } from './lib/react-query'
@@ -47,7 +50,7 @@ function App() {
         <Route path="/partners" element={
           <ProtectedRoute>
             <AppLayout>
-              <div>Parceiros</div>
+              <PartnersPage />
             </AppLayout>
           </ProtectedRoute>
         } />
@@ -55,7 +58,7 @@ function App() {
         <Route path="/appointments" element={
           <ProtectedRoute>
             <AppLayout>
-              <div>Agendamentos</div>
+              <AppointmentsPage />
             </AppLayout>
           </ProtectedRoute>
         } />
@@ -74,6 +77,14 @@ function App() {
               <ProductsPage />
             </AppLayout>
           </ProtectedRoute>
+        } />
+        
+        <Route path="/notifications" element={
+          <AdminRoute>
+            <AppLayout>
+              <NotificationsPage />
+            </AppLayout>
+          </AdminRoute>
         } />
         
         <Route path="/financial" element={

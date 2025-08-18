@@ -96,24 +96,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   // Load product data for editing
   useEffect(() => {
-    if (isEditing && productData?.data) {
-      const product = productData.data
-      setValue('name', product.name)
-      setValue('type', product.type)
-      setValue('categoryId', product.categoryId)
-      setValue('internalCode', product.internalCode || '')
-      setValue('description', product.description || '')
-      setValue('salePrice', product.salePrice)
-      setValue('costPrice', product.costPrice || 0)
-      setValue('partnerPrice', product.partnerPrice || 0)
-      setValue('durationMinutes', product.durationMinutes || 30)
-      setValue('availableForBooking', product.availableForBooking)
-      setValue('requiresSpecialPrep', product.requiresSpecialPrep)
-      setValue('specialPrepDetails', product.specialPrepDetails || '')
-      setValue('stockLevel', product.stockLevel || 0)
-      setValue('minStockLevel', product.minStockLevel || 0)
-      setValue('active', product.active)
-      setValue('observations', product.observations || '')
+    console.log('🔍 ProductForm useEffect: Checking product data', {
+      isEditing,
+      productData,
+      hasDataProperty: !!productData?.data,
+      hasDirectData: !!productData && 'id' in productData
+    })
+
+    if (isEditing && productData) {
+      // Check if data is in productData.data or directly in productData
+      const product = productData.data || productData
+      
+      if (product && product.id) {
+        console.log('🔍 ProductForm: Loading product data into form', product)
+        
+        setValue('name', product.name)
+        setValue('type', product.type)
+        setValue('categoryId', product.categoryId)
+        setValue('internalCode', product.internalCode || '')
+        setValue('description', product.description || '')
+        setValue('salePrice', product.salePrice)
+        setValue('costPrice', product.costPrice || 0)
+        setValue('partnerPrice', product.partnerPrice || 0)
+        setValue('durationMinutes', product.durationMinutes || 30)
+        setValue('availableForBooking', product.availableForBooking)
+        setValue('requiresSpecialPrep', product.requiresSpecialPrep)
+        setValue('specialPrepDetails', product.specialPrepDetails || '')
+        setValue('stockLevel', product.stockLevel || 0)
+        setValue('minStockLevel', product.minStockLevel || 0)
+        setValue('active', product.active)
+        setValue('observations', product.observations || '')
+        
+        console.log('🔍 ProductForm: Form values set successfully')
+      }
     }
   }, [isEditing, productData, setValue])
 
@@ -198,15 +213,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   )]
   const categories = allCategories
 
-  // DEBUG: Log para verificar dados
-  console.log('🔍 ProductForm Debug:', {
-    categoriesData,
-    fetchedCategories: fetchedCategories.length,
-    tempCategories: tempCategories.length,
-    allCategories: allCategories.length,
-    watchedType,
-    filteredCategories: categories.filter(cat => cat.type === watchedType).length,
-    firstCategory: categories[0]?.name
+  // DEBUG: Log para verificar dados do produto
+  console.log('🔍 ProductForm useProduct Status:', {
+    isEditing,
+    productId,
+    productData,
+    hasProductData: !!productData?.data,
+    productDataContent: productData?.data
   })
 
   return (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
   productsService, 
@@ -63,18 +63,45 @@ export const useProductSearch = () => {
 export const useProduct = (id: string) => {
   const { toast } = useToast()
 
-  return useQuery({
+  console.log('🔍 useProduct HOOK CALLED:', { id, enabled: !!id })
+
+  const result = useQuery({
     queryKey: ['product', id],
-    queryFn: () => productsService.getById(id),
+    queryFn: () => {
+      console.log('🔍 useProduct QUERY FUNCTION EXECUTING for ID:', id)
+      return productsService.getById(id)
+    },
     enabled: !!id,
-    onError: (error: any) => {
+  })
+
+  console.log('🔍 useProduct RESULT:', {
+    isLoading: result.isLoading,
+    isFetching: result.isFetching,
+    isSuccess: result.isSuccess,
+    isError: result.isError,
+    data: result.data,
+    error: result.error
+  })
+
+  // React Query v5 - handle error with useEffect
+  React.useEffect(() => {
+    if (result.error) {
+      console.log('🔍 useProduct ERROR DETECTED:', result.error)
       toast({
         title: 'Erro ao carregar produto/serviço',
-        description: error.message || 'Ocorreu um erro inesperado',
+        description: (result.error as any)?.message || 'Ocorreu um erro inesperado',
         variant: 'destructive'
       })
     }
-  })
+  }, [result.error, toast])
+
+  React.useEffect(() => {
+    if (result.data) {
+      console.log('🔍 useProduct SUCCESS DATA:', result.data)
+    }
+  }, [result.data])
+
+  return result
 }
 
 export const useBookableServices = (filters: Pick<ProductServiceFilters, 'page' | 'limit' | 'q' | 'categoryId'> = {}) => {
@@ -250,36 +277,7 @@ export const useCategories = (filters: CategoryFilters = {}) => {
 
   return useQuery({
     queryKey: ['categories', filters],
-    queryFn: async () => {
-      console.log('🔍 useCategories: Fazendo chamada para API com filtros:', filters)
-      try {
-        const result = await categoriesService.getAll(filters)
-        console.log('🔍 useCategories: Resultado da API:', result)
-        console.log('🔍 useCategories: Tipo do resultado:', typeof result)
-        console.log('🔍 useCategories: Estrutura:', {
-          hasCategories: !!(result?.categories),
-          categoriesCount: result?.categories?.length || 0,
-          total: result?.total
-        })
-        return result
-      } catch (error) {
-        console.log('🔍 useCategories: Erro na queryFn:', error)
-        throw error
-      }
-    },
-    onSuccess: (data) => {
-      console.log('🔍 useCategories: onSuccess chamado:', data)
-    },
-    onError: (error: any) => {
-      console.log('🔍 useCategories: onError chamado:', error)
-      toast({
-        title: 'Erro ao carregar categorias',
-        description: error.message || 'Ocorreu um erro inesperado',
-        variant: 'destructive'
-      })
-    },
-    retry: false, // Desabilitar retry para debug
-    refetchOnWindowFocus: false // Desabilitar refetch automático
+    queryFn: () => categoriesService.getAll(filters),
   })
 }
 

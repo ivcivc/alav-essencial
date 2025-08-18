@@ -47,31 +47,31 @@ export const patientsApi = {
     if (filters.q) params.append('q', filters.q)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const response = await apiClient.get<PatientListResponse>(`/patients?${params.toString()}`)
+    const response = await apiClient.get<PatientListResponse>(`/api/patients?${params.toString()}`)
     return response.data
   },
 
   // Get patient by ID with appointment history
   getPatient: async (id: string): Promise<PatientWithAppointments> => {
-    const response = await apiClient.get<PatientWithAppointments>(`/patients/${id}`)
+    const response = await apiClient.get<PatientWithAppointments>(`/api/patients/${id}`)
     return response.data
   },
 
   // Create new patient
   createPatient: async (data: CreatePatientData): Promise<Patient> => {
-    const response = await apiClient.post<Patient>('/patients', data)
+    const response = await apiClient.post<Patient>('/api/patients', data)
     return response.data
   },
 
   // Update patient
   updatePatient: async (id: string, data: UpdatePatientData): Promise<Patient> => {
-    const response = await apiClient.put<Patient>(`/patients/${id}`, data)
+    const response = await apiClient.put<Patient>(`/api/patients/${id}`, data)
     return response.data
   },
 
   // Delete patient
   deletePatient: async (id: string): Promise<void> => {
-    await apiClient.delete(`/patients/${id}`)
+    await apiClient.delete(`/api/patients/${id}`)
   },
 
   // Search patients
@@ -83,7 +83,7 @@ export const patientsApi = {
     if (filters.limit) params.append('limit', filters.limit.toString())
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const response = await apiClient.get<PatientListResponse>(`/patients/search?${params.toString()}`)
+    const response = await apiClient.get<PatientListResponse>(`/api/patients/search?${params.toString()}`)
     return response.data
   }
 }

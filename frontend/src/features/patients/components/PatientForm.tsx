@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ValidationErrors } from '@/components/ui/validation-errors'
 import { useToast } from '@/hooks/useToast'
 import { Patient } from '@/types/entities'
 import { CreatePatientData, UpdatePatientData } from '@/services/patients'
@@ -47,6 +48,8 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   isQuickForm = false
 }) => {
   const { toast } = useToast()
+  const [apiErrors, setApiErrors] = useState<Array<{field: string, message: string}>>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   const {
     register,
@@ -91,6 +94,9 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   })
 
   const onFormSubmit = async (data: PatientFormData) => {
+    setIsSubmitting(true)
+    setApiErrors([]) // Limpar erros anteriores
+    
     try {
       await onSubmit(data)
       toast({
@@ -98,12 +104,27 @@ export const PatientForm: React.FC<PatientFormProps> = ({
         description: patient ? "Paciente atualizado com sucesso." : "Paciente cadastrado com sucesso.",
         variant: "success",
       })
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Ocorreu um erro inesperado.",
-        variant: "destructive",
-      })
+    } catch (error: any) {
+      console.error('Erro ao salvar paciente:', error)
+      
+      // Se o erro tem detalhes de validação do backend
+      if (error.validationErrors && error.validationErrors.length > 0) {
+        setApiErrors(error.validationErrors)
+        toast({
+          title: "Dados inválidos",
+          description: "Por favor, corrija os erros indicados abaixo.",
+          variant: "destructive",
+        })
+      } else {
+        // Erro genérico
+        toast({
+          title: "Erro",
+          description: error.message || "Ocorreu um erro inesperado.",
+          variant: "destructive",
+        })
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -277,6 +298,9 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   if (isQuickForm) {
     return (
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
+        {/* Erros de validação da API */}
+        <ValidationErrors errors={apiErrors} />
+        
         {requiredFields}
         {contactFields}
         {observationsField}
@@ -287,8 +311,8 @@ export const PatientForm: React.FC<PatientFormProps> = ({
               Cancelar
             </Button>
           )}
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Salvando...' : patient ? 'Atualizar' : 'Cadastrar'}
+          <Button type="submit" disabled={isLoading || isSubmitting}>
+            {(isLoading || isSubmitting) ? 'Salvando...' : patient ? 'Atualizar' : 'Cadastrar'}
           </Button>
         </div>
       </form>
@@ -297,6 +321,9 @@ export const PatientForm: React.FC<PatientFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+      {/* Erros de validação da API */}
+      <ValidationErrors errors={apiErrors} />
+      
       <Card>
         <CardHeader>
           <CardTitle>Informações Básicas</CardTitle>
@@ -339,8 +366,8 @@ export const PatientForm: React.FC<PatientFormProps> = ({
             Cancelar
           </Button>
         )}
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Salvando...' : patient ? 'Atualizar Paciente' : 'Cadastrar Paciente'}
+        <Button type="submit" disabled={isLoading || isSubmitting}>
+          {(isLoading || isSubmitting) ? 'Salvando...' : patient ? 'Atualizar Paciente' : 'Cadastrar Paciente'}
         </Button>
       </div>
     </form>

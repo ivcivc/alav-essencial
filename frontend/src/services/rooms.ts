@@ -41,13 +41,13 @@ export const roomsApi = {
     if (filters.q) params.append('q', filters.q)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const response = await apiClient.get<RoomListResponse>(`/rooms?${params.toString()}`)
+    const response = await apiClient.get<RoomListResponse>(`/api/rooms?${params.toString()}`)
     return response.data
   },
 
   // Get room by ID with relations
   getRoom: async (id: string): Promise<RoomWithRelations> => {
-    const response = await apiClient.get<RoomWithRelations>(`/rooms/${id}`)
+    const response = await apiClient.get<RoomWithRelations>(`/api/rooms/${id}`)
     return response.data
   },
 
@@ -56,25 +56,25 @@ export const roomsApi = {
     const params = new URLSearchParams()
     params.append('date', date)
 
-    const response = await apiClient.get<RoomAvailability>(`/rooms/${id}/availability?${params.toString()}`)
+    const response = await apiClient.get<RoomAvailability>(`/api/rooms/${id}/availability?${params.toString()}`)
     return response.data
   },
 
   // Create new room
   createRoom: async (data: CreateRoomData): Promise<Room> => {
-    const response = await apiClient.post<Room>('/rooms', data)
+    const response = await apiClient.post<Room>('/api/rooms', data)
     return response.data
   },
 
   // Update room
   updateRoom: async (id: string, data: UpdateRoomData): Promise<Room> => {
-    const response = await apiClient.put<Room>(`/rooms/${id}`, data)
+    const response = await apiClient.put<Room>(`/api/rooms/${id}`, data)
     return response.data
   },
 
   // Delete room
   deleteRoom: async (id: string): Promise<void> => {
-    await apiClient.delete(`/rooms/${id}`)
+    await apiClient.delete(`/api/rooms/${id}`)
   },
 
   // Search rooms
@@ -86,7 +86,7 @@ export const roomsApi = {
     if (filters.limit) params.append('limit', filters.limit.toString())
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const response = await apiClient.get<RoomListResponse>(`/rooms/search?${params.toString()}`)
+    const response = await apiClient.get<RoomListResponse>(`/api/rooms/search?${params.toString()}`)
     return response.data
   },
 

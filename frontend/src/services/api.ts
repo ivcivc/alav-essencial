@@ -11,7 +11,7 @@ interface ApiError {
 }
 
 // Force the API to use the proxy in development
-const API_BASE_URL = '/api'
+const API_BASE_URL = ''
 
 class ApiClient {
   private baseURL: string
@@ -54,7 +54,13 @@ class ApiClient {
           return Promise.reject(new Error('Unauthorized'))
         }
         
-        throw new Error(data.error || data.message || 'Request failed')
+        // Create a detailed error with validation details if available
+        const error = new Error(data.error || data.message || 'Request failed') as any
+        error.status = response.status
+        error.details = data.details || []
+        error.validationErrors = data.details || []
+        
+        throw error
       }
 
       return data

@@ -16,7 +16,9 @@ export enum ServiceType {
 }
 
 export enum AppointmentType {
-  NEW = 'NEW',
+  CONSULTATION = 'CONSULTATION',
+  EXAM = 'EXAM',
+  PROCEDURE = 'PROCEDURE',
   RETURN = 'RETURN'
 }
 
@@ -25,6 +27,32 @@ export enum AppointmentStatus {
   CONFIRMED = 'CONFIRMED',
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  NO_SHOW = 'NO_SHOW'
+}
+
+// 🔔 ENUMS PARA NOTIFICAÇÕES
+
+export enum NotificationChannel {
+  WHATSAPP = 'WHATSAPP',
+  SMS = 'SMS',
+  EMAIL = 'EMAIL'
+}
+
+export enum NotificationReminderType {
+  FIRST_REMINDER = 'FIRST_REMINDER',    // 3 dias antes
+  SECOND_REMINDER = 'SECOND_REMINDER',  // 1 dia antes
+  THIRD_REMINDER = 'THIRD_REMINDER',    // 2 horas antes
+  IMMEDIATE = 'IMMEDIATE'               // Imediato (cancelamento, reagendamento)
+}
+
+export enum NotificationStatus {
+  PENDING = 'PENDING',
+  SENDING = 'SENDING',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  READ = 'READ',
+  FAILED = 'FAILED',
   CANCELLED = 'CANCELLED'
 }
 

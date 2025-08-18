@@ -10,6 +10,7 @@ import {
   BarChart3,
   Settings,
   Home,
+  Bell,
 } from 'lucide-react'
 
 const navigation = [
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Agendamentos', href: '/appointments', icon: Calendar },
   { name: 'Salas', href: '/rooms', icon: Building2 },
   { name: 'Produtos/Serviços', href: '/products', icon: Package },
+  { name: 'Notificações', href: '/notifications', icon: Bell },
   { name: 'Financeiro', href: '/financial', icon: DollarSign },
   { name: 'Relatórios', href: '/reports', icon: BarChart3 },
   { name: 'Configurações', href: '/settings', icon: Settings },

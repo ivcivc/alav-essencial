@@ -1,6 +1,6 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, User, AuthError } from '../types/auth'
 
-const API_BASE_URL = '/api'
+const API_BASE_URL = ''
 
 class AuthService {
   private baseURL: string
@@ -45,7 +45,7 @@ class AuthService {
   }
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await this.request<LoginResponse>('/auth/login', {
+    const response = await this.request<LoginResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     })
@@ -59,18 +59,18 @@ class AuthService {
   }
 
   async register(userData: RegisterRequest): Promise<RegisterResponse> {
-    return this.request<RegisterResponse>('/auth/register', {
+    return this.request<RegisterResponse>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     })
   }
 
   async getCurrentUser(): Promise<{ user: User }> {
-    return this.request<{ user: User }>('/auth/me')
+    return this.request<{ user: User }>('/api/auth/me')
   }
 
   async refreshToken(): Promise<{ token: string }> {
-    const response = await this.request<{ token: string }>('/auth/refresh', {
+    const response = await this.request<{ token: string }>('/api/auth/refresh', {
       method: 'POST',
     })
 
@@ -83,7 +83,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await this.request('/auth/logout', {
+      await this.request('/api/auth/logout', {
         method: 'POST',
       })
     } catch (error) {

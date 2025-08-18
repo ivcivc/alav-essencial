@@ -66,7 +66,7 @@ export const productsService = {
     if (filters.active !== undefined) params.append('active', filters.active.toString())
     if (filters.availableForBooking !== undefined) params.append('availableForBooking', filters.availableForBooking.toString())
 
-    const response = await api.get(`/product-services?${params.toString()}`)
+    const response = await api.get(`/api/product-services?${params.toString()}`)
     return response.data
   },
 
@@ -82,7 +82,7 @@ export const productsService = {
     if (filters.active !== undefined) params.append('active', filters.active.toString())
     if (filters.availableForBooking !== undefined) params.append('availableForBooking', filters.availableForBooking.toString())
 
-    const response = await api.get(`/product-services/search?${params.toString()}`)
+    const response = await api.get(`/api/product-services/search?${params.toString()}`)
     return response.data
   },
 
@@ -95,19 +95,19 @@ export const productsService = {
     if (filters.q) params.append('q', filters.q)
     if (filters.categoryId) params.append('categoryId', filters.categoryId)
 
-    const response = await api.get(`/product-services/bookable?${params.toString()}`)
+    const response = await api.get(`/api/product-services/bookable?${params.toString()}`)
     return response.data
   },
 
   // Get products with low stock
   async getLowStockProducts(): Promise<ApiResponse<ProductServiceWithRelations[]>> {
-    const response = await api.get('/product-services/stock/low')
+    const response = await api.get('/api/product-services/stock/low')
     return response.data
   },
 
   // Get stock report
   async getStockReport(): Promise<ApiResponse<StockReport>> {
-    const response = await api.get('/product-services/stock/report')
+    const response = await api.get('/api/product-services/stock/report')
     return response.data
   },
 
@@ -121,37 +121,37 @@ export const productsService = {
     if (filters.active !== undefined) params.append('active', filters.active.toString())
     if (filters.availableForBooking !== undefined) params.append('availableForBooking', filters.availableForBooking.toString())
 
-    const response = await api.get(`/product-services/category/${categoryId}?${params.toString()}`)
+    const response = await api.get(`/api/product-services/category/${categoryId}?${params.toString()}`)
     return response.data
   },
 
   // Get product/service by ID
   async getById(id: string): Promise<ApiResponse<ProductServiceWithRelations>> {
-    const response = await api.get(`/product-services/${id}`)
+    const response = await api.get(`/api/product-services/${id}`)
     return response.data
   },
 
   // Create new product/service
   async create(data: CreateProductServiceData): Promise<ApiResponse<ProductService>> {
-    const response = await api.post('/product-services', data)
+    const response = await api.post('/api/product-services', data)
     return response.data
   },
 
   // Update product/service
   async update(id: string, data: UpdateProductServiceData): Promise<ApiResponse<ProductService>> {
-    const response = await api.put(`/product-services/${id}`, data)
+    const response = await api.put(`/api/product-services/${id}`, data)
     return response.data
   },
 
   // Update product stock
   async updateStock(id: string, data: StockUpdateData): Promise<ApiResponse<ProductService>> {
-    const response = await api.patch(`/product-services/${id}/stock`, data)
+    const response = await api.patch(`/api/product-services/${id}/stock`, data)
     return response.data
   },
 
   // Delete product/service
   async delete(id: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/product-services/${id}`)
+    const response = await api.delete(`/api/product-services/${id}`)
     return response.data
   }
 }
@@ -188,7 +188,7 @@ export const categoriesService = {
     if (filters.type) params.append('type', filters.type)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const url = `/categories?${params.toString()}`
+    const url = `/api/categories?${params.toString()}`
     console.log('🔍 categoriesService.getAll: URL:', url)
     
     try {
@@ -214,31 +214,31 @@ export const categoriesService = {
     if (filters.type) params.append('type', filters.type)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
 
-    const response = await api.get(`/categories/search?${params.toString()}`)
+    const response = await api.get(`/api/categories/search?${params.toString()}`)
     return response.data
   },
 
   // Get category by ID
   async getById(id: string): Promise<ApiResponse<Category>> {
-    const response = await api.get(`/categories/${id}`)
+    const response = await api.get(`/api/categories/${id}`)
     return response.data
   },
 
   // Create new category
   async create(data: CreateCategoryData): Promise<ApiResponse<Category>> {
-    const response = await api.post('/categories', data)
+    const response = await api.post('/api/categories', data)
     return response.data
   },
 
   // Update category
   async update(id: string, data: UpdateCategoryData): Promise<ApiResponse<Category>> {
-    const response = await api.put(`/categories/${id}`, data)
+    const response = await api.put(`/api/categories/${id}`, data)
     return response.data
   },
 
   // Delete category
   async delete(id: string): Promise<ApiResponse<null>> {
-    const response = await api.delete(`/categories/${id}`)
+    const response = await api.delete(`/api/categories/${id}`)
     return response.data
   }
 }

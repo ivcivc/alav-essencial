@@ -20,6 +20,18 @@ export type {
   AppointmentWithRelations,
   RoomWithRelations,
   CategoryWithRelations,
+  NotificationConfiguration,
+  NotificationTemplate,
+  NotificationSchedule,
+  NotificationLog,
+  NotificationLogFilters,
+  NotificationStatistics,
+  NotificationProvidersStatus,
+  NotificationSchedulerStatus,
+  CreateNotificationTemplateData,
+  UpdateNotificationTemplateData,
+  UpdateNotificationConfigurationData,
+  SendImmediateNotificationData,
   ApiResponse,
   PaginatedResponse,
   ApiError
@@ -30,7 +42,10 @@ export {
   PartnershipType,
   ServiceType,
   AppointmentType,
-  AppointmentStatus
+  AppointmentStatus,
+  NotificationChannel,
+  NotificationReminderType,
+  NotificationStatus
 } from './shared'
 
 export {

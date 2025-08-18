@@ -145,7 +145,7 @@ export const appointmentFormSchema = z.object({
   date: z.string().min(1, 'Data é obrigatória'),
   startTime: timeSchema,
   endTime: timeSchema,
-  type: z.nativeEnum(AppointmentType).default(AppointmentType.NEW),
+  type: z.nativeEnum(AppointmentType).default(AppointmentType.CONSULTATION),
   observations: z.string().optional()
 }).refine((data) => {
   const start = data.startTime.split(':').map(Number)
