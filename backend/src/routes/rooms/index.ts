@@ -233,22 +233,19 @@ const roomsRoutes: FastifyPluginAsync = async (fastify) => {
     try {
       const { id } = request.params as { id: string }
       
-      fastify.log.info('Room update request:', {
-        id,
-        body: request.body
-      })
+      fastify.log.info(`Room update request: ${id} - ${JSON.stringify(request.body)}`)
       
       const updateData = createRoomSchema.partial().extend({
         active: z.boolean().optional()
       }).parse(request.body)
       
-      fastify.log.info('Parsed update data:', updateData)
+      fastify.log.info(`Parsed update data: ${JSON.stringify(updateData)}`)
       
       const room = await roomService.updateRoom(id, updateData)
       
       return successResponse(room, 'Sala atualizada com sucesso')
     } catch (error) {
-      fastify.log.error('Room update error:', error)
+      fastify.log.error(`Room update error: ${error instanceof Error ? error.message : String(error)}`)
       
       if (error instanceof Error) {
         if (error.message === 'Sala não encontrada') {

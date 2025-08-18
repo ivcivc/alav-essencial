@@ -179,7 +179,7 @@ Object# Plano de Implementação - Clínica Essencial
     - _Requisitos: 3.3, 4.5_
 
 - [ ] 7. Desenvolvimento do módulo de gestão de parceiros
-  - [ ] 7.1 Implementar CRUD de parceiros no backend com dados de teste
+  - [x ] 7.1 Implementar CRUD de parceiros no backend com dados de teste
     - Criar rotas Fastify para parceiros
     - Implementar lógica dos três tipos de parceria (sublocação, porcentagem, porcentagem com produtos)
     - Criar serviços para gestão de disponibilidade de parceiros
@@ -187,14 +187,14 @@ Object# Plano de Implementação - Clínica Essencial
     - Criar seed de dados de teste para parceiros no banco
     - _Requisitos: 5.1, 5.5, 5.6, 5.7, 5.8, 5.9_
 
-  - [ ] 7.2 Implementar sistema de disponibilidade de parceiros no backend
+  - [x ] 7.2 Implementar sistema de disponibilidade de parceiros no backend
     - Criar estrutura para horários de trabalho por dia da semana
     - Implementar bloqueio de datas/horários específicos
     - Criar API para consulta rápida de disponibilidade
     - Criar dados de teste para disponibilidade de parceiros
     - _Requisitos: 5.2, 5.3_
 
-  - [ ] 7.3 Conectar interface de gestão de parceiros com API real
+  - [x] 7.3 Conectar interface de gestão de parceiros com API real
     - Implementar formulário de cadastro conectado à API com dados bancários
     - Criar interface para configuração de disponibilidade visual consumindo dados reais
     - Implementar seleção de serviços associados conectada à API
@@ -202,7 +202,7 @@ Object# Plano de Implementação - Clínica Essencial
     - _Requisitos: 5.4, 7.4, 7.5_
 
 - [ ] 8. Desenvolvimento do sistema de agendamentos
-  - [ ] 8.1 Implementar lógica de agendamentos no backend com dados de teste
+  - [x] 8.1 Implementar lógica de agendamentos no backend com dados de teste
     - Criar rotas Fastify para agendamentos (CRUD completo)
     - Implementar validação de conflitos de horários
     - Criar serviços para verificação de disponibilidade em tempo real
@@ -210,14 +210,14 @@ Object# Plano de Implementação - Clínica Essencial
     - Criar seed de dados de teste para agendamentos no banco
     - _Requisitos: 7.3, 7.6, 7.7_
 
-  - [ ] 8.2 Conectar sistema de calendário com API real
+  - [x] 8.2 Conectar sistema de calendário com API real
     - Implementar componente de calendário consumindo dados reais (diária, semanal, mensal)
     - Criar timeline de ocupação das salas conectada à API
     - Implementar filtros por profissional, sala e tipo de serviço com dados reais
     - Criar visualização de disponibilidade de parceiros consumindo API em tempo real
     - _Requisitos: 7.1, 7.2, 7.4, 7.5_
 
-  - [ ] 8.3 Conectar funcionalidades de agendamento com API real
+  - [x] 8.3 Conectar funcionalidades de agendamento com API real
     - Criar formulário de agendamento conectado à API com seleção de paciente, serviço, parceiro e sala
     - Implementar sistema de lista de espera integrado com backend
     - Criar funcionalidades de check-in e check-out conectadas à API
@@ -225,13 +225,13 @@ Object# Plano de Implementação - Clínica Essencial
     - _Requisitos: 7.6, 7.9_
 
 - [ ] 9. Desenvolvimento do sistema de notificações
-  - [ ] 9.1 Implementar sistema de lembretes automáticos
+  - [x] 9.1 Implementar sistema de lembretes automáticos
     - Criar serviços para envio de notificações WhatsApp e SMS
     - Implementar agendamento de lembretes (3 notificações conforme configuração)
     - Criar templates de mensagens personalizáveis
     - _Requisitos: 7.8, 7.11_
 
-  - [ ] 9.2 Criar interface de configuração de notificações
+  - [x] 9.2 Criar interface de configuração de notificações
     - Implementar configurações de horários e tipos de lembrete
     - Criar interface para personalização de mensagens
     - Implementar histórico de notificações enviadas

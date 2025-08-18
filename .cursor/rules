@@ -1,0 +1,75 @@
+# Regras do Cursor para Clínica Essencial
+
+## Contexto do Projeto
+- Sistema de gestão para clínicas médicas
+- Stack: React 19 + Vite + Tailwind CSS 4 + Fastify + Prisma + PostgreSQL
+- Arquitetura modular com separação clara entre frontend e backend
+- Banco de dados hospedado em alav.cloud (PostgreSQL)
+
+## Estrutura do Projeto
+- `/backend` - API Fastify com TypeScript
+- `/frontend` - React 19 com Vite e shadcn/ui
+- Comunicação via REST API com autenticação JWT
+- Validação com Zod tanto no frontend quanto backend
+
+## Padrões de Desenvolvimento
+
+### Backend (Fastify)
+- Usar plugins modulares para funcionalidades
+- Repository pattern para acesso a dados
+- Service layer para lógica de negócio
+- Validação com schemas Zod
+- Rotas organizadas por módulo em `/routes`
+- Prefixo `/api` para todas as rotas
+
+### Frontend (React 19)
+- Componentes funcionais com hooks
+- shadcn/ui para componentes base
+- Tailwind CSS para estilização
+- React Query para cache e sincronização
+- Context API para estado global (auth)
+- Formulários com React Hook Form + Zod
+
+### Banco de Dados
+- Prisma como ORM
+- Schema bem definido com relacionamentos
+- Migrations versionadas
+- Seeds para dados de teste
+
+## Estado Atual do Desenvolvimento
+- ✅ Autenticação JWT (com problema de roteamento)
+- ✅ CRUD de Pacientes (backend + frontend)
+- ✅ CRUD de Salas (backend + frontend)
+- ✅ CRUD de Categorias (backend + frontend)
+- ✅ CRUD de Produtos/Serviços (backend + frontend)
+- ⏳ Módulo de Parceiros (próximo)
+- ⏳ Sistema de Agendamentos
+- ⏳ Módulo Financeiro
+
+## Problemas Conhecidos
+- Erro de roteamento na autenticação: "Route POST:/api/api/auth/login not found"
+- Possível duplicação do prefixo `/api` nas chamadas da API
+
+## Convenções de Código
+- TypeScript obrigatório
+- Interfaces compartilhadas entre frontend/backend em `/types`
+- Nomenclatura em português para entidades de domínio
+- Comentários em português
+- Commits descritivos
+
+## Requisitos Funcionais Principais
+1. Gestão completa de pacientes com histórico
+2. Gestão de salas e recursos
+3. Catálogo de produtos/serviços com categorias
+4. Sistema de parceiros com diferentes tipos de parceria
+5. Agendamentos com calendário
+6. Módulo financeiro integrado
+7. Dashboard e relatórios
+8. Notificações automáticas
+
+## Prioridades de Desenvolvimento
+1. Corrigir problema de autenticação
+2. Implementar módulo de parceiros
+3. Sistema de agendamentos
+4. Integração financeira
+5. Dashboard e relatórios

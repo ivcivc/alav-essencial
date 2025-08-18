@@ -97,7 +97,7 @@ export function createValidationHandler<T extends z.ZodType>(schema: T) {
       request.body = result
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return reply.status(400).send({
+        return reply.code(400).send({
           success: false,
           message: 'Dados inválidos',
           errors: error.errors.map(err => ({
@@ -119,7 +119,7 @@ export function createQueryValidationHandler<T extends z.ZodType>(schema: T) {
       request.query = result
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return reply.status(400).send({
+        return reply.code(400).send({
           success: false,
           message: 'Parâmetros de consulta inválidos',
           errors: error.errors.map(err => ({
@@ -141,7 +141,7 @@ export function createParamsValidationHandler<T extends z.ZodType>(schema: T) {
       request.params = result
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return reply.status(400).send({
+        return reply.code(400).send({
           success: false,
           message: 'Parâmetros de rota inválidos',
           errors: error.errors.map(err => ({

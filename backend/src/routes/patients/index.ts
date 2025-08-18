@@ -155,6 +155,22 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
     } catch (error) {
       fastify.log.error(error)
       
+      // Handle Zod validation errors
+      if (error && typeof error === 'object' && 'issues' in error) {
+        const zodError = error as any
+        const validationErrors = zodError.issues.map((issue: any) => ({
+          field: issue.path.join('.'),
+          message: issue.message
+        }))
+        
+        return reply.code(400).send({
+          success: false,
+          error: 'Dados inválidos',
+          details: validationErrors,
+          message: 'Por favor, corrija os erros nos campos indicados.'
+        })
+      }
+      
       if (error instanceof Error) {
         if (error.message.includes('CPF')) {
           return errorResponse(reply, error.message, 400)
@@ -209,6 +225,22 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
       return successResponse(patient, 'Paciente atualizado com sucesso')
     } catch (error) {
       fastify.log.error(error)
+      
+      // Handle Zod validation errors
+      if (error && typeof error === 'object' && 'issues' in error) {
+        const zodError = error as any
+        const validationErrors = zodError.issues.map((issue: any) => ({
+          field: issue.path.join('.'),
+          message: issue.message
+        }))
+        
+        return reply.code(400).send({
+          success: false,
+          error: 'Dados inválidos',
+          details: validationErrors,
+          message: 'Por favor, corrija os erros nos campos indicados.'
+        })
+      }
       
       if (error instanceof Error) {
         if (error.message === 'Paciente não encontrado') {

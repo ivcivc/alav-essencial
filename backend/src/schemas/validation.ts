@@ -80,7 +80,7 @@ export const createPatientSchema = z.object({
   birthDate: z.string().transform((str) => new Date(str)),
   whatsapp: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.string().email('Email inválido').optional().or(z.literal('')),
   street: z.string().optional(),
   number: z.string().optional(),
   complement: z.string().optional(),
@@ -262,7 +262,7 @@ export const createAppointmentSchema = z.object({
   date: z.string().transform((str) => new Date(str)),
   startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de hora inválido (HH:MM)'),
   endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de hora inválido (HH:MM)'),
-  type: z.nativeEnum(AppointmentType).default(AppointmentType.NEW),
+  type: z.nativeEnum(AppointmentType).default(AppointmentType.CONSULTATION),
   observations: z.string().optional()
 })
 

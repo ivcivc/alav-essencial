@@ -11,7 +11,10 @@ import {
   PartnershipType,
   ServiceType,
   AppointmentType,
-  AppointmentStatus
+  AppointmentStatus,
+  NotificationChannel,
+  NotificationReminderType,
+  NotificationStatus
 } from './shared'
 
 // User Entity
@@ -75,6 +78,16 @@ export interface PartnerAvailability extends BaseEntity {
   endTime: string
   breakStart?: string
   breakEnd?: string
+  active: boolean
+}
+
+// Partner Blocked Date Entity
+export interface PartnerBlockedDate extends BaseEntity {
+  partnerId: string
+  blockedDate: Date
+  startTime?: string
+  endTime?: string
+  reason?: string
   active: boolean
 }
 
@@ -149,6 +162,7 @@ export interface PatientWithAppointments extends Patient {
 
 export interface PartnerWithRelations extends Partner {
   availability?: PartnerAvailability[]
+  blockedDates?: PartnerBlockedDate[]
   partnerServices?: PartnerService[]
   appointments?: Appointment[]
 }
@@ -174,4 +188,74 @@ export interface RoomWithRelations extends Room {
 
 export interface CategoryWithRelations extends Category {
   productServices?: ProductService[]
+}
+
+// 🔔 ENTIDADES DE NOTIFICAÇÃO
+
+export interface NotificationConfiguration extends BaseEntity {
+  enabled: boolean
+  defaultChannel: string
+  firstReminderDays: number
+  secondReminderDays: number
+  thirdReminderHours: number
+  whatsappEnabled: boolean
+  smsEnabled: boolean
+  emailEnabled: boolean
+  retryAttempts: number
+  retryIntervalMinutes: number
+}
+
+export interface NotificationTemplate extends BaseEntity {
+  name: string
+  type: NotificationReminderType
+  channel: NotificationChannel
+  subject?: string
+  content: string
+  variables: any // JSON
+  active: boolean
+}
+
+export interface NotificationSchedule extends BaseEntity {
+  appointmentId: string
+  templateId: string
+  scheduledFor: Date
+  status: NotificationStatus
+  channel: NotificationChannel
+  retryCount: number
+  lastAttempt?: Date
+  errorMessage?: string
+}
+
+export interface NotificationLog extends BaseEntity {
+  appointmentId: string
+  channel: NotificationChannel
+  recipient: string
+  content: string
+  subject?: string
+  status: NotificationStatus
+  errorMessage?: string
+  providerData?: any // JSON
+  deliveredAt?: Date
+  readAt?: Date
+  sentAt: Date
+}
+
+// Extended notification entities with relations
+export interface NotificationTemplateWithSchedules extends NotificationTemplate {
+  notificationSchedules?: NotificationSchedule[]
+}
+
+export interface NotificationScheduleWithRelations extends NotificationSchedule {
+  appointment?: Appointment
+  template?: NotificationTemplate
+}
+
+export interface NotificationLogWithRelations extends NotificationLog {
+  appointment?: AppointmentWithRelations
+}
+
+// Extended appointment with notifications
+export interface AppointmentWithNotifications extends AppointmentWithRelations {
+  notificationSchedules?: NotificationSchedule[]
+  notificationLogs?: NotificationLog[]
 }

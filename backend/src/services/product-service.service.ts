@@ -1,7 +1,8 @@
-import { ProductService } from '@prisma/client'
 import { ProductServiceRepository, ProductServiceFilters } from '../repositories/product-service.repository'
 import { CategoryRepository } from '../repositories/category.repository'
 import { ServiceType } from '../types/shared'
+import { ProductService } from '../types/entities'
+import { convertPrismaProductService } from '../utils/typeConverters'
 
 export interface CreateProductServiceData {
   name: string
@@ -47,10 +48,12 @@ export class ProductServiceService {
   async getAllProductServices(filters: ProductServiceFilters = {}): Promise<ProductServiceListResponse> {
     const { page = 1, limit = 10 } = filters
     
-    const [productServices, total] = await Promise.all([
+    const [prismaProductServices, total] = await Promise.all([
       this.productServiceRepository.findAll(filters),
       this.productServiceRepository.count(filters)
     ])
+
+    const productServices = prismaProductServices.map(convertPrismaProductService)
 
     return {
       productServices,
@@ -68,7 +71,7 @@ export class ProductServiceService {
       throw new Error('Produto/Serviço não encontrado')
     }
 
-    return productService
+    return convertPrismaProductService(productService)
   }
 
   async createProductService(data: CreateProductServiceData): Promise<ProductService> {
@@ -139,7 +142,8 @@ export class ProductServiceService {
       requiresSpecialPrep: data.requiresSpecialPrep ?? false
     }
 
-    return this.productServiceRepository.create(createData)
+    const createdProductService = await this.productServiceRepository.create(createData)
+    return convertPrismaProductService(createdProductService)
   }
 
   async updateProductService(id: string, data: UpdateProductServiceData): Promise<ProductService> {
@@ -216,7 +220,8 @@ export class ProductServiceService {
       }
     }
 
-    return this.productServiceRepository.update(id, data)
+    const updatedProductService = await this.productServiceRepository.update(id, data)
+    return convertPrismaProductService(updatedProductService)
   }
 
   async deleteProductService(id: string): Promise<void> {
@@ -307,11 +312,13 @@ export class ProductServiceService {
       throw new Error('Estoque insuficiente para esta operação')
     }
 
-    return this.productServiceRepository.updateStock(id, newQuantity)
+    const updatedProductService = await this.productServiceRepository.updateStock(id, newQuantity)
+    return convertPrismaProductService(updatedProductService)
   }
 
   async getLowStockProducts(): Promise<ProductService[]> {
-    return this.productServiceRepository.findLowStock()
+    const lowStockProducts = await this.productServiceRepository.findLowStock()
+    return lowStockProducts.map(convertPrismaProductService)
   }
 
   async getStockReport(): Promise<{

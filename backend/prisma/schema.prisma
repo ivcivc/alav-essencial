@@ -71,6 +71,7 @@ model Partner {
   updatedAt          DateTime              @updatedAt
   appointments       Appointment[]
   availability       PartnerAvailability[]
+  blockedDates       PartnerBlockedDate[]
   partnerServices    PartnerService[]
 
   @@map("partners")
@@ -90,6 +91,22 @@ model PartnerAvailability {
   partner    Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
 
   @@map("partner_availability")
+}
+
+model PartnerBlockedDate {
+  id          String   @id @default(cuid())
+  partnerId   String
+  blockedDate DateTime @db.Date
+  startTime   String?  // Se for bloqueio total do dia, será null
+  endTime     String?  // Se for bloqueio total do dia, será null
+  reason      String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  partner     Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@unique([partnerId, blockedDate, startTime, endTime])
+  @@map("partner_blocked_dates")
 }
 
 model Room {
@@ -172,26 +189,28 @@ model PartnerService {
 }
 
 model Appointment {
-  id                 String            @id @default(cuid())
-  patientId          String
-  partnerId          String
-  productServiceId   String
-  roomId             String?
-  date               DateTime
-  startTime          String
-  endTime            String
-  type               AppointmentType   @default(NEW)
-  status             AppointmentStatus @default(SCHEDULED)
-  observations       String?
-  checkIn            DateTime?
-  checkOut           DateTime?
-  cancellationReason String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  partner            Partner           @relation(fields: [partnerId], references: [id])
-  patient            Patient           @relation(fields: [patientId], references: [id])
-  productService     ProductService    @relation(fields: [productServiceId], references: [id])
-  room               Room?             @relation(fields: [roomId], references: [id])
+  id                    String                  @id @default(cuid())
+  patientId             String
+  partnerId             String
+  productServiceId      String
+  roomId                String?
+  date                  DateTime
+  startTime             String
+  endTime               String
+  type                  AppointmentType         @default(CONSULTATION)
+  status                AppointmentStatus       @default(SCHEDULED)
+  observations          String?
+  checkIn               DateTime?
+  checkOut              DateTime?
+  cancellationReason    String?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  partner               Partner                 @relation(fields: [partnerId], references: [id])
+  patient               Patient                 @relation(fields: [patientId], references: [id])
+  productService        ProductService          @relation(fields: [productServiceId], references: [id])
+  room                  Room?                   @relation(fields: [roomId], references: [id])
+  notificationSchedules NotificationSchedule[]
+  notificationLogs      NotificationLog[]
 
   @@map("appointments")
 }
@@ -213,7 +232,9 @@ enum ServiceType {
 }
 
 enum AppointmentType {
-  NEW
+  CONSULTATION
+  EXAM
+  PROCEDURE
   RETURN
 }
 
@@ -222,5 +243,103 @@ enum AppointmentStatus {
   CONFIRMED
   IN_PROGRESS
   COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// 🔔 MODELOS DE NOTIFICAÇÃO
+
+model NotificationConfiguration {
+  id                   String   @id @default(cuid())
+  enabled              Boolean  @default(true)
+  defaultChannel       String   @default("whatsapp") // 'whatsapp', 'sms', 'email'
+  firstReminderDays    Int      @default(3)
+  secondReminderDays   Int      @default(1)
+  thirdReminderHours   Int      @default(2)
+  whatsappEnabled      Boolean  @default(true)
+  smsEnabled           Boolean  @default(true)
+  emailEnabled         Boolean  @default(true)
+  retryAttempts        Int      @default(3)
+  retryIntervalMinutes Int      @default(30)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("notification_configuration")
+}
+
+model NotificationTemplate {
+  id                    String                 @id @default(cuid())
+  name                  String
+  type                  NotificationReminderType
+  channel               NotificationChannel
+  subject               String?                // Para email
+  content               String
+  variables             Json                   // Lista de variáveis disponíveis
+  active                Boolean                @default(true)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  notificationSchedules NotificationSchedule[]
+
+  @@map("notification_templates")
+}
+
+model NotificationSchedule {
+  id            String               @id @default(cuid())
+  appointmentId String
+  templateId    String
+  scheduledFor  DateTime
+  status        NotificationStatus   @default(PENDING)
+  channel       NotificationChannel
+  retryCount    Int                  @default(0)
+  lastAttempt   DateTime?
+  errorMessage  String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  appointment   Appointment          @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  template      NotificationTemplate @relation(fields: [templateId], references: [id])
+
+  @@map("notification_schedules")
+}
+
+model NotificationLog {
+  id            String              @id @default(cuid())
+  appointmentId String
+  channel       NotificationChannel
+  recipient     String              // Número/email do destinatário
+  content       String
+  subject       String?             // Para email
+  status        NotificationStatus
+  errorMessage  String?
+  providerData  Json?               // Dados específicos do provedor
+  deliveredAt   DateTime?
+  readAt        DateTime?
+  sentAt        DateTime            @default(now())
+  appointment   Appointment         @relation(fields: [appointmentId], references: [id])
+
+  @@map("notification_logs")
+}
+
+// 🔔 ENUMS PARA NOTIFICAÇÕES
+
+enum NotificationChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+}
+
+enum NotificationReminderType {
+  FIRST_REMINDER    // 3 dias antes
+  SECOND_REMINDER   // 1 dia antes
+  THIRD_REMINDER    // 2 horas antes
+  IMMEDIATE         // Imediato (cancelamento, reagendamento)
+}
+
+enum NotificationStatus {
+  PENDING
+  SENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
   CANCELLED
 }

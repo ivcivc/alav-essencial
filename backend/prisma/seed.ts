@@ -16,6 +16,15 @@ async function main() {
   
   // Seed products and services
   await seedProductServices()
+  
+  // Seed partners
+  await seedPartners()
+  
+  // Seed appointments
+  await seedAppointments()
+  
+  // Seed notifications
+  await seedNotifications()
 
   console.log('✅ Database seeding completed!')
 }
@@ -907,6 +916,744 @@ async function seedProductServices() {
   }
 
   console.log('🛍️ Products and services seeding completed!')
+}
+
+async function seedPartners() {
+  console.log('👥 Seeding partners...')
+
+  const partners = [
+    {
+      fullName: 'Dr. Ricardo Almeida Silva',
+      document: '12345678901',
+      phone: '11987654321',
+      email: 'ricardo.silva@clinica.com',
+      street: 'Rua dos Médicos',
+      number: '100',
+      neighborhood: 'Centro Médico',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01234567',
+      bank: 'Banco do Brasil',
+      agency: '1234',
+      account: '56789-0',
+      pix: 'ricardo.silva@clinica.com',
+      partnershipType: 'PERCENTAGE' as const,
+      percentageAmount: 120.00
+    },
+    {
+      fullName: 'Dra. Mariana Costa Pereira',
+      document: '23456789012',
+      phone: '11876543210',
+      email: 'mariana.pereira@clinica.com',
+      street: 'Avenida Paulista',
+      number: '1500',
+      complement: 'Conjunto 801',
+      neighborhood: 'Bela Vista',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01310100',
+      bank: 'Itaú',
+      agency: '2345',
+      account: '67890-1',
+      pix: '11876543210',
+      partnershipType: 'SUBLEASE' as const,
+      subleaseAmount: 2500.00,
+      subleasePaymentDay: 10
+    },
+    {
+      fullName: 'Dr. Fernando Santos Oliveira',
+      document: '34567890123',
+      phone: '11765432109',
+      email: 'fernando.oliveira@clinica.com',
+      street: 'Rua Oscar Freire',
+      number: '800',
+      neighborhood: 'Jardins',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01426000',
+      bank: 'Bradesco',
+      agency: '3456',
+      account: '78901-2',
+      pix: 'fernando.oliveira@clinica.com',
+      partnershipType: 'PERCENTAGE_WITH_PRODUCTS' as const,
+      percentageRate: 70.0
+    },
+    {
+      fullName: 'Dra. Carolina Ribeiro Lima',
+      document: '45678901234',
+      phone: '11654321098',
+      email: 'carolina.lima@clinica.com',
+      street: 'Rua Augusta',
+      number: '2000',
+      neighborhood: 'Consolação',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01305000',
+      bank: 'Santander',
+      agency: '4567',
+      account: '89012-3',
+      pix: '11654321098',
+      partnershipType: 'PERCENTAGE' as const,
+      percentageAmount: 150.00
+    },
+    {
+      fullName: 'Dr. André Luiz Fernandes',
+      document: '56789012345',
+      phone: '11543210987',
+      email: 'andre.fernandes@clinica.com',
+      street: 'Rua Haddock Lobo',
+      number: '600',
+      neighborhood: 'Cerqueira César',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01414000',
+      bank: 'Caixa Econômica Federal',
+      agency: '5678',
+      account: '90123-4',
+      pix: 'andre.fernandes@clinica.com',
+      partnershipType: 'SUBLEASE' as const,
+      subleaseAmount: 1800.00,
+      subleasePaymentDay: 5
+    },
+    {
+      fullName: 'Dra. Patrícia Moura Santos',
+      document: '67890123456',
+      phone: '11432109876',
+      email: 'patricia.santos@clinica.com',
+      street: 'Avenida Faria Lima',
+      number: '1200',
+      complement: 'Torre A - Sala 1205',
+      neighborhood: 'Itaim Bibi',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01451000',
+      bank: 'Nubank',
+      pix: 'patricia.santos@clinica.com',
+      partnershipType: 'PERCENTAGE_WITH_PRODUCTS' as const,
+      percentageRate: 65.0
+    },
+    {
+      fullName: 'Dr. Gabriel Henrique Costa',
+      document: '78901234567',
+      phone: '11321098765',
+      email: 'gabriel.costa@clinica.com',
+      street: 'Rua Pamplona',
+      number: '1000',
+      neighborhood: 'Jardim Paulista',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01405000',
+      bank: 'Inter',
+      pix: '11321098765',
+      partnershipType: 'PERCENTAGE' as const,
+      percentageAmount: 100.00
+    },
+    {
+      fullName: 'Dra. Juliana Alves Rodrigues',
+      document: '89012345678',
+      phone: '11210987654',
+      email: 'juliana.rodrigues@clinica.com',
+      street: 'Rua Estados Unidos',
+      number: '800',
+      neighborhood: 'Jardins',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01427000',
+      bank: 'BTG Pactual',
+      agency: '6789',
+      account: '01234-5',
+      pix: 'juliana.rodrigues@clinica.com',
+      partnershipType: 'SUBLEASE' as const,
+      subleaseAmount: 3200.00,
+      subleasePaymentDay: 15
+    },
+    {
+      fullName: 'Dr. Thiago Barbosa Mendes',
+      document: '90123456789',
+      phone: '11109876543',
+      email: 'thiago.mendes@clinica.com',
+      street: 'Rua Teodoro Sampaio',
+      number: '1500',
+      neighborhood: 'Pinheiros',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '05405000',
+      bank: 'Original',
+      pix: 'thiago.mendes@clinica.com',
+      partnershipType: 'PERCENTAGE_WITH_PRODUCTS' as const,
+      percentageRate: 75.0
+    },
+    {
+      fullName: 'Dra. Renata Silva Carvalho',
+      document: '01234567891',
+      phone: '11098765432',
+      email: 'renata.carvalho@clinica.com',
+      street: 'Rua Consolação',
+      number: '2500',
+      complement: 'Andar 12',
+      neighborhood: 'Consolação',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01301000',
+      bank: 'C6 Bank',
+      pix: '11098765432',
+      partnershipType: 'PERCENTAGE' as const,
+      percentageAmount: 140.00
+    }
+  ]
+
+  for (const partnerData of partners) {
+    const existingPartner = await prisma.partner.findUnique({
+      where: { document: partnerData.document }
+    })
+
+    if (!existingPartner) {
+      const partner = await prisma.partner.create({
+        data: partnerData
+      })
+      console.log(`✅ Created partner: ${partnerData.fullName}`)
+
+      // Add availability for each partner (Monday to Friday, 8:00-17:00 with lunch break)
+      const availability = [
+        { dayOfWeek: 1, startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00' }, // Monday
+        { dayOfWeek: 2, startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00' }, // Tuesday
+        { dayOfWeek: 3, startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00' }, // Wednesday
+        { dayOfWeek: 4, startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00' }, // Thursday
+        { dayOfWeek: 5, startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00' }, // Friday
+      ]
+
+      for (const avail of availability) {
+        await prisma.partnerAvailability.create({
+          data: {
+            partnerId: partner.id,
+            ...avail
+          }
+        })
+      }
+
+      console.log(`✅ Created availability for partner: ${partnerData.fullName}`)
+
+      // Add some sample blocked dates for testing
+      await createSampleBlockedDates(partner.id, partnerData.fullName)
+    } else {
+      console.log(`⏭️  Partner already exists: ${partnerData.fullName}`)
+    }
+  }
+
+  // Associate partners with services
+  await associatePartnersWithServices()
+
+  console.log('👥 Partners seeding completed!')
+}
+
+async function createSampleBlockedDates(partnerId: string, partnerName: string) {
+  console.log(`🚫 Creating sample blocked dates for ${partnerName}...`)
+
+  const today = new Date()
+  const futureDate1 = new Date()
+  const futureDate2 = new Date()
+  const futureDate3 = new Date()
+
+  // Create dates in the future for testing
+  futureDate1.setDate(today.getDate() + 7) // Next week
+  futureDate2.setDate(today.getDate() + 14) // In 2 weeks  
+  futureDate3.setDate(today.getDate() + 21) // In 3 weeks
+
+  const sampleBlockedDates = [
+    {
+      partnerId,
+      blockedDate: futureDate1,
+      startTime: '14:00',
+      endTime: '15:30',
+      reason: 'Reunião administrativa'
+    },
+    {
+      partnerId,
+      blockedDate: futureDate2,
+      startTime: null,
+      endTime: null,
+      reason: 'Feriado - Dia completo bloqueado'
+    },
+    {
+      partnerId,
+      blockedDate: futureDate3,
+      startTime: '09:00',
+      endTime: '11:00',
+      reason: 'Treinamento obrigatório'
+    }
+  ]
+
+  for (const blockedDate of sampleBlockedDates) {
+    const existing = await prisma.partnerBlockedDate.findFirst({
+      where: {
+        partnerId: blockedDate.partnerId,
+        blockedDate: blockedDate.blockedDate
+      }
+    })
+
+    if (!existing) {
+      await prisma.partnerBlockedDate.create({
+        data: blockedDate
+      })
+      const dateStr = blockedDate.blockedDate.toISOString().split('T')[0]
+      const timeStr = blockedDate.startTime && blockedDate.endTime 
+        ? `${blockedDate.startTime}-${blockedDate.endTime}` 
+        : 'dia completo'
+      console.log(`✅ Created blocked date for ${partnerName}: ${dateStr} (${timeStr})`)
+    }
+  }
+}
+
+async function associatePartnersWithServices() {
+  console.log('🔗 Associating partners with services...')
+
+  // Get some partners and services for association
+  const partners = await prisma.partner.findMany({ take: 5 })
+  const services = await prisma.productService.findMany({ 
+    where: { type: 'SERVICE' },
+    take: 10 
+  })
+
+  if (partners.length === 0 || services.length === 0) {
+    console.log('⏭️  No partners or services found for association')
+    return
+  }
+
+  // Associate each partner with 3-5 random services
+  for (const partner of partners) {
+    const numberOfServices = Math.floor(Math.random() * 3) + 3 // 3 to 5 services
+    const shuffledServices = services.sort(() => 0.5 - Math.random()).slice(0, numberOfServices)
+
+    for (const service of shuffledServices) {
+      const existingAssociation = await prisma.partnerService.findFirst({
+        where: {
+          partnerId: partner.id,
+          productServiceId: service.id
+        }
+      })
+
+      if (!existingAssociation) {
+        await prisma.partnerService.create({
+          data: {
+            partnerId: partner.id,
+            productServiceId: service.id
+          }
+        })
+        console.log(`✅ Associated ${partner.fullName} with ${service.name}`)
+      }
+    }
+  }
+
+  console.log('🔗 Partner-service associations completed!')
+}
+
+async function seedAppointments() {
+  console.log('📅 Starting appointments seeding...')
+
+  // Get existing data to create appointments
+  const patients = await prisma.patient.findMany({ take: 10 })
+  const partners = await prisma.partner.findMany({ take: 5 })
+  const rooms = await prisma.room.findMany({ take: 3 })
+  const services = await prisma.productService.findMany({ 
+    where: { type: 'SERVICE' }, 
+    take: 10 
+  })
+
+  if (patients.length === 0 || partners.length === 0 || services.length === 0) {
+    console.log('⚠️ Missing required data for appointments. Skipping appointment seeding.')
+    return
+  }
+
+  // Generate appointments for the next 30 days
+  const today = new Date()
+  const appointments = []
+
+  for (let dayOffset = 1; dayOffset <= 30; dayOffset++) {
+    const appointmentDate = new Date(today)
+    appointmentDate.setDate(today.getDate() + dayOffset)
+    
+    // Skip weekends for most appointments
+    const dayOfWeek = appointmentDate.getDay()
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue
+
+    // Create 3-8 appointments per day
+    const appointmentsPerDay = Math.floor(Math.random() * 6) + 3
+
+    for (let i = 0; i < appointmentsPerDay; i++) {
+      const patient = patients[Math.floor(Math.random() * patients.length)]
+      const partner = partners[Math.floor(Math.random() * partners.length)]
+      const service = services[Math.floor(Math.random() * services.length)]
+      const room = Math.random() > 0.3 ? rooms[Math.floor(Math.random() * rooms.length)] : null
+
+      // Generate appointment times (8:00 to 17:00)
+      const startHour = Math.floor(Math.random() * 9) + 8 // 8-16
+      const startMinute = Math.random() > 0.5 ? 0 : 30
+      const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`
+      
+      // Calculate end time based on service duration or default 30 minutes
+      const durationMinutes = service.durationMinutes || 30
+      const endHour = startHour + Math.floor((startMinute + durationMinutes) / 60)
+      const endMinute = (startMinute + durationMinutes) % 60
+      const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`
+
+      // Determine appointment type based on service
+      let type: 'CONSULTATION' | 'EXAM' | 'PROCEDURE' | 'RETURN' = 'CONSULTATION'
+      if (service.name.toLowerCase().includes('ultrassom') || service.name.toLowerCase().includes('exame')) {
+        type = 'EXAM'
+      } else if (service.name.toLowerCase().includes('procedimento') || service.name.toLowerCase().includes('cirurgia')) {
+        type = 'PROCEDURE'
+      } else if (Math.random() > 0.8) {
+        type = 'RETURN'
+      }
+
+      // Determine status based on date
+      let status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' = 'SCHEDULED'
+      if (dayOffset < 0) { // Past appointments
+        const rand = Math.random()
+        if (rand > 0.8) status = 'CANCELLED'
+        else if (rand > 0.9) status = 'NO_SHOW'
+        else status = 'COMPLETED'
+      } else if (dayOffset === 0) { // Today's appointments
+        const rand = Math.random()
+        if (rand > 0.7) status = 'IN_PROGRESS'
+        else if (rand > 0.85) status = 'COMPLETED'
+      }
+
+      // Generate some observations
+      const observations = Math.random() > 0.7 ? [
+        'Paciente chegou no horário',
+        'Primeira consulta',
+        'Retorno para avaliação',
+        'Paciente relatou melhora',
+        'Necessário acompanhamento',
+        'Exame de rotina'
+      ][Math.floor(Math.random() * 6)] : undefined
+
+      appointments.push({
+        patientId: patient.id,
+        partnerId: partner.id,
+        productServiceId: service.id,
+        roomId: room?.id,
+        date: appointmentDate,
+        startTime,
+        endTime,
+        type,
+        status,
+        observations,
+        checkIn: status === 'IN_PROGRESS' || status === 'COMPLETED' ? new Date() : null,
+        checkOut: status === 'COMPLETED' ? new Date() : null,
+        cancellationReason: status === 'CANCELLED' ? 'Paciente cancelou' : null
+      })
+    }
+  }
+
+  // Create appointments in batches to avoid conflicts
+  console.log(`📅 Creating ${appointments.length} sample appointments...`)
+  
+  let createdCount = 0
+  for (const appointmentData of appointments) {
+    try {
+      const existing = await prisma.appointment.findFirst({
+        where: {
+          partnerId: appointmentData.partnerId,
+          date: appointmentData.date,
+          startTime: appointmentData.startTime
+        }
+      })
+
+      if (!existing) {
+        await prisma.appointment.create({
+          data: appointmentData
+        })
+        createdCount++
+      }
+    } catch (error) {
+      // Skip appointments that cause conflicts
+      console.log(`⚠️ Skipped appointment due to conflict: ${error}`)
+    }
+  }
+
+  console.log(`✅ Created ${createdCount} appointments successfully!`)
+}
+
+async function seedNotifications() {
+  console.log('🔔 Seeding notification system...')
+
+  // 1. Create notification configuration
+  const existingConfig = await prisma.notificationConfiguration.findFirst()
+  
+  if (!existingConfig) {
+    await prisma.notificationConfiguration.create({
+      data: {
+        enabled: true,
+        defaultChannel: 'whatsapp',
+        firstReminderDays: 3,
+        secondReminderDays: 1,
+        thirdReminderHours: 2,
+        whatsappEnabled: true,
+        smsEnabled: true,
+        emailEnabled: true,
+        retryAttempts: 3,
+        retryIntervalMinutes: 30
+      }
+    })
+    console.log('✅ Created notification configuration')
+  } else {
+    console.log('⏭️  Notification configuration already exists')
+  }
+
+  // 2. Create notification templates
+  const templates = [
+    // WhatsApp Templates
+    {
+      name: 'Lembrete WhatsApp - 3 dias',
+      type: 'FIRST_REMINDER',
+      channel: 'WHATSAPP',
+      content: `🏥 *{clinica}* 
+
+Olá *{paciente}*! 
+
+📅 Lembramos que você tem um agendamento marcado:
+
+🔸 *Serviço:* {servico}
+🔸 *Profissional:* {profissional}  
+🔸 *Data:* {data}
+🔸 *Horário:* {hora}
+${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+
+ℹ️ Em caso de dúvidas ou necessidade de reagendamento, entre em contato conosco.
+
+📞 {telefone}
+
+Obrigado pela confiança! 💙`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'sala', 'clinica', 'telefone'])
+    },
+    {
+      name: 'Lembrete WhatsApp - 1 dia',
+      type: 'SECOND_REMINDER',
+      channel: 'WHATSAPP',
+      content: `🏥 *{clinica}*
+
+Oi *{paciente}*! 
+
+⏰ Seu agendamento é *AMANHÃ*:
+
+🔸 *Serviço:* {servico}
+🔸 *Profissional:* {profissional}
+🔸 *Data:* {data}
+🔸 *Horário:* {hora}
+${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+
+📋 *Lembre-se:*
+• Chegue 15 minutos antes
+• Traga seus documentos
+• Use máscara de proteção
+
+📞 Dúvidas? {telefone}
+
+Até breve! 💙`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'sala', 'clinica', 'telefone'])
+    },
+    {
+      name: 'Lembrete WhatsApp - 2 horas',
+      type: 'THIRD_REMINDER',
+      channel: 'WHATSAPP',
+      content: `🏥 *{clinica}*
+
+*{paciente}*, seu horário é HOJE! ⏰
+
+🔸 *Serviço:* {servico}
+🔸 *Profissional:* {profissional}
+🔸 *Horário:* {hora}
+${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+
+⚠️ *Lembre-se:* Chegue 15 minutos antes do horário.
+
+📍 *Endereço:* {endereco}
+📞 *Contato:* {telefone}
+
+Aguardamos você! 💙`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'sala', 'clinica', 'endereco', 'telefone'])
+    },
+    {
+      name: 'Notificação WhatsApp - Imediata',
+      type: 'IMMEDIATE',
+      channel: 'WHATSAPP',
+      content: `🏥 *{clinica}*
+
+Olá *{paciente}*,
+
+Informamos sobre seu agendamento:
+
+🔸 *Serviço:* {servico}
+🔸 *Profissional:* {profissional}
+🔸 *Data:* {data}
+🔸 *Horário:* {hora}
+
+📞 Para mais informações: {telefone}
+
+Obrigado! 💙`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'clinica', 'telefone'])
+    },
+
+    // SMS Templates
+    {
+      name: 'Lembrete SMS - 3 dias',
+      type: 'FIRST_REMINDER',
+      channel: 'SMS',
+      content: 'CLINICA ESSENCIAL: Ola {paciente}! Lembrete: voce tem {servico} com {profissional} em {data} as {hora}. Duvidas: {telefone}',
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'telefone'])
+    },
+    {
+      name: 'Lembrete SMS - 1 dia',
+      type: 'SECOND_REMINDER',
+      channel: 'SMS',
+      content: 'CLINICA ESSENCIAL: {paciente}, seu agendamento e AMANHA! {servico} com {profissional} as {hora}. Chegue 15min antes. Info: {telefone}',
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'hora', 'telefone'])
+    },
+    {
+      name: 'Lembrete SMS - 2 horas',
+      type: 'THIRD_REMINDER',
+      channel: 'SMS',
+      content: 'CLINICA ESSENCIAL: {paciente}, seu horario e HOJE as {hora}! {servico} com {profissional}. Chegue 15min antes. {endereco}',
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'hora', 'endereco'])
+    },
+    {
+      name: 'Notificação SMS - Imediata',
+      type: 'IMMEDIATE',
+      channel: 'SMS',
+      content: 'CLINICA ESSENCIAL: {paciente}, informacao sobre seu agendamento: {servico} com {profissional} em {data} as {hora}. Info: {telefone}',
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'telefone'])
+    },
+
+    // Email Templates
+    {
+      name: 'Lembrete Email - 3 dias',
+      type: 'FIRST_REMINDER',
+      channel: 'EMAIL',
+      subject: 'Lembrete: Seu agendamento na {clinica}',
+      content: `Olá {paciente},
+
+Esperamos que esteja bem!
+
+Este é um lembrete sobre seu agendamento:
+
+• Serviço: {servico}
+• Profissional: {profissional}
+• Data: {data}
+• Horário: {hora}
+• Sala: {sala}
+
+INFORMAÇÕES IMPORTANTES:
+- Chegue 15 minutos antes do horário agendado
+- Traga um documento de identificação
+- Use máscara de proteção
+
+Em caso de dúvidas ou necessidade de reagendamento, entre em contato conosco através do telefone {telefone}.
+
+Atenciosamente,
+Equipe {clinica}
+
+📍 Endereço: {endereco}
+📞 Telefone: {telefone}`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'sala', 'clinica', 'endereco', 'telefone'])
+    },
+    {
+      name: 'Lembrete Email - 1 dia',
+      type: 'SECOND_REMINDER',
+      channel: 'EMAIL',
+      subject: 'AMANHÃ: Seu agendamento na {clinica}',
+      content: `Olá {paciente},
+
+Seu agendamento é AMANHÃ!
+
+• Serviço: {servico}
+• Profissional: {profissional}
+• Data: {data}
+• Horário: {hora}
+• Sala: {sala}
+
+CHECKLIST PARA SUA CONSULTA:
+✓ Chegue 15 minutos antes
+✓ Traga documento de identificação  
+✓ Use máscara de proteção
+✓ Traga exames anteriores (se houver)
+
+Aguardamos você!
+
+Atenciosamente,
+Equipe {clinica}
+
+📍 {endereco}
+📞 {telefone}`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'sala', 'clinica', 'endereco', 'telefone'])
+    },
+    {
+      name: 'Lembrete Email - 2 horas',
+      type: 'THIRD_REMINDER',
+      channel: 'EMAIL',
+      subject: 'HOJE: Seu agendamento em 2 horas - {clinica}',
+      content: `{paciente},
+
+Seu agendamento é HOJE em aproximadamente 2 horas!
+
+• Serviço: {servico}
+• Profissional: {profissional}
+• Horário: {hora}
+• Sala: {sala}
+
+⏰ LEMBRE-SE: Chegue 15 minutos antes do horário.
+
+📍 Endereço: {endereco}
+📞 Telefone: {telefone}
+
+Aguardamos você!
+
+Equipe {clinica}`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'hora', 'sala', 'clinica', 'endereco', 'telefone'])
+    },
+    {
+      name: 'Notificação Email - Imediata',
+      type: 'IMMEDIATE',
+      channel: 'EMAIL',
+      subject: 'Informação sobre seu agendamento - {clinica}',
+      content: `Olá {paciente},
+
+Informamos sobre seu agendamento:
+
+• Serviço: {servico}
+• Profissional: {profissional}
+• Data: {data}
+• Horário: {hora}
+
+Para mais informações, entre em contato conosco.
+
+Atenciosamente,
+Equipe {clinica}
+
+📞 {telefone}`,
+      variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'clinica', 'telefone'])
+    }
+  ]
+
+  for (const templateData of templates) {
+    const existingTemplate = await prisma.notificationTemplate.findFirst({
+      where: { 
+        name: templateData.name
+      }
+    })
+
+    if (!existingTemplate) {
+      await prisma.notificationTemplate.create({
+        data: templateData
+      })
+      console.log(`✅ Created template: ${templateData.name}`)
+    } else {
+      console.log(`⏭️  Template already exists: ${templateData.name}`)
+    }
+  }
+
+  console.log('🔔 Notification system seeding completed!')
 }
 
 main()

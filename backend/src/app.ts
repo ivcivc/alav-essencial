@@ -75,11 +75,27 @@ async function registerPlugins() {
   const productServicesRoutes = await import('./routes/product-services')
   await fastify.register(productServicesRoutes.default, { prefix: '/api/product-services' })
   
+  // Import partners routes
+  const partnersRoutes = await import('./routes/partners')
+  await fastify.register(partnersRoutes.default, { prefix: '/api/partners' })
+  
+  // Import appointments routes
+  const appointmentsRoutes = await import('./routes/appointments')
+  await fastify.register(appointmentsRoutes.default, { prefix: '/api/appointments' })
+  
+  // Import notifications routes
+  const notificationsRoutes = await import('./routes/notifications')
+  await fastify.register(notificationsRoutes.default, { prefix: '/api/notifications' })
+  
   await fastify.register(async function (fastify) {
     fastify.get('/health', async () => {
       return { status: 'ok', timestamp: new Date().toISOString() }
     })
   })
+
+  // 🔔 Inicializar agendador de notificações
+  const { NotificationSchedulerSingleton } = await import('./services/notification-scheduler')
+  NotificationSchedulerSingleton.start(fastify.prisma)
 }
 
 // Start server
