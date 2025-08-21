@@ -263,7 +263,7 @@ export default async function appointmentsRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // POST /api/appointments/:id/checkout - Check-out appointment
+  // POST /api/appointments/:id/checkout - Check-out appointment (simples)
   fastify.post('/:id/checkout', {
     schema: {
       params: {
@@ -281,6 +281,89 @@ export default async function appointmentsRoutes(fastify: FastifyInstance) {
     } catch (error) {
       fastify.log.error(error)
       return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro ao realizar check-out'))
+    }
+  })
+
+  // POST /api/appointments/:id/checkout-with-payment - Check-out com processamento financeiro
+  fastify.post('/:id/checkout-with-payment', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string' }
+        }
+      },
+      body: {
+        type: 'object',
+        required: ['paymentMethod', 'bankAccountId', 'totalAmount'],
+        properties: {
+          paymentMethod: { 
+            type: 'string', 
+            enum: ['CASH', 'CREDIT_CARD', 'DEBIT_CARD', 'PIX', 'BANK_TRANSFER'] 
+          },
+          bankAccountId: { type: 'string' },
+          totalAmount: { type: 'number', minimum: 0 },
+          discountAmount: { type: 'number', minimum: 0 },
+          additionalCharges: { type: 'number', minimum: 0 },
+          notes: { type: 'string' }
+        }
+      }
+    }
+  }, async (request: FastifyRequest<{ 
+    Params: { id: string },
+    Body: {
+      paymentMethod: 'CASH' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'PIX' | 'BANK_TRANSFER'
+      bankAccountId: string
+      totalAmount: number
+      discountAmount?: number
+      additionalCharges?: number
+      notes?: string
+    }
+  }>, reply: FastifyReply) => {
+    try {
+      const result = await appointmentService.checkOutAppointmentWithFinancials(
+        request.params.id,
+        request.body
+      )
+      return reply.send(successResponse(result, 'Check-out com processamento financeiro realizado com sucesso'))
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro ao processar checkout financeiro'))
+    }
+  })
+
+  // POST /api/appointments/:id/cancel-checkout - Cancel checkout financials only
+  fastify.post('/:id/cancel-checkout', {
+    schema: {
+      params: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' }
+        },
+        required: ['id']
+      },
+      body: {
+        type: 'object',
+        properties: {
+          reason: { type: 'string' }
+        },
+        required: ['reason']
+      }
+    }
+  }, async (request: FastifyRequest<{
+    Params: { id: string }
+    Body: { reason: string }
+  }>, reply: FastifyReply) => {
+    try {
+      const result = await appointmentService.cancelCheckoutFinancials(
+        request.params.id,
+        request.body.reason
+      )
+      return reply.send(successResponse(result, 'Checkout cancelado com sucesso. Lançamentos financeiros foram cancelados.'))
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro ao cancelar checkout'))
     }
   })
 
@@ -379,8 +462,13 @@ export default async function appointmentsRoutes(fastify: FastifyInstance) {
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const query = request.query as any
+      
+      // Criar startDate no início do dia e endDate no final do dia
       const startDate = new Date(query.startDate)
+      startDate.setHours(0, 0, 0, 0) // Início do dia
+      
       const endDate = new Date(query.endDate)
+      endDate.setHours(23, 59, 59, 999) // Final do dia
       
       const filters = {
         patientId: query.patientId,
@@ -396,6 +484,28 @@ export default async function appointmentsRoutes(fastify: FastifyInstance) {
     } catch (error) {
       fastify.log.error(error)
       return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro ao buscar agendamentos'))
+    }
+  })
+
+  // GET /api/appointments/:id/financials - Get financial entries for an appointment
+  fastify.get('/:id/financials', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string' }
+        }
+      }
+    }
+  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    try {
+      const { appointmentFinancialService } = await import('../../services/appointment-financial.service')
+      const financials = await appointmentFinancialService.getAppointmentFinancials(request.params.id)
+      return reply.send(successResponse(financials, 'Dados financeiros do agendamento obtidos com sucesso'))
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro ao obter dados financeiros'))
     }
   })
 }

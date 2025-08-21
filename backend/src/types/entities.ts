@@ -138,6 +138,7 @@ export interface Appointment extends BaseEntity {
   endTime: string
   type: AppointmentType
   status: AppointmentStatus
+  isEncaixe: boolean
   observations?: string
   checkIn?: Date
   checkOut?: Date
@@ -258,4 +259,138 @@ export interface NotificationLogWithRelations extends NotificationLog {
 export interface AppointmentWithNotifications extends AppointmentWithRelations {
   notificationSchedules?: NotificationSchedule[]
   notificationLogs?: NotificationLog[]
+}
+
+// 💰 ENTIDADES FINANCEIRAS
+
+export interface BankAccount extends BaseEntity {
+  name: string
+  bank: string
+  accountType: string
+  agency?: string
+  accountNumber?: string
+  pixKey?: string
+  initialBalance: number
+  currentBalance: number
+  active: boolean
+  color: string
+  description?: string
+}
+
+export interface FinancialEntry extends BaseEntity {
+  bankAccountId: string
+  type: string // 'INCOME' | 'EXPENSE'
+  category: string
+  subcategory?: string
+  description: string
+  amount: number
+  dueDate: Date
+  paidDate?: Date
+  status: string // 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELLED' | 'PARTIAL'
+  paymentMethod?: string
+  notes?: string
+  referenceId?: string
+  referenceType?: string
+  partnerId?: string
+  patientId?: string
+  appointmentId?: string
+  recurring: boolean
+  parentEntryId?: string
+}
+
+// Extended financial entities with relations
+export interface BankAccountWithRelations extends BankAccount {
+  financialEntries?: FinancialEntry[]
+}
+
+export interface FinancialEntryWithRelations extends FinancialEntry {
+  bankAccount?: BankAccount
+  partner?: Partner
+  patient?: Patient
+  appointment?: AppointmentWithRelations
+  parentEntry?: FinancialEntry
+  childEntries?: FinancialEntry[]
+}
+
+// Financial data transfer objects
+export interface CreateBankAccountData {
+  name: string
+  bank: string
+  accountType: string
+  agency?: string
+  accountNumber?: string
+  pixKey?: string
+  initialBalance?: number
+  active?: boolean
+  color?: string
+  description?: string
+}
+
+export interface UpdateBankAccountData {
+  name?: string
+  bank?: string
+  accountType?: string
+  agency?: string
+  accountNumber?: string
+  pixKey?: string
+  initialBalance?: number
+  active?: boolean
+  color?: string
+  description?: string
+}
+
+export interface CreateFinancialEntryData {
+  bankAccountId: string
+  type: string
+  category: string
+  subcategory?: string
+  description: string
+  amount: number
+  dueDate: Date
+  paidDate?: Date
+  status?: string
+  paymentMethod?: string
+  notes?: string
+  referenceId?: string
+  referenceType?: string
+  partnerId?: string
+  patientId?: string
+  appointmentId?: string
+  recurring?: boolean
+  parentEntryId?: string
+}
+
+export interface UpdateFinancialEntryData {
+  bankAccountId?: string
+  type?: string
+  category?: string
+  subcategory?: string
+  description?: string
+  amount?: number
+  dueDate?: Date
+  paidDate?: Date
+  status?: string
+  paymentMethod?: string
+  notes?: string
+  referenceId?: string
+  referenceType?: string
+  partnerId?: string
+  patientId?: string
+  appointmentId?: string
+  recurring?: boolean
+  parentEntryId?: string
+}
+
+export interface FinancialEntryFilters {
+  bankAccountId?: string
+  type?: string
+  status?: string
+  category?: string
+  partnerId?: string
+  patientId?: string
+  appointmentId?: string
+  startDate?: Date
+  endDate?: Date
+  page?: number
+  limit?: number
 }

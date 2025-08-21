@@ -55,7 +55,7 @@ export function AppointmentFilters({
   const updateFilter = (key: keyof typeof filters, value: string | undefined) => {
     onFiltersChange({
       ...filters,
-      [key]: value || undefined
+      [key]: (value === 'all' || !value) ? undefined : value
     })
   }
 
@@ -127,14 +127,14 @@ export function AppointmentFilters({
               Profissional
             </Label>
             <Select
-              value={filters.partnerId || ''}
+              value={filters.partnerId || 'all'}
               onValueChange={(value) => updateFilter('partnerId', value)}
             >
               <SelectTrigger id="partner-select">
                 <SelectValue placeholder="Todos os profissionais" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os profissionais</SelectItem>
+                <SelectItem value="all">Todos os profissionais</SelectItem>
                 {partners.map(partner => (
                   <SelectItem key={partner.id} value={partner.id}>
                     {partner.fullName}
@@ -151,14 +151,14 @@ export function AppointmentFilters({
               Sala
             </Label>
             <Select
-              value={filters.roomId || ''}
+              value={filters.roomId || 'all'}
               onValueChange={(value) => updateFilter('roomId', value)}
             >
               <SelectTrigger id="room-select">
                 <SelectValue placeholder="Todas as salas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as salas</SelectItem>
+                <SelectItem value="all">Todas as salas</SelectItem>
                 {rooms.map(room => (
                   <SelectItem key={room.id} value={room.id}>
                     {room.name}
@@ -175,14 +175,14 @@ export function AppointmentFilters({
               Serviço
             </Label>
             <Select
-              value={filters.productServiceId || ''}
+              value={filters.productServiceId || 'all'}
               onValueChange={(value) => updateFilter('productServiceId', value)}
             >
               <SelectTrigger id="service-select">
                 <SelectValue placeholder="Todos os serviços" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os serviços</SelectItem>
+                <SelectItem value="all">Todos os serviços</SelectItem>
                 {services.map(service => (
                   <SelectItem key={service.id} value={service.id}>
                     {service.name}
@@ -199,14 +199,14 @@ export function AppointmentFilters({
               Status
             </Label>
             <Select
-              value={filters.status || ''}
+              value={filters.status || 'all'}
               onValueChange={(value) => updateFilter('status', value as AppointmentStatus)}
             >
               <SelectTrigger id="status-select">
                 <SelectValue placeholder="Todos os status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os status</SelectItem>
+                <SelectItem value="all">Todos os status</SelectItem>
                 {STATUS_OPTIONS.map(status => (
                   <SelectItem key={status.value} value={status.value}>
                     {status.label}
@@ -223,14 +223,14 @@ export function AppointmentFilters({
               Tipo
             </Label>
             <Select
-              value={filters.type || ''}
+              value={filters.type || 'all'}
               onValueChange={(value) => updateFilter('type', value as AppointmentType)}
             >
               <SelectTrigger id="type-select">
                 <SelectValue placeholder="Todos os tipos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os tipos</SelectItem>
+                <SelectItem value="all">Todos os tipos</SelectItem>
                 {TYPE_OPTIONS.map(type => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}

@@ -69,8 +69,8 @@ export function AppointmentCalendar({
     switch (view) {
       case 'day':
         return {
-          startDate: format(startOfDay(currentDate), 'yyyy-MM-dd'),
-          endDate: format(endOfDay(currentDate), 'yyyy-MM-dd')
+          startDate: format(currentDate, 'yyyy-MM-dd'),
+          endDate: format(currentDate, 'yyyy-MM-dd')
         }
       case 'week':
         return {
@@ -102,12 +102,15 @@ export function AppointmentCalendar({
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {}
     filteredAppointments.forEach(appointment => {
-      const dateKey = format(new Date(appointment.date), 'yyyy-MM-dd')
+      // Usar apenas a parte da data, ignorando horário e timezone
+      const dateKey = appointment.date.split('T')[0]
       if (!grouped[dateKey]) {
         grouped[dateKey] = []
       }
       grouped[dateKey].push(appointment)
     })
+
+    
     return grouped
   }, [filteredAppointments])
 
@@ -140,6 +143,7 @@ export function AppointmentCalendar({
   const renderDayView = () => {
     const dateKey = format(currentDate, 'yyyy-MM-dd')
     const dayAppointments = appointmentsByDate[dateKey] || []
+
 
     return (
       <div className="space-y-2">
@@ -231,14 +235,19 @@ export function AppointmentCalendar({
                   {timeAppointments.map(appointment => (
                     <div
                       key={appointment.id}
-                      className={`text-xs p-1 rounded mb-1 cursor-pointer ${STATUS_COLORS[appointment.status]}`}
+                      className={`text-xs p-1 rounded mb-1 cursor-pointer ${STATUS_COLORS[appointment.status]} ${
+                        appointment.isEncaixe ? 'border-2 border-orange-400 shadow-sm' : ''
+                      }`}
                       onClick={(e) => {
                         e.stopPropagation()
                         onAppointmentClick?.(appointment)
                       }}
-                      title={`${appointment.patient?.fullName} - ${appointment.partner?.fullName}`}
+                      title={`${appointment.isEncaixe ? '📌 ENCAIXE - ' : ''}${appointment.patient?.fullName} - ${appointment.partner?.fullName}`}
                     >
-                      <div className="truncate font-medium">{appointment.patient?.fullName}</div>
+                      <div className="truncate font-medium">
+                        {appointment.isEncaixe && '📌 '}
+                        {appointment.patient?.fullName}
+                      </div>
                     </div>
                   ))}
                 </div>

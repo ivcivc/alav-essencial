@@ -26,6 +26,15 @@ async function main() {
   // Seed notifications
   await seedNotifications()
 
+  // Seed financial system
+  await seedFinancialSystem()
+
+  // Seed advanced financial data
+  await seedAdvancedFinancialData()
+
+  // Seed partner settlement test data
+  await seedPartnerSettlementData()
+
   console.log('✅ Database seeding completed!')
 }
 
@@ -1407,8 +1416,8 @@ async function seedNotifications() {
     // WhatsApp Templates
     {
       name: 'Lembrete WhatsApp - 3 dias',
-      type: 'FIRST_REMINDER',
-      channel: 'WHATSAPP',
+      type: 'FIRST_REMINDER' as const,
+      channel: 'WHATSAPP' as const,
       content: `🏥 *{clinica}* 
 
 Olá *{paciente}*! 
@@ -1419,7 +1428,7 @@ Olá *{paciente}*!
 🔸 *Profissional:* {profissional}  
 🔸 *Data:* {data}
 🔸 *Horário:* {hora}
-${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+🔸 *Sala:* {sala}
 
 ℹ️ Em caso de dúvidas ou necessidade de reagendamento, entre em contato conosco.
 
@@ -1430,8 +1439,8 @@ Obrigado pela confiança! 💙`,
     },
     {
       name: 'Lembrete WhatsApp - 1 dia',
-      type: 'SECOND_REMINDER',
-      channel: 'WHATSAPP',
+      type: 'SECOND_REMINDER' as const,
+      channel: 'WHATSAPP' as const,
       content: `🏥 *{clinica}*
 
 Oi *{paciente}*! 
@@ -1442,7 +1451,7 @@ Oi *{paciente}*!
 🔸 *Profissional:* {profissional}
 🔸 *Data:* {data}
 🔸 *Horário:* {hora}
-${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+🔸 *Sala:* {sala}
 
 📋 *Lembre-se:*
 • Chegue 15 minutos antes
@@ -1456,8 +1465,8 @@ Até breve! 💙`,
     },
     {
       name: 'Lembrete WhatsApp - 2 horas',
-      type: 'THIRD_REMINDER',
-      channel: 'WHATSAPP',
+      type: 'THIRD_REMINDER' as const,
+      channel: 'WHATSAPP' as const,
       content: `🏥 *{clinica}*
 
 *{paciente}*, seu horário é HOJE! ⏰
@@ -1465,7 +1474,7 @@ Até breve! 💙`,
 🔸 *Serviço:* {servico}
 🔸 *Profissional:* {profissional}
 🔸 *Horário:* {hora}
-${'{sala}' ? '🔸 *Sala:* {sala}' : ''}
+🔸 *Sala:* {sala}
 
 ⚠️ *Lembre-se:* Chegue 15 minutos antes do horário.
 
@@ -1477,8 +1486,8 @@ Aguardamos você! 💙`,
     },
     {
       name: 'Notificação WhatsApp - Imediata',
-      type: 'IMMEDIATE',
-      channel: 'WHATSAPP',
+      type: 'IMMEDIATE' as const,
+      channel: 'WHATSAPP' as const,
       content: `🏥 *{clinica}*
 
 Olá *{paciente}*,
@@ -1499,29 +1508,29 @@ Obrigado! 💙`,
     // SMS Templates
     {
       name: 'Lembrete SMS - 3 dias',
-      type: 'FIRST_REMINDER',
-      channel: 'SMS',
+      type: 'FIRST_REMINDER' as const,
+      channel: 'SMS' as const,
       content: 'CLINICA ESSENCIAL: Ola {paciente}! Lembrete: voce tem {servico} com {profissional} em {data} as {hora}. Duvidas: {telefone}',
       variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'telefone'])
     },
     {
       name: 'Lembrete SMS - 1 dia',
-      type: 'SECOND_REMINDER',
-      channel: 'SMS',
+      type: 'SECOND_REMINDER' as const,
+      channel: 'SMS' as const,
       content: 'CLINICA ESSENCIAL: {paciente}, seu agendamento e AMANHA! {servico} com {profissional} as {hora}. Chegue 15min antes. Info: {telefone}',
       variables: JSON.stringify(['paciente', 'profissional', 'servico', 'hora', 'telefone'])
     },
     {
       name: 'Lembrete SMS - 2 horas',
-      type: 'THIRD_REMINDER',
-      channel: 'SMS',
+      type: 'THIRD_REMINDER' as const,
+      channel: 'SMS' as const,
       content: 'CLINICA ESSENCIAL: {paciente}, seu horario e HOJE as {hora}! {servico} com {profissional}. Chegue 15min antes. {endereco}',
       variables: JSON.stringify(['paciente', 'profissional', 'servico', 'hora', 'endereco'])
     },
     {
       name: 'Notificação SMS - Imediata',
-      type: 'IMMEDIATE',
-      channel: 'SMS',
+      type: 'IMMEDIATE' as const,
+      channel: 'SMS' as const,
       content: 'CLINICA ESSENCIAL: {paciente}, informacao sobre seu agendamento: {servico} com {profissional} em {data} as {hora}. Info: {telefone}',
       variables: JSON.stringify(['paciente', 'profissional', 'servico', 'data', 'hora', 'telefone'])
     },
@@ -1529,8 +1538,8 @@ Obrigado! 💙`,
     // Email Templates
     {
       name: 'Lembrete Email - 3 dias',
-      type: 'FIRST_REMINDER',
-      channel: 'EMAIL',
+      type: 'FIRST_REMINDER' as const,
+      channel: 'EMAIL' as const,
       subject: 'Lembrete: Seu agendamento na {clinica}',
       content: `Olá {paciente},
 
@@ -1560,8 +1569,8 @@ Equipe {clinica}
     },
     {
       name: 'Lembrete Email - 1 dia',
-      type: 'SECOND_REMINDER',
-      channel: 'EMAIL',
+      type: 'SECOND_REMINDER' as const,
+      channel: 'EMAIL' as const,
       subject: 'AMANHÃ: Seu agendamento na {clinica}',
       content: `Olá {paciente},
 
@@ -1590,8 +1599,8 @@ Equipe {clinica}
     },
     {
       name: 'Lembrete Email - 2 horas',
-      type: 'THIRD_REMINDER',
-      channel: 'EMAIL',
+      type: 'THIRD_REMINDER' as const,
+      channel: 'EMAIL' as const,
       subject: 'HOJE: Seu agendamento em 2 horas - {clinica}',
       content: `{paciente},
 
@@ -1614,8 +1623,8 @@ Equipe {clinica}`,
     },
     {
       name: 'Notificação Email - Imediata',
-      type: 'IMMEDIATE',
-      channel: 'EMAIL',
+      type: 'IMMEDIATE' as const,
+      channel: 'EMAIL' as const,
       subject: 'Informação sobre seu agendamento - {clinica}',
       content: `Olá {paciente},
 
@@ -1654,6 +1663,696 @@ Equipe {clinica}
   }
 
   console.log('🔔 Notification system seeding completed!')
+}
+
+async function seedFinancialSystem() {
+  console.log('💰 Seeding financial system...')
+
+  // 1. Criar contas bancárias
+  const bankAccounts = [
+    {
+      name: 'Conta Corrente Principal - Banco do Brasil',
+      bank: 'Banco do Brasil',
+      accountType: 'CHECKING' as const,
+      agency: '1234-5',
+      accountNumber: '12345-6',
+      pixKey: 'clinic@essencial.com.br',
+      initialBalance: 50000.00,
+      currentBalance: 50000.00,
+      active: true,
+      color: '#FCD34D',
+      description: 'Conta principal da clínica para movimentação geral'
+    },
+    {
+      name: 'Conta Poupança - Caixa Econômica',
+      bank: 'Caixa Econômica Federal',
+      accountType: 'SAVINGS' as const,
+      agency: '5678',
+      accountNumber: '987654-3',
+      pixKey: '11987654321',
+      initialBalance: 25000.00,
+      currentBalance: 25000.00,
+      active: true,
+      color: '#10B981',
+      description: 'Conta poupança para reserva de emergência'
+    },
+    {
+      name: 'Cartão de Crédito Empresarial',
+      bank: 'Itaú',
+      accountType: 'CREDIT_CARD' as const,
+      pixKey: undefined,
+      initialBalance: 0.00,
+      currentBalance: 0.00,
+      active: true,
+      color: '#F59E0B',
+      description: 'Cartão de crédito para despesas operacionais'
+    },
+    {
+      name: 'Dinheiro em Espécie',
+      bank: 'Caixa da Clínica',
+      accountType: 'CASH' as const,
+      initialBalance: 2000.00,
+      currentBalance: 2000.00,
+      active: true,
+      color: '#22C55E',
+      description: 'Dinheiro em espécie para pequenos gastos'
+    }
+  ]
+
+  const createdAccounts = []
+  for (const accountData of bankAccounts) {
+    try {
+      const existingAccount = await prisma.bankAccount.findFirst({
+        where: { name: accountData.name }
+      })
+
+      if (!existingAccount) {
+        const account = await prisma.bankAccount.create({
+          data: accountData
+        })
+        createdAccounts.push(account)
+        console.log(`✅ Created bank account: ${account.name}`)
+      } else {
+        createdAccounts.push(existingAccount)
+        console.log(`⏭️  Bank account already exists: ${accountData.name}`)
+      }
+    } catch (error) {
+      console.error(`❌ Error creating account ${accountData.name}:`, error)
+    }
+  }
+
+  // 2. Criar lançamentos financeiros de exemplo
+  if (createdAccounts.length > 0) {
+    const mainAccount = createdAccounts[0] // Conta corrente principal
+    const currentDate = new Date()
+
+    const financialEntries = [
+      // Receitas
+      {
+        bankAccountId: mainAccount.id,
+        type: 'INCOME' as const,
+        category: 'Consultas',
+        subcategory: 'Clínica Geral',
+        description: 'Consulta - João Silva',
+        amount: 150.00,
+        dueDate: new Date(currentDate.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 dias atrás
+        paidDate: new Date(currentDate.getTime() - 5 * 24 * 60 * 60 * 1000),
+        status: 'PAID' as const,
+        paymentMethod: 'PIX' as const,
+        notes: 'Pagamento via PIX no ato da consulta'
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'INCOME' as const,
+        category: 'Exames',
+        subcategory: 'Ultrassom',
+        description: 'Ultrassom Abdominal - Maria Santos',
+        amount: 120.00,
+        dueDate: new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 dias atrás
+        paidDate: new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000),
+        status: 'PAID' as const,
+        paymentMethod: 'DEBIT_CARD' as const
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'INCOME' as const,
+        category: 'Procedimentos',
+        subcategory: 'Cirurgia',
+        description: 'Pequena Cirurgia - Carlos Oliveira',
+        amount: 400.00,
+        dueDate: new Date(currentDate.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 dia atrás
+        status: 'PENDING' as const,
+        notes: 'Aguardando pagamento pelo convênio'
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'INCOME' as const,
+        category: 'Consultas',
+        subcategory: 'Retorno',
+        description: 'Retorno - Ana Costa',
+        amount: 100.00,
+        dueDate: new Date(currentDate.getTime() + 2 * 24 * 60 * 60 * 1000), // 2 dias à frente
+        status: 'PENDING' as const,
+        paymentMethod: 'CASH' as const
+      },
+
+      // Despesas
+      {
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: 'Pessoal',
+        subcategory: 'Salários',
+        description: 'Salário - Recepcionista',
+        amount: 2500.00,
+        dueDate: new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 dias atrás
+        paidDate: new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000),
+        status: 'PAID' as const,
+        paymentMethod: 'BANK_TRANSFER' as const
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: 'Infraestrutura',
+        subcategory: 'Aluguel',
+        description: 'Aluguel do consultório',
+        amount: 3500.00,
+        dueDate: new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000), // 5 dias à frente
+        status: 'PENDING' as const,
+        notes: 'Vencimento todo dia 5 do mês'
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: 'Operacional',
+        subcategory: 'Materiais Médicos',
+        description: 'Compra de seringas e agulhas',
+        amount: 450.00,
+        dueDate: new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 dias atrás
+        paidDate: new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000),
+        status: 'PAID' as const,
+        paymentMethod: 'CREDIT_CARD' as const
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: 'Serviços',
+        subcategory: 'Limpeza',
+        description: 'Serviço de limpeza semanal',
+        amount: 300.00,
+        dueDate: new Date(currentDate.getTime() + 1 * 24 * 60 * 60 * 1000), // 1 dia à frente
+        status: 'PENDING' as const
+      },
+      {
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: 'Infraestrutura',
+        subcategory: 'Energia Elétrica',
+        description: 'Conta de luz - CPFL',
+        amount: 650.00,
+        dueDate: new Date(currentDate.getTime() - 15 * 24 * 60 * 60 * 1000), // 15 dias atrás (vencida)
+        status: 'PENDING' as const,
+        notes: 'CONTA VENCIDA - Pagar urgente!'
+      }
+    ]
+
+    let createdEntriesCount = 0
+    for (const entryData of financialEntries) {
+      try {
+        await prisma.financialEntry.create({
+          data: entryData
+        })
+        createdEntriesCount++
+      } catch (error) {
+        console.error('❌ Error creating financial entry:', error)
+      }
+    }
+
+    console.log(`✅ Created ${createdEntriesCount} financial entries`)
+
+    // 3. Recalcular saldo da conta principal
+    try {
+      const paidEntries = await prisma.financialEntry.findMany({
+        where: {
+          bankAccountId: mainAccount.id,
+          status: 'PAID'
+        }
+      })
+
+      let newBalance = Number(mainAccount.initialBalance)
+      for (const entry of paidEntries) {
+        const amount = Number(entry.amount)
+        if (entry.type === 'INCOME') {
+          newBalance += amount
+        } else if (entry.type === 'EXPENSE') {
+          newBalance -= amount
+        }
+      }
+
+      await prisma.bankAccount.update({
+        where: { id: mainAccount.id },
+        data: { currentBalance: newBalance }
+      })
+
+      console.log(`✅ Updated balance for ${mainAccount.name}: R$ ${newBalance.toFixed(2)}`)
+    } catch (error) {
+      console.error('❌ Error updating account balance:', error)
+    }
+  }
+
+  console.log('💰 Financial system seeding completed!')
+}
+
+async function seedAdvancedFinancialData() {
+  console.log('💳 Seeding advanced financial data...')
+
+  // Buscar contas bancárias existentes
+  const bankAccounts = await prisma.bankAccount.findMany()
+  if (bankAccounts.length === 0) {
+    console.log('⚠️  No bank accounts found. Skipping advanced financial seeding.')
+    return
+  }
+
+  const mainAccount = bankAccounts[0] // Conta corrente principal
+  const currentDate = new Date()
+
+  // 1. Criar lançamentos recorrentes (despesas fixas)
+  const recurringExpenses = [
+    {
+      bankAccountId: mainAccount.id,
+      type: 'EXPENSE' as const,
+      category: 'Infraestrutura',
+      subcategory: 'Aluguel',
+      description: 'Aluguel do consultório - Mensal',
+      amount: 3500.00,
+      recurring: true
+    },
+    {
+      bankAccountId: mainAccount.id,
+      type: 'EXPENSE' as const,
+      category: 'Pessoal',
+      subcategory: 'Salários',
+      description: 'Salário Recepcionista - Mensal',
+      amount: 2500.00,
+      recurring: true
+    },
+    {
+      bankAccountId: mainAccount.id,
+      type: 'EXPENSE' as const,
+      category: 'Infraestrutura',
+      subcategory: 'Energia Elétrica',
+      description: 'Conta de Energia - Mensal',
+      amount: 450.00,
+      recurring: true
+    },
+    {
+      bankAccountId: mainAccount.id,
+      type: 'EXPENSE' as const,
+      category: 'Serviços',
+      subcategory: 'Contabilidade',
+      description: 'Honorários Contábeis - Mensal',
+      amount: 800.00,
+      recurring: true
+    }
+  ]
+
+  console.log('📅 Creating recurring expenses for the next 6 months...')
+  
+  for (const expenseBase of recurringExpenses) {
+    // Criar lançamento pai
+    const parentEntry = await prisma.financialEntry.create({
+      data: {
+        ...expenseBase,
+        dueDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5), // Todo dia 5
+        status: 'PENDING'
+      }
+    })
+
+    // Criar 6 parcelas futuras
+    for (let i = 1; i <= 6; i++) {
+      const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 5)
+      
+      await prisma.financialEntry.create({
+        data: {
+          ...expenseBase,
+          description: `${expenseBase.description} (${i + 1}/7)`,
+          dueDate,
+          status: 'PENDING',
+          recurring: false,
+          parentEntryId: parentEntry.id
+        }
+      })
+    }
+
+    console.log(`✅ Created recurring series: ${expenseBase.description}`)
+  }
+
+  // 2. Criar lançamentos retroativos (últimos 3 meses)
+  console.log('📊 Creating retroactive entries for the last 3 months...')
+  
+  const retroactiveEntries = []
+  
+  // Receitas variadas dos últimos 3 meses
+  for (let monthOffset = -3; monthOffset < 0; monthOffset++) {
+    const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + monthOffset, 1)
+    const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate()
+    
+    // Gerar 15-25 receitas aleatórias por mês
+    const entriesCount = Math.floor(Math.random() * 11) + 15 // 15-25 entradas
+    
+    for (let i = 0; i < entriesCount; i++) {
+      const randomDay = Math.floor(Math.random() * daysInMonth) + 1
+      const entryDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), randomDay)
+      
+      // Tipos de receita aleatórios
+      const incomeTypes = [
+        { category: 'Consultas', subcategory: 'Clínica Geral', amount: 150, desc: 'Consulta' },
+        { category: 'Consultas', subcategory: 'Cardiologia', amount: 200, desc: 'Consulta Cardiológica' },
+        { category: 'Exames', subcategory: 'Ultrassom', amount: 120, desc: 'Ultrassom' },
+        { category: 'Procedimentos', subcategory: 'Pequena Cirurgia', amount: 400, desc: 'Procedimento' },
+        { category: 'Vendas', subcategory: 'Medicamentos', amount: 80, desc: 'Venda de Medicamento' }
+      ]
+      
+      const randomType = incomeTypes[Math.floor(Math.random() * incomeTypes.length)]
+      const variation = (Math.random() * 0.4) + 0.8 // Variação de 80% a 120%
+      
+      retroactiveEntries.push({
+        bankAccountId: mainAccount.id,
+        type: 'INCOME' as const,
+        category: randomType.category,
+        subcategory: randomType.subcategory,
+        description: `${randomType.desc} - Paciente ${i + 1}`,
+        amount: Math.round(randomType.amount * variation * 100) / 100,
+        dueDate: entryDate,
+        paidDate: entryDate,
+        status: 'PAID' as const,
+        paymentMethod: Math.random() > 0.5 ? 'PIX' as const : 'DEBIT_CARD' as const
+      })
+    }
+
+    // Gerar algumas despesas variáveis
+    const expenseTypes = [
+      { category: 'Operacional', subcategory: 'Materiais Médicos', amount: 300, desc: 'Compra de Materiais' },
+      { category: 'Serviços', subcategory: 'Limpeza', amount: 200, desc: 'Serviço de Limpeza' },
+      { category: 'Infraestrutura', subcategory: 'Manutenção Predial', amount: 150, desc: 'Manutenção' },
+      { category: 'Outras Despesas', subcategory: 'Combustível', amount: 100, desc: 'Combustível' }
+    ]
+
+    for (let i = 0; i < 5; i++) { // 5 despesas por mês
+      const randomDay = Math.floor(Math.random() * daysInMonth) + 1
+      const entryDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), randomDay)
+      const randomType = expenseTypes[Math.floor(Math.random() * expenseTypes.length)]
+      
+      retroactiveEntries.push({
+        bankAccountId: mainAccount.id,
+        type: 'EXPENSE' as const,
+        category: randomType.category,
+        subcategory: randomType.subcategory,
+        description: `${randomType.desc} - ${monthDate.toLocaleDateString('pt-BR', { month: 'long' })}`,
+        amount: randomType.amount,
+        dueDate: entryDate,
+        paidDate: entryDate,
+        status: 'PAID' as const,
+        paymentMethod: 'BANK_TRANSFER' as const
+      })
+    }
+  }
+
+  // Inserir lançamentos retroativos em lote
+  let createdRetroactive = 0
+  for (const entry of retroactiveEntries) {
+    try {
+      await prisma.financialEntry.create({ data: entry })
+      createdRetroactive++
+    } catch (error) {
+      console.error('Error creating retroactive entry:', error)
+    }
+  }
+
+  console.log(`✅ Created ${createdRetroactive} retroactive entries`)
+
+  // 3. Criar contas a receber parceladas
+  console.log('💰 Creating installment receivables...')
+  
+  const installmentReceivables = [
+    {
+      totalAmount: 2400,
+      installments: 12,
+      description: 'Tratamento Ortodôntico - João Silva',
+      category: 'Consultas',
+      subcategory: 'Odontologia'
+    },
+    {
+      totalAmount: 1800,
+      installments: 6,
+      description: 'Fisioterapia - Maria Santos',
+      category: 'Procedimentos',
+      subcategory: 'Fisioterapia'
+    },
+    {
+      totalAmount: 900,
+      installments: 3,
+      description: 'Procedimento Estético - Ana Costa',
+      category: 'Procedimentos',
+      subcategory: 'Estética'
+    }
+  ]
+
+  for (const installment of installmentReceivables) {
+    const monthlyAmount = installment.totalAmount / installment.installments
+    
+    for (let i = 0; i < installment.installments; i++) {
+      const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + i + 1, 10)
+      const status = i < 2 ? 'PAID' as const : 'PENDING' as const // Primeiras 2 parcelas pagas
+      
+      await prisma.financialEntry.create({
+        data: {
+          bankAccountId: mainAccount.id,
+          type: 'INCOME',
+          category: installment.category,
+          subcategory: installment.subcategory,
+          description: `${installment.description} (${i + 1}/${installment.installments})`,
+          amount: monthlyAmount,
+          dueDate,
+          paidDate: status === 'PAID' ? dueDate : undefined,
+          status,
+          paymentMethod: status === 'PAID' ? 'PIX' : undefined,
+          recurring: true,
+          referenceType: 'installment_plan'
+        }
+      })
+    }
+
+    console.log(`✅ Created installment plan: ${installment.description}`)
+  }
+
+  // 4. Criar algumas contas vencidas (para testar relatórios)
+  console.log('⚠️  Creating overdue entries...')
+  
+  const overdueEntries = [
+    {
+      bankAccountId: mainAccount.id,
+      type: 'EXPENSE' as const,
+      category: 'Impostos e Taxas',
+      subcategory: 'Simples Nacional',
+      description: 'DAS - Simples Nacional (VENCIDO)',
+      amount: 850.00,
+      dueDate: new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 dias atrás
+      status: 'PENDING' as const,
+      notes: 'ATENÇÃO: Conta vencida há 10 dias!'
+    },
+    {
+      bankAccountId: mainAccount.id,
+      type: 'INCOME' as const,
+      category: 'Convênios',
+      subcategory: 'Unimed',
+      description: 'Repasse Unimed - Dezembro (VENCIDO)',
+      amount: 1200.00,
+      dueDate: new Date(currentDate.getTime() - 20 * 24 * 60 * 60 * 1000), // 20 dias atrás
+      status: 'PENDING' as const,
+      notes: 'Entrar em contato com o convênio'
+    }
+  ]
+
+  for (const entry of overdueEntries) {
+    await prisma.financialEntry.create({ data: entry })
+  }
+
+  console.log(`✅ Created ${overdueEntries.length} overdue entries`)
+
+  // 5. Recalcular saldo da conta principal
+  console.log('🔄 Recalculating main account balance...')
+  
+  const paidEntries = await prisma.financialEntry.findMany({
+    where: {
+      bankAccountId: mainAccount.id,
+      status: 'PAID'
+    }
+  })
+
+  let newBalance = Number(mainAccount.initialBalance)
+  for (const entry of paidEntries) {
+    const amount = Number(entry.amount)
+    if (entry.type === 'INCOME') {
+      newBalance += amount
+    } else if (entry.type === 'EXPENSE') {
+      newBalance -= amount
+    }
+  }
+
+  await prisma.bankAccount.update({
+    where: { id: mainAccount.id },
+    data: { currentBalance: newBalance }
+  })
+
+  console.log(`✅ Updated main account balance: R$ ${newBalance.toFixed(2)}`)
+  console.log('💳 Advanced financial data seeding completed!')
+}
+
+async function seedPartnerSettlementData() {
+  console.log('🤝 Seeding partner settlement test data...')
+
+  // Buscar alguns parceiros para criar dados de teste
+  const partners = await prisma.partner.findMany({
+    take: 3,
+    where: {
+      active: true
+    }
+  })
+
+  if (partners.length === 0) {
+    console.log('⚠️  No partners found. Skipping settlement seeding.')
+    return
+  }
+
+  const currentDate = new Date()
+  const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+  const endLastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0)
+
+  // Garantir que temos parceiros com diferentes tipos de parceria
+  const partnershipTypes = ['PERCENTAGE', 'SUBLEASE', 'PERCENTAGE_WITH_PRODUCTS'] as const
+  
+  for (let i = 0; i < Math.min(partners.length, 3); i++) {
+    const partner = partners[i]
+    const partnershipType = partnershipTypes[i]
+
+    // Atualizar o tipo de parceria do parceiro
+    await prisma.partner.update({
+      where: { id: partner.id },
+      data: {
+        partnershipType: partnershipType as any,
+        percentageRate: (partnershipType === 'PERCENTAGE' || partnershipType === 'PERCENTAGE_WITH_PRODUCTS') ? 60 : undefined, // 60% para o parceiro
+        subleaseAmount: partnershipType === 'SUBLEASE' ? 2500 : undefined, // R$ 2.500/mês
+        subleasePaymentDay: partnershipType === 'SUBLEASE' ? 5 : undefined
+      }
+    })
+
+    console.log(`✅ Updated ${partner.fullName} to ${partnershipType}`)
+
+    // Criar algumas consultas no mês passado para gerar dados de acerto
+    const consultationsCount = Math.floor(Math.random() * 15) + 10 // 10-25 consultas
+
+    for (let j = 0; j < consultationsCount; j++) {
+      // Data aleatória no mês passado
+      const randomDay = Math.floor(Math.random() * 28) + 1
+      const consultationDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), randomDay)
+      
+      // Horário aleatório entre 8h e 18h
+      const hour = Math.floor(Math.random() * 10) + 8
+      const minute = Math.random() > 0.5 ? 0 : 30
+      consultationDate.setHours(hour, minute, 0, 0)
+
+      const endTime = new Date(consultationDate)
+      endTime.setMinutes(endTime.getMinutes() + 60) // 1 hora de consulta
+
+      // Buscar um serviço aleatório
+      const services = await prisma.productService.findMany({
+        where: { 
+          type: 'SERVICE',
+          active: true 
+        },
+        take: 5
+      })
+
+      if (services.length === 0) continue
+
+      const randomService = services[Math.floor(Math.random() * services.length)]
+
+      // Buscar um paciente aleatório
+      const patients = await prisma.patient.findMany({
+        where: { active: true },
+        take: 10
+      })
+
+      if (patients.length === 0) continue
+
+      const randomPatient = patients[Math.floor(Math.random() * patients.length)]
+
+      // Buscar uma sala aleatória
+      const rooms = await prisma.room.findMany({
+        where: { active: true },
+        take: 3
+      })
+
+      const randomRoom = rooms.length > 0 ? rooms[Math.floor(Math.random() * rooms.length)] : null
+
+      try {
+        await prisma.appointment.create({
+          data: {
+            patientId: randomPatient.id,
+            partnerId: partner.id,
+            productServiceId: randomService.id,
+            roomId: randomRoom?.id,
+            date: consultationDate,
+            startTime: consultationDate.toISOString(),
+            endTime: endTime.toISOString(),
+            type: 'CONSULTATION',
+            status: 'COMPLETED', // Marcar como completo para aparecer nos acertos
+            observations: `Consulta de teste para acerto - ${partner.fullName}`,
+            checkIn: consultationDate,
+            checkOut: endTime
+          }
+        })
+      } catch (error) {
+        console.error(`Error creating test appointment for ${partner.fullName}:`, error)
+      }
+    }
+
+    console.log(`✅ Created ${consultationsCount} test appointments for ${partner.fullName}`)
+  }
+
+  // Criar algumas sublocações pendentes para parceiros de sublocação
+  const subleasePartners = await prisma.partner.findMany({
+    where: {
+      partnershipType: 'SUBLEASE',
+      active: true
+    }
+  })
+
+  const bankAccount = await prisma.bankAccount.findFirst()
+  if (bankAccount && subleasePartners.length > 0) {
+    for (const partner of subleasePartners) {
+      // Criar sublocação do mês atual (pendente)
+      const currentMonthDue = new Date(currentDate.getFullYear(), currentDate.getMonth(), 5)
+      
+      try {
+        const existingEntry = await prisma.financialEntry.findFirst({
+          where: {
+            partnerId: partner.id,
+            category: 'Outras Receitas',
+            subcategory: 'Sublocação',
+            dueDate: {
+              gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+              lt: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+            }
+          }
+        })
+
+        if (!existingEntry) {
+          await prisma.financialEntry.create({
+            data: {
+              bankAccountId: bankAccount.id,
+              type: 'INCOME',
+              category: 'Outras Receitas',
+              subcategory: 'Sublocação',
+              description: `Sublocação ${partner.fullName} - ${currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}`,
+              amount: Number(partner.subleaseAmount) || 2500,
+              dueDate: currentMonthDue,
+              status: 'PENDING',
+              partnerId: partner.id,
+              referenceType: 'monthly_sublease',
+              notes: 'Gerado automaticamente para teste de acerto'
+            }
+          })
+
+          console.log(`✅ Created sublease entry for ${partner.fullName}`)
+        }
+      } catch (error) {
+        console.error(`Error creating sublease for ${partner.fullName}:`, error)
+      }
+    }
+  }
+
+  console.log('🤝 Partner settlement test data seeding completed!')
 }
 
 main()

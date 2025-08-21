@@ -21,25 +21,26 @@ model User {
 }
 
 model Patient {
-  id           String        @id @default(cuid())
-  fullName     String
-  cpf          String        @unique
-  birthDate    DateTime
-  whatsapp     String?
-  phone        String?
-  email        String?
-  street       String?
-  number       String?
-  complement   String?
-  neighborhood String?
-  city         String?
-  state        String?
-  zipCode      String?
-  observations String?
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  appointments Appointment[]
+  id               String           @id @default(cuid())
+  fullName         String
+  cpf              String           @unique
+  birthDate        DateTime
+  whatsapp         String?
+  phone            String?
+  email            String?
+  street           String?
+  number           String?
+  complement       String?
+  neighborhood     String?
+  city             String?
+  state            String?
+  zipCode          String?
+  observations     String?
+  active           Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  appointments     Appointment[]
+  financialEntries FinancialEntry[]
 
   @@map("patients")
 }
@@ -70,6 +71,7 @@ model Partner {
   createdAt          DateTime              @default(now())
   updatedAt          DateTime              @updatedAt
   appointments       Appointment[]
+  financialEntries   FinancialEntry[]
   availability       PartnerAvailability[]
   blockedDates       PartnerBlockedDate[]
   partnerServices    PartnerService[]
@@ -97,8 +99,8 @@ model PartnerBlockedDate {
   id          String   @id @default(cuid())
   partnerId   String
   blockedDate DateTime @db.Date
-  startTime   String?  // Se for bloqueio total do dia, será null
-  endTime     String?  // Se for bloqueio total do dia, será null
+  startTime   String?
+  endTime     String?
   reason      String?
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -189,7 +191,7 @@ model PartnerService {
 }
 
 model Appointment {
-  id                    String                  @id @default(cuid())
+  id                    String                 @id @default(cuid())
   patientId             String
   partnerId             String
   productServiceId      String
@@ -197,22 +199,146 @@ model Appointment {
   date                  DateTime
   startTime             String
   endTime               String
-  type                  AppointmentType         @default(CONSULTATION)
-  status                AppointmentStatus       @default(SCHEDULED)
+  type                  AppointmentType        @default(CONSULTATION)
+  status                AppointmentStatus      @default(SCHEDULED)
+  isEncaixe             Boolean                @default(false)
   observations          String?
   checkIn               DateTime?
   checkOut              DateTime?
   cancellationReason    String?
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  partner               Partner                 @relation(fields: [partnerId], references: [id])
-  patient               Patient                 @relation(fields: [patientId], references: [id])
-  productService        ProductService          @relation(fields: [productServiceId], references: [id])
-  room                  Room?                   @relation(fields: [roomId], references: [id])
-  notificationSchedules NotificationSchedule[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  partner               Partner                @relation(fields: [partnerId], references: [id])
+  patient               Patient                @relation(fields: [patientId], references: [id])
+  productService        ProductService         @relation(fields: [productServiceId], references: [id])
+  room                  Room?                  @relation(fields: [roomId], references: [id])
+  financialEntries      FinancialEntry[]
   notificationLogs      NotificationLog[]
+  notificationSchedules NotificationSchedule[]
 
   @@map("appointments")
+}
+
+model NotificationConfiguration {
+  id                   String   @id @default(cuid())
+  enabled              Boolean  @default(true)
+  defaultChannel       String   @default("whatsapp")
+  firstReminderDays    Int      @default(3)
+  secondReminderDays   Int      @default(1)
+  thirdReminderHours   Int      @default(2)
+  whatsappEnabled      Boolean  @default(true)
+  smsEnabled           Boolean  @default(true)
+  emailEnabled         Boolean  @default(true)
+  retryAttempts        Int      @default(3)
+  retryIntervalMinutes Int      @default(30)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("notification_configuration")
+}
+
+model NotificationTemplate {
+  id                    String                   @id @default(cuid())
+  name                  String
+  type                  NotificationReminderType
+  channel               NotificationChannel
+  subject               String?
+  content               String
+  variables             Json
+  active                Boolean                  @default(true)
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  notificationSchedules NotificationSchedule[]
+
+  @@map("notification_templates")
+}
+
+model NotificationSchedule {
+  id            String               @id @default(cuid())
+  appointmentId String
+  templateId    String
+  scheduledFor  DateTime
+  status        NotificationStatus   @default(PENDING)
+  channel       NotificationChannel
+  retryCount    Int                  @default(0)
+  lastAttempt   DateTime?
+  errorMessage  String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  appointment   Appointment          @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  template      NotificationTemplate @relation(fields: [templateId], references: [id])
+
+  @@map("notification_schedules")
+}
+
+model NotificationLog {
+  id            String              @id @default(cuid())
+  appointmentId String
+  channel       NotificationChannel
+  recipient     String
+  content       String
+  subject       String?
+  status        NotificationStatus
+  errorMessage  String?
+  providerData  Json?
+  deliveredAt   DateTime?
+  readAt        DateTime?
+  sentAt        DateTime            @default(now())
+  appointment   Appointment         @relation(fields: [appointmentId], references: [id])
+
+  @@map("notification_logs")
+}
+
+model BankAccount {
+  id               String           @id @default(cuid())
+  name             String
+  bank             String
+  accountType      BankAccountType
+  agency           String?
+  accountNumber    String?
+  pixKey           String?
+  initialBalance   Decimal          @default(0) @db.Decimal(10, 2)
+  currentBalance   Decimal          @default(0) @db.Decimal(10, 2)
+  active           Boolean          @default(true)
+  color            String           @default("#3B82F6")
+  description      String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  financialEntries FinancialEntry[]
+
+  @@map("bank_accounts")
+}
+
+model FinancialEntry {
+  id            String               @id @default(cuid())
+  bankAccountId String
+  type          FinancialEntryType
+  category      String
+  subcategory   String?
+  description   String
+  amount        Decimal              @db.Decimal(10, 2)
+  dueDate       DateTime
+  paidDate      DateTime?
+  status        FinancialEntryStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  notes         String?
+  referenceId   String?
+  referenceType String?
+  partnerId     String?
+  patientId     String?
+  appointmentId String?
+  recurring     Boolean              @default(false)
+  parentEntryId String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  appointment   Appointment?         @relation(fields: [appointmentId], references: [id])
+  bankAccount   BankAccount          @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  parentEntry   FinancialEntry?      @relation("RecurringEntries", fields: [parentEntryId], references: [id])
+  childEntries  FinancialEntry[]     @relation("RecurringEntries")
+  partner       Partner?             @relation(fields: [partnerId], references: [id])
+  patient       Patient?             @relation(fields: [patientId], references: [id])
+
+  @@map("financial_entries")
 }
 
 enum UserRole {
@@ -247,80 +373,6 @@ enum AppointmentStatus {
   NO_SHOW
 }
 
-// 🔔 MODELOS DE NOTIFICAÇÃO
-
-model NotificationConfiguration {
-  id                   String   @id @default(cuid())
-  enabled              Boolean  @default(true)
-  defaultChannel       String   @default("whatsapp") // 'whatsapp', 'sms', 'email'
-  firstReminderDays    Int      @default(3)
-  secondReminderDays   Int      @default(1)
-  thirdReminderHours   Int      @default(2)
-  whatsappEnabled      Boolean  @default(true)
-  smsEnabled           Boolean  @default(true)
-  emailEnabled         Boolean  @default(true)
-  retryAttempts        Int      @default(3)
-  retryIntervalMinutes Int      @default(30)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  @@map("notification_configuration")
-}
-
-model NotificationTemplate {
-  id                    String                 @id @default(cuid())
-  name                  String
-  type                  NotificationReminderType
-  channel               NotificationChannel
-  subject               String?                // Para email
-  content               String
-  variables             Json                   // Lista de variáveis disponíveis
-  active                Boolean                @default(true)
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
-  notificationSchedules NotificationSchedule[]
-
-  @@map("notification_templates")
-}
-
-model NotificationSchedule {
-  id            String               @id @default(cuid())
-  appointmentId String
-  templateId    String
-  scheduledFor  DateTime
-  status        NotificationStatus   @default(PENDING)
-  channel       NotificationChannel
-  retryCount    Int                  @default(0)
-  lastAttempt   DateTime?
-  errorMessage  String?
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  appointment   Appointment          @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  template      NotificationTemplate @relation(fields: [templateId], references: [id])
-
-  @@map("notification_schedules")
-}
-
-model NotificationLog {
-  id            String              @id @default(cuid())
-  appointmentId String
-  channel       NotificationChannel
-  recipient     String              // Número/email do destinatário
-  content       String
-  subject       String?             // Para email
-  status        NotificationStatus
-  errorMessage  String?
-  providerData  Json?               // Dados específicos do provedor
-  deliveredAt   DateTime?
-  readAt        DateTime?
-  sentAt        DateTime            @default(now())
-  appointment   Appointment         @relation(fields: [appointmentId], references: [id])
-
-  @@map("notification_logs")
-}
-
-// 🔔 ENUMS PARA NOTIFICAÇÕES
-
 enum NotificationChannel {
   WHATSAPP
   SMS
@@ -328,10 +380,10 @@ enum NotificationChannel {
 }
 
 enum NotificationReminderType {
-  FIRST_REMINDER    // 3 dias antes
-  SECOND_REMINDER   // 1 dia antes
-  THIRD_REMINDER    // 2 horas antes
-  IMMEDIATE         // Imediato (cancelamento, reagendamento)
+  FIRST_REMINDER
+  SECOND_REMINDER
+  THIRD_REMINDER
+  IMMEDIATE
 }
 
 enum NotificationStatus {
@@ -342,4 +394,36 @@ enum NotificationStatus {
   READ
   FAILED
   CANCELLED
+}
+
+enum BankAccountType {
+  CHECKING
+  SAVINGS
+  INVESTMENT
+  CASH
+  CREDIT_CARD
+  PIX
+}
+
+enum FinancialEntryType {
+  INCOME
+  EXPENSE
+}
+
+enum FinancialEntryStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+  PARTIAL
+}
+
+enum PaymentMethod {
+  CASH
+  DEBIT_CARD
+  CREDIT_CARD
+  PIX
+  BANK_TRANSFER
+  CHECK
+  VOUCHER
 }

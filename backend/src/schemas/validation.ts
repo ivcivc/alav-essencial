@@ -263,6 +263,7 @@ export const createAppointmentSchema = z.object({
   startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de hora inválido (HH:MM)'),
   endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de hora inválido (HH:MM)'),
   type: z.nativeEnum(AppointmentType).default(AppointmentType.CONSULTATION),
+  isEncaixe: z.boolean().default(false),
   observations: z.string().optional()
 })
 

@@ -48,6 +48,7 @@ export const createAppointmentSchema = z.object({
   type: z.enum(['CONSULTATION', 'EXAM', 'PROCEDURE', 'RETURN'], {
     errorMap: () => ({ message: "Tipo deve ser CONSULTATION, EXAM, PROCEDURE ou RETURN" })
   }),
+  isEncaixe: z.boolean().default(false),
   observations: z.string().optional()
 }).refine((data) => {
   if (data.endTime && data.startTime >= data.endTime) {
@@ -80,6 +81,7 @@ export const updateAppointmentSchema = z.object({
   status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'], {
     errorMap: () => ({ message: "Status deve ser SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED ou NO_SHOW" })
   }).optional(),
+  isEncaixe: z.boolean().optional(),
   observations: z.string().optional(),
   cancellationReason: z.string().optional()
 }).refine((data) => {

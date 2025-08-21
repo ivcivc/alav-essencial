@@ -180,9 +180,18 @@ function useToast() {
     }
   }, [state])
 
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    toast({
+      title: type === 'success' ? 'Sucesso' : type === 'error' ? 'Erro' : type === 'warning' ? 'Atenção' : 'Informação',
+      description: message,
+      variant: type === 'error' ? 'destructive' : 'default',
+    })
+  }
+
   return {
     ...state,
     toast,
+    showToast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
 }

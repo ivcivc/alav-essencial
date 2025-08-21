@@ -238,69 +238,69 @@ Object# Plano de Implementação - Clínica Essencial
     - _Requisitos: 6.3_
 
 - [ ] 10. Desenvolvimento do módulo financeiro
-  - [ ] 10.1 Implementar gestão de contas bancárias no backend com dados de teste
-    - Criar rotas Fastify para contas bancárias
-    - Implementar lógica de saldo inicial dinâmico
-    - Criar serviços para recálculo automático de saldos
-    - Criar seed de dados de teste para contas bancárias
+  - [x] 10.1 Implementar gestão de contas bancárias no backend com dados de teste
+    - [x] Criar rotas Fastify para contas bancárias
+    - [x] Implementar lógica de saldo inicial dinâmico
+    - [x] Criar serviços para recálculo automático de saldos
+    - [x] Criar seed de dados de teste para contas bancárias
     - _Requisitos: 8.1, 8.2_
 
-  - [ ] 10.2 Implementar sistema de lançamentos financeiros no backend com dados de teste
-    - Criar rotas para contas a pagar e receber
-    - Implementar categorização de receitas e despesas
-    - Criar lógica para lançamentos retroativos e futuros
-    - Implementar múltiplas formas de pagamento
-    - Criar seed de dados de teste para lançamentos financeiros
+  - [x] 10.2 Implementar sistema de lançamentos financeiros no backend com dados de teste
+    - [x] Criar rotas para contas a pagar e receber
+    - [x] Implementar categorização de receitas e despesas
+    - [x] Criar lógica para lançamentos retroativos e futuros
+    - [x] Implementar múltiplas formas de pagamento
+    - [x] Criar seed de dados de teste para lançamentos financeiros
     - _Requisitos: 8.3, 8.4, 8.5, 8.7_
 
-  - [ ] 10.3 Implementar acerto automático com parceiros no backend
-    - Criar serviços para geração automática de lançamentos baseados no tipo de parceria
-    - Implementar cálculo de repasses para parceiros de porcentagem
-    - Criar lançamentos automáticos para sublocação
-    - Implementar relatórios de repasses por parceiro
+  - [x] 10.3 Implementar acerto automático com parceiros no backend
+    - [x] Criar serviços para geração automática de lançamentos baseados no tipo de parceria
+    - [x] Implementar cálculo de repasses para parceiros de porcentagem
+    - [x] Criar lançamentos automáticos para sublocação
+    - [x] Implementar relatórios de repasses por parceiro
     - _Requisitos: 8.6, 5.7, 5.8, 5.9_
 
-  - [ ] 10.4 Conectar interface financeira com API real
-    - Implementar formulários de lançamentos financeiros conectados à API
-    - Criar visualização de fluxo de caixa consumindo dados reais
-    - Implementar relatórios financeiros básicos (DRE simplificado) com dados reais
-    - Criar dashboard de contas a pagar/receber conectado à API
+  - [x] 10.4 Conectar interface financeira com API real
+    - [x] Implementar formulários de lançamentos financeiros conectados à API
+    - [x] Criar visualização de fluxo de caixa consumindo dados reais
+    - [x] Implementar relatórios financeiros básicos (DRE simplificado) com dados reais
+    - [x] Criar dashboard de contas a pagar/receber conectado à API
     - _Requisitos: 8.8, 8.9_
 
-- [ ] 11. Integração entre módulos e automações
-  - [ ] 11.1 Implementar integração agendamento-financeiro
+- [x ] 11. Integração entre módulos e automações
+  - [x] 11.1 Implementar integração agendamento-financeiro
     - Criar automação para lançamento de receitas após checkout
     - Implementar cálculo automático de comissões de parceiros
     - Criar integração com diferentes tipos de parceria
     - _Requisitos: 7.10_
 
-  - [ ] 11.2 Implementar regras de negócio avançadas
+  - [x] 11.2 Implementar regras de negócio avançadas
     - Criar validações de horário de funcionamento da clínica
     - Implementar regras de movimentação de agendamentos
     - Criar automações para recálculo de saldos financeiros
     - _Requisitos: 6.1, 6.2, 8.8_
 
-- [ ] 12. Desenvolvimento do dashboard e relatórios
-  - [ ] 12.1 Implementar APIs de dashboard no backend
+- [x] 12. Desenvolvimento do dashboard e relatórios
+  - [x] 12.1 Implementar APIs de dashboard no backend
     - Criar rotas para KPIs principais da clínica
     - Implementar serviços para cálculo de métricas de agendamentos e receitas
     - Criar APIs para métricas de desempenho de parceiros
     - _Requisitos: 10.1, 10.2_
 
-  - [ ] 12.2 Conectar dashboard principal com API real
+  - [x] 12.2 Conectar dashboard principal com API real
     - Implementar dashboard consumindo KPIs reais da API
     - Criar gráficos de agendamentos e receitas com dados reais
     - Implementar métricas de desempenho de parceiros conectadas à API
     - _Requisitos: 10.1, 10.2_
 
-  - [ ] 12.3 Implementar APIs de relatórios no backend
+  - [x] 12.3 Implementar APIs de relatórios no backend
     - Criar rotas para relatórios de agendamentos com filtros
     - Implementar APIs para relatórios financeiros detalhados
     - Criar APIs para relatórios de desempenho por parceiro
     - Implementar funcionalidade de exportação no backend
     - _Requisitos: 10.3, 10.4, 10.5_
 
-  - [ ] 12.4 Conectar sistema de relatórios com API real
+  - [x] 12.4 Conectar sistema de relatórios com API real
     - Criar interface de relatórios de agendamentos consumindo dados reais
     - Implementar relatórios financeiros detalhados conectados à API
     - Criar relatórios de desempenho por parceiro com dados reais

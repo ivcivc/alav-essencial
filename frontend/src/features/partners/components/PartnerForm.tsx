@@ -315,7 +315,10 @@ export function PartnerForm({ partner, onSubmit, onCancel, isLoading }: PartnerF
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="partnershipType">Tipo de Parceria *</Label>
-                  <Select onValueChange={(value) => setValue('partnershipType', value as any)}>
+                  <Select 
+                    value={partnershipType || ''}
+                    onValueChange={(value) => setValue('partnershipType', value as any)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o tipo de parceria" />
                     </SelectTrigger>

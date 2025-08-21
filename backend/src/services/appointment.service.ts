@@ -1,4 +1,4 @@
-import { Appointment } from '@prisma/client'
+import { Appointment, PrismaClient } from '@prisma/client'
 import { AppointmentRepository, AppointmentFilters } from '../repositories/appointment.repository'
 import { PartnerRepository } from '../repositories/partner.repository'
 import { PatientRepository } from '../repositories/patient.repository'
@@ -8,6 +8,10 @@ import { Appointment as AppointmentEntity, AppointmentWithRelations } from '../t
 import { AppointmentStatus, AppointmentType, NotificationReminderType } from '../types/shared'
 import { convertPrismaAppointments, convertPrismaAppointment, convertPrismaProductService } from '../utils/typeConverters'
 import { NotificationService } from './notification.service'
+import { appointmentFinancialService, type CheckoutFinancialData } from './appointment-financial.service'
+import { clinicSettingsService } from './clinic-settings.service'
+
+const prisma = new PrismaClient()
 
 export interface CreateAppointmentData {
   patientId: string
@@ -18,6 +22,7 @@ export interface CreateAppointmentData {
   startTime: string
   endTime: string
   type: AppointmentType
+  isEncaixe?: boolean
   observations?: string
 }
 
@@ -102,13 +107,13 @@ export class AppointmentService {
       throw new Error('Agendamento não encontrado')
     }
 
-    // Convert the main appointment data while keeping relations as-is for now
+    // Convert the main appointment data and relations
     const convertedAppointment = convertPrismaAppointment(appointment)
     return {
       ...convertedAppointment,
       patient: appointment.patient,
       partner: appointment.partner,
-      productService: appointment.productService,
+      productService: appointment.productService ? convertPrismaProductService(appointment.productService) : undefined,
       room: appointment.room
     } as AppointmentWithRelations
   }
@@ -117,17 +122,22 @@ export class AppointmentService {
     // Validate that all referenced entities exist
     await this.validateAppointmentEntities(data)
 
+    // 🏥 VALIDAR REGRAS DE NEGÓCIO DA CLÍNICA
+    await this.validateBusinessRules(data)
+
     // Check for conflicts
     const availabilityResult = await this.checkAvailability({
       partnerId: data.partnerId,
       roomId: data.roomId,
       date: data.date,
       startTime: data.startTime,
-      endTime: data.endTime
+      endTime: data.endTime,
+      isEncaixe: data.isEncaixe
     })
 
     if (!availabilityResult.available) {
-      throw new Error(`Conflito de horário: ${availabilityResult.conflicts.join(', ')}`)
+      const conflictMessages = availabilityResult.conflicts.map(c => c.message).join('; ')
+      throw new Error(`Conflito de horário: ${conflictMessages}`)
     }
 
     // Calculate end time based on service duration if not provided
@@ -140,7 +150,8 @@ export class AppointmentService {
 
     const createdAppointment = await this.appointmentRepository.create({
       ...data,
-      status: 'SCHEDULED'
+      status: 'SCHEDULED',
+      isEncaixe: data.isEncaixe || false
     })
 
     // 🔔 Agendar lembretes de notificação
@@ -165,6 +176,9 @@ export class AppointmentService {
       throw new Error('Agendamento não encontrado')
     }
 
+    // 🔄 VALIDAR REGRAS DE MOVIMENTAÇÃO
+    await this.validateAppointmentMovement(id, data)
+
     // If changing date/time/partner/room, check for conflicts
     if (data.date || data.startTime || data.endTime || data.partnerId || data.roomId !== undefined) {
       const checkData: AvailabilityCheckData = {
@@ -178,7 +192,8 @@ export class AppointmentService {
 
       const availabilityResult = await this.checkAvailability(checkData)
       if (!availabilityResult.available) {
-        throw new Error(`Conflito de horário: ${availabilityResult.conflicts.join(', ')}`)
+        const conflictMessages = availabilityResult.conflicts.map(c => c.message).join('; ')
+      throw new Error(`Conflito de horário: ${conflictMessages}`)
       }
     }
 
@@ -249,7 +264,36 @@ export class AppointmentService {
       throw new Error('Apenas agendamentos "AGENDADOS" ou "EM ANDAMENTO" podem ser cancelados')
     }
 
+    // Verificar se há lançamentos financeiros que impedem o cancelamento
+    const criticalFinancialEntries = await prisma.financialEntry.count({
+      where: {
+        OR: [
+          { referenceId: id, referenceType: 'APPOINTMENT' },
+          { appointmentId: id }
+        ],
+        status: 'PAID',
+        // Verificar se foi pago há mais de 24 horas (regra de negócio opcional)
+        paidDate: {
+          lt: new Date(Date.now() - 24 * 60 * 60 * 1000)
+        }
+      }
+    })
+
+    if (criticalFinancialEntries > 0) {
+      console.log(`⚠️ Agendamento ${id} tem ${criticalFinancialEntries} lançamentos pagos há mais de 24h`)
+      // Opcional: Permitir cancelamento mesmo assim, mas com aviso nos logs
+    }
+
     const cancelledAppointment = await this.appointmentRepository.cancel(id, reason)
+
+    // 💰 Cancelar lançamentos financeiros relacionados ao agendamento
+    try {
+      console.log(`🔍 Iniciando cancelamento de lançamentos financeiros para agendamento ${id}`)
+      const result = await appointmentFinancialService.cancelFinancialEntries(id, reason)
+      console.log(`💰 Cancelamento concluído: ${result.cancelledEntries} lançamentos cancelados, R$ ${result.totalAmount} total`)
+    } catch (error) {
+      console.error(`❌ ERRO ao cancelar lançamentos financeiros para agendamento ${id}:`, error)
+    }
 
     // 🔔 Cancelar lembretes e enviar notificação de cancelamento
     if (this.notificationService) {
@@ -297,7 +341,8 @@ export class AppointmentService {
     })
 
     if (!availabilityResult.available) {
-      throw new Error(`Conflito de horário: ${availabilityResult.conflicts.join(', ')}`)
+      const conflictMessages = availabilityResult.conflicts.map(c => c.message).join('; ')
+      throw new Error(`Conflito de horário: ${conflictMessages}`)
     }
 
     // Update appointment with new date/time
@@ -363,6 +408,74 @@ export class AppointmentService {
     return convertPrismaAppointment(checkedOutAppointment)
   }
 
+  /**
+   * Checkout com processamento financeiro automático
+   * Gera lançamentos de receita e comissões automaticamente
+   */
+  async checkOutAppointmentWithFinancials(
+    id: string, 
+    financialData: CheckoutFinancialData
+  ): Promise<{
+    appointment: AppointmentEntity
+    financialResult: any
+  }> {
+    // Primeiro fazer o checkout normal
+    const appointment = await this.checkOutAppointment(id)
+
+    // Processar automações financeiras
+    const financialResult = await appointmentFinancialService.processCheckoutFinancials(
+      id, 
+      financialData
+    )
+
+    console.log(`💰 Checkout financeiro processado para agendamento ${id}`)
+    console.log(`📊 Receita: R$ ${financialResult.totalProcessed}`)
+    console.log(`🤝 Comissão: R$ ${financialResult.commissionCalculation.commissionAmount}`)
+
+    return {
+      appointment,
+      financialResult
+    }
+  }
+
+  /**
+   * Cancela apenas o checkout financeiro do agendamento (sem cancelar o agendamento)
+   */
+  async cancelCheckoutFinancials(
+    id: string, 
+    reason: string
+  ): Promise<{
+    appointment: AppointmentEntity
+    cancelResult: any
+  }> {
+    // Verificar se o agendamento existe
+    const existingAppointment = await this.appointmentRepository.findById(id)
+    if (!existingAppointment) {
+      throw new Error('Agendamento não encontrado')
+    }
+
+    // Verificar se o agendamento está COMPLETED (tem checkout)
+    if (existingAppointment.status !== 'COMPLETED') {
+      throw new Error('Apenas agendamentos concluídos podem ter o checkout cancelado')
+    }
+
+    // Cancelar lançamentos financeiros
+    const cancelResult = await appointmentFinancialService.cancelCheckoutFinancials(id, reason)
+
+    // Retornar agendamento para IN_PROGRESS (antes do checkout)
+    const updatedAppointment = await this.appointmentRepository.update(id, {
+      status: AppointmentStatus.IN_PROGRESS,
+      checkOut: null
+    })
+
+    console.log(`🔄 Checkout cancelado para agendamento ${id}: ${cancelResult.cancelledEntries} lançamentos, R$ ${cancelResult.totalAmount}`)
+
+    return {
+      appointment: convertPrismaAppointment(updatedAppointment),
+      cancelResult
+    }
+  }
+
   async undoCheckIn(id: string): Promise<AppointmentEntity> {
     // Check if appointment exists
     const existingAppointment = await this.appointmentRepository.findById(id)
@@ -413,7 +526,7 @@ export class AppointmentService {
     return convertPrismaAppointment(updatedAppointment)
   }
 
-  async checkAvailability(data: AvailabilityCheckData): Promise<AvailabilityResult> {
+  async checkAvailability(data: AvailabilityCheckData & { isEncaixe?: boolean }): Promise<AvailabilityResult> {
     const conflicts: ConflictDetail[] = []
     
     // Mapeamento dos dias da semana em português
@@ -422,40 +535,25 @@ export class AppointmentService {
       'quinta-feira', 'sexta-feira', 'sábado'
     ]
 
-    // Find conflicting appointments
-    const conflictingAppointments = await this.appointmentRepository.findConflicts(
-      data.partnerId,
-      data.roomId,
-      data.date,
-      data.startTime,
-      data.endTime,
-      data.excludeAppointmentId
-    )
+    // 🚀 ENCAIXE: Se for encaixe, pular verificação de conflitos de horário
+    if (!data.isEncaixe) {
+      // Find conflicting appointments
+      const conflictingAppointments = await this.appointmentRepository.findConflicts(
+        data.partnerId,
+        data.roomId,
+        data.date,
+        data.startTime,
+        data.endTime,
+        data.excludeAppointmentId
+      )
 
-    // Check partner conflicts
-    const partnerConflicts = conflictingAppointments.filter(apt => apt.partnerId === data.partnerId)
-    if (partnerConflicts.length > 0) {
-      for (const conflictApt of partnerConflicts) {
-        conflicts.push({
-          type: 'appointment',
-          message: `Parceiro já possui agendamento das ${conflictApt.startTime} às ${conflictApt.endTime}`,
-          appointment: conflictApt,
-          timeSlot: {
-            startTime: conflictApt.startTime,
-            endTime: conflictApt.endTime
-          }
-        })
-      }
-    }
-
-    // Check room conflicts (if room is specified)
-    if (data.roomId) {
-      const roomConflicts = conflictingAppointments.filter(apt => apt.roomId === data.roomId)
-      if (roomConflicts.length > 0) {
-        for (const conflictApt of roomConflicts) {
+      // Check partner conflicts
+      const partnerConflicts = conflictingAppointments.filter(apt => apt.partnerId === data.partnerId)
+      if (partnerConflicts.length > 0) {
+        for (const conflictApt of partnerConflicts) {
           conflicts.push({
             type: 'appointment',
-            message: `Sala já ocupada das ${conflictApt.startTime} às ${conflictApt.endTime}`,
+            message: `Parceiro já possui agendamento das ${conflictApt.startTime} às ${conflictApt.endTime}`,
             appointment: conflictApt,
             timeSlot: {
               startTime: conflictApt.startTime,
@@ -464,6 +562,27 @@ export class AppointmentService {
           })
         }
       }
+
+      // Check room conflicts (if room is specified)
+      if (data.roomId) {
+        const roomConflicts = conflictingAppointments.filter(apt => apt.roomId === data.roomId)
+        if (roomConflicts.length > 0) {
+          for (const conflictApt of roomConflicts) {
+            conflicts.push({
+              type: 'appointment',
+              message: `Sala já ocupada das ${conflictApt.startTime} às ${conflictApt.endTime}`,
+              appointment: conflictApt,
+              timeSlot: {
+                startTime: conflictApt.startTime,
+                endTime: conflictApt.endTime
+              }
+            })
+          }
+        }
+      }
+    } else {
+      // Log para debug quando for encaixe
+      console.log(`📌 ENCAIXE permitido: ${data.partnerId} no horário ${data.startTime}-${data.endTime}`)
     }
 
     // Check partner availability (working hours and blocked dates)
@@ -655,5 +774,68 @@ export class AppointmentService {
     }
 
     return suggestions.slice(0, 5) // Return first 5 suggestions
+  }
+
+  /**
+   * 🏥 Validar regras de negócio da clínica
+   */
+  private async validateBusinessRules(data: CreateAppointmentData): Promise<void> {
+    console.log('🏥 Validando regras de negócio da clínica...')
+
+    // 1. Validar horário de funcionamento
+    const businessHoursValidation = await clinicSettingsService.validateBusinessHours(
+      data.date, 
+      data.startTime, 
+      data.endTime
+    )
+
+    if (!businessHoursValidation.valid) {
+      throw new Error(`Horário inválido: ${businessHoursValidation.reason}`)
+    }
+
+    // 2. Validar antecedência mínima/máxima (PULAR PARA ENCAIXES)
+    if (!data.isEncaixe) {
+      const advanceValidation = await clinicSettingsService.validateBookingAdvance(data.date)
+
+      if (!advanceValidation.valid) {
+        throw new Error(`Antecedência inválida: ${advanceValidation.reason}`)
+      }
+    } else {
+      console.log('📌 ENCAIXE: Pulando validação de antecedência mínima')
+    }
+
+    console.log('✅ Regras de negócio validadas com sucesso')
+  }
+
+  /**
+   * 🔄 Validar movimentação de agendamento
+   */
+  async validateAppointmentMovement(appointmentId: string, newData: Partial<CreateAppointmentData>): Promise<void> {
+    console.log('🔄 Validando movimentação de agendamento...')
+
+    // Buscar agendamento atual
+    const appointment = await this.getAppointmentById(appointmentId)
+
+    // Validar se o status permite movimentação
+    const movementValidation = await clinicSettingsService.validateAppointmentMovement(appointment.status)
+
+    if (!movementValidation.valid) {
+      throw new Error(`Movimentação não permitida: ${movementValidation.reason}`)
+    }
+
+    // Se está mudando data/horário, validar regras de negócio
+    if (newData.date || newData.startTime || newData.endTime) {
+      const validationData = {
+        ...appointment,
+        ...newData,
+        date: newData.date || appointment.date,
+        startTime: newData.startTime || appointment.startTime,
+        endTime: newData.endTime || appointment.endTime
+      } as CreateAppointmentData
+
+      await this.validateBusinessRules(validationData)
+    }
+
+    console.log('✅ Movimentação validada com sucesso')
   }
 }

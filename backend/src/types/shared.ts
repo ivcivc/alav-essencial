@@ -111,3 +111,37 @@ export interface PartnershipConfig {
   percentageAmount?: number
   percentageRate?: number
 }
+
+// 💰 ENUMS PARA MÓDULO FINANCEIRO
+
+export enum BankAccountType {
+  CHECKING = 'CHECKING',      // Conta corrente
+  SAVINGS = 'SAVINGS',        // Conta poupança
+  INVESTMENT = 'INVESTMENT',  // Conta investimento
+  CASH = 'CASH',              // Dinheiro em espécie
+  CREDIT_CARD = 'CREDIT_CARD', // Cartão de crédito
+  PIX = 'PIX'                 // Conta PIX
+}
+
+export enum FinancialEntryType {
+  INCOME = 'INCOME',          // Receita
+  EXPENSE = 'EXPENSE'         // Despesa
+}
+
+export enum FinancialEntryStatus {
+  PENDING = 'PENDING',        // Pendente
+  PAID = 'PAID',              // Pago
+  OVERDUE = 'OVERDUE',        // Vencido
+  CANCELLED = 'CANCELLED',    // Cancelado
+  PARTIAL = 'PARTIAL'         // Pagamento parcial
+}
+
+export enum PaymentMethod {
+  CASH = 'CASH',              // Dinheiro
+  DEBIT_CARD = 'DEBIT_CARD',  // Cartão de débito
+  CREDIT_CARD = 'CREDIT_CARD', // Cartão de crédito
+  PIX = 'PIX',                // PIX
+  BANK_TRANSFER = 'BANK_TRANSFER', // Transferência bancária
+  CHECK = 'CHECK',            // Cheque
+  VOUCHER = 'VOUCHER'         // Vale/Voucher
+}

@@ -202,6 +202,7 @@ export function AppointmentsPage() {
             selectedDate={selectedDate}
             onAppointmentClick={handleAppointmentClick}
             onTimeSlotClick={(roomId, time) => handleTimeSlotClick(roomId, time)}
+            onDateChange={setSelectedDate}
           />
         )}
 

@@ -175,14 +175,53 @@ export function useCancelAppointment() {
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: appointmentKeys.all })
       
+      // Invalidar queries financeiras também (lançamentos podem ter sido cancelados)
+      queryClient.invalidateQueries({ queryKey: ['financial'] })
+      queryClient.invalidateQueries({ queryKey: ['accountsPayable'] })
+      queryClient.invalidateQueries({ queryKey: ['accountsReceivable'] })
+      
       toast({
         title: 'Agendamento cancelado',
-        description: 'O agendamento foi cancelado com sucesso.',
+        description: 'O agendamento foi cancelado com sucesso. Lançamentos financeiros relacionados foram automaticamente cancelados.',
       })
     },
     onError: (error: any) => {
       toast({
         title: 'Erro ao cancelar agendamento',
+        description: error.message,
+        variant: 'destructive',
+      })
+    },
+  })
+}
+
+// Hook para cancelar checkout
+export function useCancelCheckout() {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
+
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      appointmentsService.cancelCheckout(id, reason),
+    onSuccess: (result) => {
+      // Atualizar cache específico e invalidar listas
+      queryClient.setQueryData(appointmentKeys.detail(result.appointment.id), result.appointment)
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.all })
+      
+      // Invalidar queries financeiras (lançamentos foram cancelados)
+      queryClient.invalidateQueries({ queryKey: ['financial'] })
+      queryClient.invalidateQueries({ queryKey: ['accountsPayable'] })
+      queryClient.invalidateQueries({ queryKey: ['accountsReceivable'] })
+      
+      toast({
+        title: 'Checkout cancelado',
+        description: `Checkout cancelado com sucesso. ${result.cancelResult.cancelledEntries} lançamentos foram cancelados.`,
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao cancelar checkout',
         description: error.message,
         variant: 'destructive',
       })
@@ -276,6 +315,50 @@ export function useCheckOutAppointment() {
     onError: (error: any) => {
       toast({
         title: 'Erro no check-out',
+        description: error.message,
+        variant: 'destructive',
+      })
+    },
+  })
+}
+
+// Hook para check-out com processamento financeiro
+export function useCheckOutAppointmentWithPayment() {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
+
+  return useMutation({
+    mutationFn: ({ 
+      id, 
+      paymentData 
+    }: { 
+      id: string
+      paymentData: {
+        paymentMethod: 'CASH' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'PIX' | 'BANK_TRANSFER'
+        bankAccountId: string
+        totalAmount: number
+        discountAmount?: number
+        additionalCharges?: number
+        notes?: string
+      }
+    }) => appointmentsService.checkOutAppointmentWithPayment(id, paymentData),
+    onSuccess: (result) => {
+      // Atualizar cache específico e invalidar listas
+      queryClient.setQueryData(appointmentKeys.detail(result.appointment.id), result.appointment)
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.all })
+      
+      // Invalidar cache financeiro também
+      queryClient.invalidateQueries({ queryKey: ['financial'] })
+      
+      toast({
+        title: 'Checkout realizado com sucesso!',
+        description: `Receita de R$ ${result.financialResult.totalProcessed.toFixed(2)} lançada automaticamente.`,
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro no checkout financeiro',
         description: error.message,
         variant: 'destructive',
       })

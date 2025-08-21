@@ -4,7 +4,7 @@ import { ptBR } from 'date-fns/locale'
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card'
 import { Badge } from '../../../components/ui/badge'
 import { Button } from '../../../components/ui/button'
-import { usePartners } from '../../../hooks/usePartners'
+import { usePartners, usePartnerAvailability, usePartnerBlockedDates } from '../../../hooks/usePartners'
 import { useAppointmentsByDateRange } from '../../../hooks/useAppointments'
 import { Partner, Appointment } from '../../../types/entities'
 import { Users, Clock, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
@@ -51,6 +51,26 @@ const isTimeInAvailability = (
 const timeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(':').map(Number)
   return hours * 60 + minutes
+}
+
+// Função para formatar nome do médico
+const formatDoctorName = (fullName: string): string => {
+  const nameParts = fullName.split(' ')
+  const firstName = nameParts[0]?.replace(/^Dr\.?\s?|^Dra\.?\s?/i, '') || ''
+  const secondName = nameParts[1] || ''
+  
+  // Detectar se já tem Dr/Dra no nome
+  const hasTitle = /^Dr\.?\s?|^Dra\.?\s?/i.test(fullName)
+  
+  if (hasTitle) {
+    // Se já tem título, manter apenas primeiro e segundo nome
+    return `${firstName}${secondName ? ` ${secondName}` : ''}`
+  } else {
+    // Se não tem título, adicionar Dr./Dra. baseado no gênero (assumir Dr. como padrão)
+    const title = fullName.toLowerCase().includes('dra') || 
+                 firstName.toLowerCase().endsWith('a') ? 'Dra.' : 'Dr.'
+    return `${title} ${firstName}${secondName ? ` ${secondName}` : ''}`
+  }
 }
 
 // Função para verificar se uma data/hora está bloqueada
@@ -118,11 +138,30 @@ export function PartnerAvailabilityView({
 
   const partners = partnersData?.partners || []
 
+  // Buscar availability para todos os parceiros
+  const partnerAvailabilityQueries = partners.map(partner => 
+    usePartnerAvailability(partner.id)
+  )
+
+  // Buscar blocked dates para todos os parceiros  
+  const partnerBlockedDatesQueries = partners.map(partner =>
+    usePartnerBlockedDates(partner.id, dateStr, dateStr)
+  )
+
+  // Combinar dados dos parceiros com availability e blocked dates
+  const partnersWithRelations = useMemo(() => {
+    return partners.map((partner, index) => ({
+      ...partner,
+      availability: partnerAvailabilityQueries[index]?.data || [],
+      blockedDates: partnerBlockedDatesQueries[index]?.data || []
+    }))
+  }, [partners, partnerAvailabilityQueries, partnerBlockedDatesQueries])
+
   // Agrupar agendamentos por parceiro e horário
   const appointmentsByPartnerAndTime = useMemo(() => {
     const grouped: Record<string, Record<string, Appointment[]>> = {}
     
-    partners.forEach(partner => {
+    partnersWithRelations.forEach(partner => {
       grouped[partner.id] = {}
       HOUR_SLOTS.forEach(time => {
         grouped[partner.id][time] = []
@@ -136,13 +175,13 @@ export function PartnerAvailabilityView({
     })
 
     return grouped
-  }, [appointments, partners])
+  }, [appointments, partnersWithRelations])
 
   // Calcular status de cada slot para cada parceiro
   const partnerSlotStatus = useMemo(() => {
     const status: Record<string, Record<string, SlotStatus>> = {}
     
-    partners.forEach(partner => {
+    partnersWithRelations.forEach(partner => {
       status[partner.id] = {}
       
       HOUR_SLOTS.forEach(time => {
@@ -161,7 +200,7 @@ export function PartnerAvailabilityView({
     })
     
     return status
-  }, [partners, appointmentsByPartnerAndTime, selectedDate])
+  }, [partnersWithRelations, appointmentsByPartnerAndTime, selectedDate])
 
   // Calcular estatísticas de disponibilidade
   const partnerStats = useMemo(() => {
@@ -174,7 +213,7 @@ export function PartnerAvailabilityView({
       availabilityRate: number
     }> = {}
 
-    partners.forEach(partner => {
+    partnersWithRelations.forEach(partner => {
       const slotCounts = { available: 0, busy: 0, blocked: 0, unavailable: 0 }
       
       HOUR_SLOTS.forEach(time => {
@@ -195,11 +234,11 @@ export function PartnerAvailabilityView({
     })
 
     return stats
-  }, [partnerSlotStatus, partners])
+  }, [partnerSlotStatus, partnersWithRelations, selectedDate, dateStr])
 
   const filteredPartners = selectedPartnerId 
-    ? partners.filter(p => p.id === selectedPartnerId)
-    : partners
+    ? partnersWithRelations.filter(p => p.id === selectedPartnerId)
+    : partnersWithRelations
 
   const getAvailabilityColor = (rate: number) => {
     if (rate >= 70) return 'text-green-600'
@@ -274,86 +313,92 @@ export function PartnerAvailabilityView({
           })}
         </div>
 
-        {/* Grid de disponibilidade */}
+        {/* Tabela de disponibilidade */}
         <div className="overflow-x-auto">
-          <div className="min-w-[600px]">
-            {/* Cabeçalho com nomes dos profissionais */}
-            <div className={`grid gap-1 mb-2`} style={{ gridTemplateColumns: `150px repeat(${filteredPartners.length}, 1fr)` }}>
-              <div className="p-2 font-medium text-sm text-gray-600">
-                Horário
-              </div>
-              {filteredPartners.map(partner => (
-                <div 
-                  key={partner.id} 
-                  className="p-2 text-center font-medium text-sm bg-gray-50 rounded cursor-pointer hover:bg-gray-100"
-                  onClick={() => onPartnerClick?.(partner)}
-                >
-                  {partner.fullName.split(' ')[0]}
-                  <div className="text-xs text-gray-500">
-                    {partner.partnershipType === 'SUBLEASE' ? 'Sublocação' : 
-                     partner.partnershipType === 'PERCENTAGE' ? 'Porcentagem' : 
-                     'Porcentagem + Produtos'}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Grid de horários */}
-            {HOUR_SLOTS.map(time => (
-              <div 
-                key={time} 
-                className={`grid gap-1 mb-1`} 
-                style={{ gridTemplateColumns: `150px repeat(${filteredPartners.length}, 1fr)` }}
-              >
-                {/* Coluna do horário */}
-                <div className="p-2 text-sm text-gray-600 font-medium flex items-center border-r">
-                  <Clock className="w-4 h-4 mr-1" />
-                  {time}
-                </div>
-
-                {/* Colunas dos profissionais */}
-                {filteredPartners.map(partner => {
-                  const slotStatus = partnerSlotStatus[partner.id]?.[time] || 'unavailable'
-                  const appointment = appointmentsByPartnerAndTime[partner.id]?.[time]?.[0]
-
-                  return (
-                    <div 
-                      key={`${partner.id}-${time}`}
-                      className={`p-2 min-h-[50px] border rounded transition-colors ${SLOT_COLORS[slotStatus]}`}
-                      onClick={() => {
-                        if (slotStatus === 'available') {
-                          onTimeSlotClick?.(partner.id, time)
-                        } else if (appointment) {
-                          // Abrir detalhes do agendamento
-                        }
-                      }}
-                      title={`${SLOT_LABELS[slotStatus]} - ${partner.fullName} às ${time}`}
-                    >
-                      <div className="flex items-center justify-center h-full">
-                        {slotStatus === 'busy' && appointment ? (
-                          <div className="text-center">
-                            <div className="text-xs font-medium truncate">
-                              {appointment.patient?.fullName}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              {appointment.startTime} - {appointment.endTime}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-center">
-                            {SLOT_ICONS[slotStatus]}
-                            <div className="text-xs mt-1">
-                              {SLOT_LABELS[slotStatus]}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+          <table className="min-w-full border-collapse border border-gray-200">
+            {/* Cabeçalho */}
+            <thead>
+              <tr>
+                <th className="p-3 text-left font-medium text-sm text-gray-600 bg-gray-50 border border-gray-200 w-[150px]">
+                  Horário
+                </th>
+                {filteredPartners.map(partner => (
+                  <th 
+                    key={partner.id}
+                    className="p-3 text-center font-medium text-sm bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100 min-w-[120px]"
+                    onClick={() => onPartnerClick?.(partner)}
+                  >
+                    <div className="font-medium">
+                      {formatDoctorName(partner.fullName)}
                     </div>
-                  )
-                })}
-              </div>
-            ))}
-          </div>
+                    <div className="text-xs text-gray-500 font-normal">
+                      {partner.partnershipType === 'SUBLEASE' ? 'Sublocação' : 
+                       partner.partnershipType === 'PERCENTAGE' ? 'Porcentagem' : 
+                       'Porcentagem + Produtos'}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            {/* Corpo da tabela */}
+            <tbody>
+              {HOUR_SLOTS.map(time => (
+                <tr key={time}>
+                  {/* Coluna do horário */}
+                  <td className="p-3 text-sm text-gray-600 font-medium bg-gray-50 border border-gray-200">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      {time}
+                    </div>
+                  </td>
+
+                  {/* Colunas dos profissionais */}
+                  {filteredPartners.map(partner => {
+                    const slotStatus = partnerSlotStatus[partner.id]?.[time] || 'unavailable'
+                    const appointment = appointmentsByPartnerAndTime[partner.id]?.[time]?.[0]
+
+                    return (
+                      <td 
+                        key={`${partner.id}-${time}`}
+                        className={`p-2 border border-gray-200 transition-colors ${SLOT_COLORS[slotStatus]} h-[60px]`}
+                        onClick={() => {
+                          if (slotStatus === 'available') {
+                            onTimeSlotClick?.(partner.id, time)
+                          } else if (appointment) {
+                            // Abrir detalhes do agendamento
+                          }
+                        }}
+                        title={`${SLOT_LABELS[slotStatus]} - ${partner.fullName} às ${time}`}
+                      >
+                        <div className="flex items-center justify-center h-full">
+                          {slotStatus === 'busy' && appointment ? (
+                            <div className="text-center w-full">
+                              <div className="text-xs font-medium truncate leading-tight">
+                                {appointment.patient?.fullName}
+                              </div>
+                              <div className="text-xs text-gray-600 leading-tight mt-0.5">
+                                {appointment.startTime} - {appointment.endTime}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-center">
+                              <div className="flex justify-center mb-1">
+                                {SLOT_ICONS[slotStatus]}
+                              </div>
+                              <div className="text-xs leading-tight">
+                                {SLOT_LABELS[slotStatus]}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* Legenda */}

@@ -146,6 +146,7 @@ export const appointmentFormSchema = z.object({
   startTime: timeSchema,
   endTime: timeSchema,
   type: z.nativeEnum(AppointmentType).default(AppointmentType.CONSULTATION),
+  isEncaixe: z.boolean().default(false),
   observations: z.string().optional()
 }).refine((data) => {
   const start = data.startTime.split(':').map(Number)

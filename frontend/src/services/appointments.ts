@@ -142,6 +142,25 @@ export const appointmentsService = {
     return data.data
   },
 
+  // Cancelar checkout (apenas lançamentos financeiros)
+  async cancelCheckout(id: string, reason: string): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/cancel-checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reason }),
+    })
+    
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || error.message || 'Erro ao cancelar checkout')
+    }
+
+    const data = await response.json()
+    return data.data
+  },
+
   // Reagendar agendamento
   async rescheduleAppointment(id: string, newDate: string, newStartTime: string, newEndTime: string): Promise<Appointment> {
     const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/reschedule`, {
@@ -219,6 +238,58 @@ export const appointmentsService = {
     if (!response.ok) {
       const error = await response.json()
       throw new Error(error.error || error.message || 'Erro ao desfazer check-out')
+    }
+
+    const data = await response.json()
+    return data.data
+  },
+
+  // Check-out com processamento financeiro
+  async checkOutAppointmentWithPayment(
+    id: string, 
+    paymentData: {
+      paymentMethod: 'CASH' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'PIX' | 'BANK_TRANSFER'
+      bankAccountId: string
+      totalAmount: number
+      discountAmount?: number
+      additionalCharges?: number
+      notes?: string
+    }
+  ): Promise<{
+    appointment: Appointment
+    financialResult: any
+  }> {
+    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/checkout-with-payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(paymentData),
+    })
+    
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || error.message || 'Erro ao processar checkout financeiro')
+    }
+
+    const data = await response.json()
+    return data.data
+  },
+
+  // Buscar dados financeiros de um agendamento
+  async getAppointmentFinancials(id: string): Promise<{
+    revenue: any[]
+    commissions: any[]
+    total: {
+      revenue: number
+      commissions: number
+    }
+  }> {
+    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/financials`)
+    
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || error.message || 'Erro ao buscar dados financeiros')
     }
 
     const data = await response.json()

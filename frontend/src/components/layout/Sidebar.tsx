@@ -11,6 +11,7 @@ import {
   Settings,
   Home,
   Bell,
+  Shield,
 } from 'lucide-react'
 
 const navigation = [
@@ -23,6 +24,7 @@ const navigation = [
   { name: 'Notificações', href: '/notifications', icon: Bell },
   { name: 'Financeiro', href: '/financial', icon: DollarSign },
   { name: 'Relatórios', href: '/reports', icon: BarChart3 },
+  { name: 'Backup', href: '/backup', icon: Shield },
   { name: 'Configurações', href: '/settings', icon: Settings },
 ]
 

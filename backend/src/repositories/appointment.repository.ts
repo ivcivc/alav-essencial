@@ -1,6 +1,7 @@
 import { PrismaClient, Appointment, Prisma } from '@prisma/client'
 import { Appointment as AppointmentEntity, AppointmentWithRelations } from '../types/entities'
 import { AppointmentStatus, AppointmentType } from '../types/shared'
+import { convertPrismaAppointment } from '../utils/typeConverters'
 
 export interface AppointmentFilters {
   patientId?: string
@@ -293,5 +294,87 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     return this.prisma.appointment.count({
       where: this.buildWhereClause(filters)
     })
+  }
+
+  async findByPartnerAndPeriod(
+    partnerId: string,
+    startDate: Date,
+    endDate: Date,
+    filters?: {
+      status?: string
+      productServiceId?: string
+    }
+  ): Promise<AppointmentWithRelations[]> {
+    const whereConditions: any = {
+      partnerId,
+      date: {
+        gte: startDate,
+        lte: endDate
+      }
+    }
+
+    if (filters?.status) {
+      whereConditions.status = filters.status
+    }
+
+    if (filters?.productServiceId) {
+      whereConditions.productServiceId = filters.productServiceId
+    }
+
+    const appointments = await this.prisma.appointment.findMany({
+      where: whereConditions,
+      include: {
+        patient: true,
+        partner: true,
+        productService: {
+          include: {
+            category: true
+          }
+        },
+        room: true
+      },
+      orderBy: {
+        date: 'asc'
+      }
+    })
+
+    return appointments.map(convertPrismaAppointment)
+  }
+
+  async getPartnerRevenue(
+    partnerId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<{
+    totalAppointments: number
+    totalRevenue: number
+    averagePerAppointment: number
+  }> {
+    const appointments = await this.prisma.appointment.findMany({
+      where: {
+        partnerId,
+        date: {
+          gte: startDate,
+          lte: endDate
+        },
+        status: 'COMPLETED'
+      },
+      include: {
+        productService: true
+      }
+    })
+
+    const totalAppointments = appointments.length
+    const totalRevenue = appointments.reduce((sum, apt) => {
+      return sum + Number(apt.productService?.salePrice || 0)
+    }, 0)
+
+    const averagePerAppointment = totalAppointments > 0 ? totalRevenue / totalAppointments : 0
+
+    return {
+      totalAppointments,
+      totalRevenue,
+      averagePerAppointment
+    }
   }
 }

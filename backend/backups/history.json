@@ -1,0 +1,86 @@
+[
+  {
+    "id": "backup-1755490410644",
+    "configId": "default-daily",
+    "filename": "",
+    "filepath": "",
+    "size": 0,
+    "type": "DATABASE",
+    "status": "FAILED",
+    "startedAt": "2025-08-18T04:13:30.644Z",
+    "completedAt": "2025-08-18T04:13:30.659Z",
+    "errorMessage": "Falha ao criar backup do banco: Error: Command failed: PGPASSWORD=\"0Urantia1\" pg_dump -h alav.cloud -p 5432 -U ivan -d clinica_demo -f \"/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-18-01-13-30.sql\" --no-password --verbose\n/bin/sh: pg_dump: command not found\n"
+  },
+  {
+    "id": "backup-1755490902884",
+    "configId": "default-daily",
+    "filename": "",
+    "filepath": "",
+    "size": 0,
+    "type": "DATABASE",
+    "status": "FAILED",
+    "startedAt": "2025-08-18T04:21:42.884Z",
+    "completedAt": "2025-08-18T04:21:42.895Z",
+    "errorMessage": "Falha ao criar backup do banco: Error: Command failed: PGPASSWORD=\"0Urantia1\" pg_dump -h alav.cloud -p 5432 -U ivan -d clinica_demo -f \"/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-18-01-21-42.sql\" --no-password --verbose\n/bin/sh: pg_dump: command not found\n"
+  },
+  {
+    "id": "backup-1755490938645",
+    "configId": "default-daily",
+    "filename": "",
+    "filepath": "",
+    "size": 0,
+    "type": "DATABASE",
+    "status": "FAILED",
+    "startedAt": "2025-08-18T04:22:18.645Z",
+    "completedAt": "2025-08-18T04:22:18.655Z",
+    "errorMessage": "Falha ao criar backup do banco: Error: Command failed: PGPASSWORD=\"0Urantia1\" pg_dump -h alav.cloud -p 5432 -U ivan -d clinica_demo -f \"/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-18-01-22-18.sql\" --no-password --verbose\n/bin/sh: pg_dump: command not found\n"
+  },
+  {
+    "id": "backup-1755490945268",
+    "configId": "default-daily",
+    "filename": "",
+    "filepath": "",
+    "size": 0,
+    "type": "DATABASE",
+    "status": "FAILED",
+    "startedAt": "2025-08-18T04:22:25.268Z",
+    "completedAt": "2025-08-18T04:22:25.275Z",
+    "errorMessage": "Falha ao criar backup do banco: Error: Command failed: PGPASSWORD=\"0Urantia1\" pg_dump -h alav.cloud -p 5432 -U ivan -d clinica_demo -f \"/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-18-01-22-25.sql\" --no-password --verbose\n/bin/sh: pg_dump: command not found\n"
+  },
+  {
+    "id": "backup-1755491006852",
+    "configId": "default-daily",
+    "filename": "clinica-db-2025-08-18-01-23-26.sql",
+    "filepath": "/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-18-01-23-26.sql",
+    "size": 265,
+    "type": "DATABASE",
+    "status": "SUCCESS",
+    "startedAt": "2025-08-18T04:23:26.852Z",
+    "completedAt": "2025-08-18T04:23:26.861Z",
+    "checksum": "d324811e007c40a39b0dd730a80374a30c3c5fedd5173f4b05f23a8806561140"
+  },
+  {
+    "id": "backup-1755607895403",
+    "configId": "default-daily",
+    "filename": "clinica-db-2025-08-19-09-51-35.sql",
+    "filepath": "/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-19-09-51-35.sql",
+    "size": 265,
+    "type": "DATABASE",
+    "status": "SUCCESS",
+    "startedAt": "2025-08-19T12:51:35.403Z",
+    "completedAt": "2025-08-19T12:51:35.420Z",
+    "checksum": "90ab4c52ff8d4915a23f25890f6bd4c719919db42a991b28b19b25eeaab52c32"
+  },
+  {
+    "id": "backup-1755712800018",
+    "configId": "default-daily",
+    "filename": "clinica-db-2025-08-20-15-00-00.sql",
+    "filepath": "/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-20-15-00-00.sql",
+    "size": 265,
+    "type": "DATABASE",
+    "status": "SUCCESS",
+    "startedAt": "2025-08-20T18:00:00.018Z",
+    "completedAt": "2025-08-20T18:00:00.062Z",
+    "checksum": "b8db6d6e37c16cbc3f50ae14d8624ead4ee9389708b703bad907fecb785c3c36"
+  }
+]

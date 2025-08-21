@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default-daily",
+    "name": "Backup Diário Automático",
+    "frequency": "DAILY",
+    "enabled": true,
+    "retentionDays": 30,
+    "includeFiles": false,
+    "includeDatabase": true,
+    "notifyOnSuccess": false,
+    "notifyOnFailure": true,
+    "createdAt": "2025-08-18T04:13:13.493Z",
+    "updatedAt": "2025-08-21T03:58:11.379Z",
+    "lastBackup": "2025-08-20T18:00:00.018Z",
+    "nextBackup": "2025-08-21T18:00:00.018Z"
+  }
+]

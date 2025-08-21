@@ -150,6 +150,7 @@ export interface Appointment extends BaseEntity {
   endTime: string
   type: AppointmentType
   status: AppointmentStatus
+  isEncaixe: boolean
   observations?: string
   checkIn?: Date
   checkOut?: Date
@@ -225,6 +226,7 @@ export interface CreateAppointmentData {
   startTime: string
   endTime: string
   type: AppointmentType
+  isEncaixe?: boolean
   observations?: string
 }
 

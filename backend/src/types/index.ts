@@ -19,3 +19,7 @@ export interface PaginatedResponse<T> {
     totalPages: number
   }
 }
+
+// Re-export all types from shared
+export * from './shared'
+export * from './entities'

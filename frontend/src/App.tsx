@@ -9,6 +9,9 @@ import { AppointmentsPage } from './features/appointments'
 import { RoomsPage } from './features/rooms'
 import { ProductsPage } from './features/products'
 import { NotificationsPage } from './features/notifications'
+import { FinancialPage } from './features/financial'
+import { BackupPage } from './features/backup'
+import { ReportsPage } from './features/reports'
 import { LoginForm, ProtectedRoute, AdminRoute } from './components/auth'
 import { Toaster } from './components/ui/toaster'
 import { queryClient } from './lib/react-query'
@@ -90,7 +93,7 @@ function App() {
         <Route path="/financial" element={
           <ProtectedRoute>
             <AppLayout>
-              <div>Financeiro</div>
+              <FinancialPage />
             </AppLayout>
           </ProtectedRoute>
         } />
@@ -99,6 +102,22 @@ function App() {
           <ProtectedRoute>
             <AppLayout>
               <div>Relatórios</div>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/backup" element={
+          <AdminRoute>
+            <AppLayout>
+              <BackupPage />
+            </AppLayout>
+          </AdminRoute>
+        } />
+        
+        <Route path="/reports" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <ReportsPage />
             </AppLayout>
           </ProtectedRoute>
         } />

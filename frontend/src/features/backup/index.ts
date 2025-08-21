@@ -1,0 +1,5 @@
+export { BackupPage } from './BackupPage'
+export { BackupConfigurations } from './components/BackupConfigurations'
+export { BackupConfigForm } from './components/BackupConfigForm'
+export { BackupHistory } from './components/BackupHistory'
+export { BackupStats } from './components/BackupStats'

@@ -32,6 +32,7 @@ const appointmentSchema = z.object({
   startTime: z.string().min(1, 'Selecione um horário'),
   endTime: z.string().min(1, 'Horário de fim é obrigatório'),
   type: z.enum(['CONSULTATION', 'EXAM', 'PROCEDURE', 'RETURN']),
+  isEncaixe: z.boolean().default(false),
   observations: z.string().optional(),
 })
 
@@ -510,8 +511,12 @@ export function AppointmentForm({
                   </div>
                 ) : availabilityCheck.available === false ? (
                   <div className="space-y-2">
-                    <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-                      Conflito de Horário
+                    <Badge variant="outline" className={
+                      form.watch('isEncaixe') 
+                        ? "bg-orange-50 text-orange-700 border-orange-200"
+                        : "bg-red-50 text-red-700 border-red-200"
+                    }>
+                      {form.watch('isEncaixe') ? '📌 Encaixe Permitido' : 'Conflito de Horário'}
                     </Badge>
                     {availabilityCheck.conflicts.length > 0 && (
                       <div className="text-sm text-gray-600">
@@ -541,6 +546,14 @@ export function AppointmentForm({
                             </li>
                           ))}
                         </ul>
+                        {form.watch('isEncaixe') && (
+                          <div className="mt-2 p-2 bg-orange-50 rounded border border-orange-200">
+                            <p className="text-xs text-orange-700">
+                              💡 <strong>Encaixe permitido:</strong> Como esta opção está marcada, 
+                              os conflitos de horário são ignorados e o agendamento pode ser criado.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -548,6 +561,25 @@ export function AppointmentForm({
               </CardContent>
             </Card>
           )}
+
+          {/* Encaixe */}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isEncaixe"
+                {...form.register('isEncaixe')}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <Label htmlFor="isEncaixe" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                📌 Encaixe
+              </Label>
+            </div>
+            <p className="text-xs text-gray-500 ml-6">
+              Marque esta opção para permitir agendamento mesmo em horários já ocupados. 
+              Útil para casos urgentes ou encaixes rápidos entre consultas.
+            </p>
+          </div>
 
           {/* Observações */}
           <div className="space-y-2">
@@ -627,7 +659,7 @@ export function AppointmentForm({
               disabled={
                 form.formState.isSubmitting || 
                 availabilityCheck.checking ||
-                availabilityCheck.available === false ||
+                (availabilityCheck.available === false && !form.watch('isEncaixe')) ||
                 createAppointment.isPending ||
                 updateAppointment.isPending
               }

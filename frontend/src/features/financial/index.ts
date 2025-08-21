@@ -1,1 +1,5 @@
-// Financial feature exports will be here
+export { default as FinancialPage } from './FinancialPage'
+export { FinancialEntryForm } from './components/FinancialEntryForm'
+export { CashFlowChart } from './components/CashFlowChart'
+export { DREReport } from './components/DREReport'
+export { AccountsDashboard } from './components/AccountsDashboard'

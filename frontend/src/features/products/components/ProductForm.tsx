@@ -63,7 +63,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [tempCategories, setTempCategories] = useState<any[]>([])
   
   const { data: productData } = useProduct(productId || '')
-  const { data: categoriesData, refetch: refetchCategories } = useCategories({ active: true, limit: 100 })
+  const { data: categoriesData, refetch: refetchCategories, isLoading: categoriesLoading, error: categoriesError } = useCategories({ active: true, limit: 100 })
+  
+  // Debug: Log do useCategories
+  console.log('🔍 ProductForm useCategories Debug:', {
+    categoriesData,
+    categoriesLoading,
+    categoriesError,
+    hasData: !!categoriesData,
+    dataType: typeof categoriesData,
+    dataKeys: categoriesData ? Object.keys(categoriesData) : 'N/A'
+  })
   const createProduct = useCreateProduct()
   const updateProduct = useUpdateProduct()
   const createCategory = useCreateCategory()
@@ -93,6 +103,24 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = form
   const watchedType = watch('type')
   const watchedRequiresSpecialPrep = watch('requiresSpecialPrep')
+  const [stableType, setStableType] = useState<string>('')
+  
+  // Garantir que sempre temos um tipo válido para filtrar categorias
+  useEffect(() => {
+    if (watchedType && watchedType !== '') {
+      setStableType(watchedType)
+    } else if (isEditing && productData) {
+      const product = productData.data || productData
+      if (product?.type) {
+        setStableType(product.type)
+      }
+    }
+  }, [watchedType, isEditing, productData])
+  
+  // Usar watchedType como prioridade, depois stableType, depois default
+  const effectiveType = watchedType || stableType || 'PRODUCT'
+  
+  console.log('🔍 ProductForm RENDER: watchedType =', watchedType, 'stableType =', stableType, 'effectiveType =', effectiveType)
 
   // Load product data for editing
   useEffect(() => {
@@ -128,6 +156,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         setValue('observations', product.observations || '')
         
         console.log('🔍 ProductForm: Form values set successfully')
+        console.log('🔍 ProductForm: Type value after setting:', watch('type'))
+        console.log('🔍 ProductForm: All form values:', form.getValues())
+      }
+    }
+  }, [isEditing, productData, setValue])
+
+  // Ensure type is set correctly after product data loads
+  useEffect(() => {
+    if (isEditing && productData) {
+      const product = productData.data || productData
+      if (product && product.type) {
+        console.log('🔍 ProductForm: Forcing type update to:', product.type)
+        setValue('type', product.type, { shouldDirty: true, shouldTouch: true })
       }
     }
   }, [isEditing, productData, setValue])
@@ -148,7 +189,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     try {
       const response = await createCategory.mutateAsync({
         name: newCategoryName.trim(),
-        type: watchedType,
+        type: effectiveType,
         description: newCategoryDescription.trim() || undefined
       })
 
@@ -183,14 +224,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         description: data.description || undefined,
         observations: data.observations || undefined,
         // Service specific
-        durationMinutes: watchedType === ServiceType.SERVICE ? data.durationMinutes : undefined,
-        availableForBooking: watchedType === ServiceType.SERVICE ? data.availableForBooking : false,
-        requiresSpecialPrep: watchedType === ServiceType.SERVICE ? data.requiresSpecialPrep : false,
-        specialPrepDetails: watchedType === ServiceType.SERVICE && data.requiresSpecialPrep 
+        durationMinutes: effectiveType === ServiceType.SERVICE ? data.durationMinutes : undefined,
+        availableForBooking: effectiveType === ServiceType.SERVICE ? data.availableForBooking : false,
+        requiresSpecialPrep: effectiveType === ServiceType.SERVICE ? data.requiresSpecialPrep : false,
+        specialPrepDetails: effectiveType === ServiceType.SERVICE && data.requiresSpecialPrep 
           ? data.specialPrepDetails : undefined,
         // Product specific
-        stockLevel: watchedType === ServiceType.PRODUCT ? data.stockLevel : undefined,
-        minStockLevel: watchedType === ServiceType.PRODUCT ? data.minStockLevel : undefined
+        stockLevel: effectiveType === ServiceType.PRODUCT ? data.stockLevel : undefined,
+        minStockLevel: effectiveType === ServiceType.PRODUCT ? data.minStockLevel : undefined
       }
 
       if (isEditing && productId) {
@@ -212,6 +253,66 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     !fetchedCategories.some(fetched => fetched.id === temp.id)
   )]
   const categories = allCategories
+
+  // DEBUG: Log para verificar dados das categorias
+  console.log('🔍 ProductForm Categories Debug:', {
+    categoriesData,
+    fetchedCategories,
+    allCategories,
+    categoriesLength: categories.length,
+    watchedType,
+    effectiveType,
+    filteredCategories: categories.filter(cat => cat.type === effectiveType),
+    filteredCategoriesLength: categories.filter(cat => cat.type === effectiveType).length,
+    tempCategories,
+    firstCategoryType: categories[0]?.type,
+    firstCategoryTypeType: typeof categories[0]?.type,
+    strictComparison: categories[0]?.type === effectiveType,
+    looseComparison: categories[0]?.type == effectiveType
+  })
+
+  // DEBUG ESPECÍFICO: Verificar categorias por tipo
+  const serviceCategories = categories.filter(cat => cat.type === 'SERVICE')
+  const productCategories = categories.filter(cat => cat.type === 'PRODUCT')
+  console.log('🔍 Categorias de Serviços encontradas:', serviceCategories.map(c => c.name))
+  console.log('🔍 Categorias de Produtos encontradas:', productCategories.map(c => c.name))
+  
+  // DEBUG ESPECÍFICO: Verificar problema da categoria selecionada
+  const currentCategoryId = watch('categoryId')
+  const currentCategory = categories.find(cat => cat.id === currentCategoryId)
+  
+  // CORREÇÃO: Manter categoryId estável quando existe no produto original
+  const [stableCategoryId, setStableCategoryId] = useState<string>('')
+  
+  useEffect(() => {
+    if (isEditing && productData) {
+      const product = productData.data || productData
+      if (product?.categoryId && product.categoryId !== stableCategoryId) {
+        console.log('🔧 SALVANDO categoryId estável:', product.categoryId)
+        setStableCategoryId(product.categoryId)
+      }
+    }
+  }, [isEditing, productData, stableCategoryId])
+
+  // Se o categoryId atual está vazio mas temos um estável, restaurar
+  useEffect(() => {
+    if (stableCategoryId && !currentCategoryId && categories.length > 0) {
+      const categoryExists = categories.find(cat => cat.id === stableCategoryId)
+      if (categoryExists) {
+        console.log('🔧 RESTAURANDO categoryId:', stableCategoryId, 'para categoria:', categoryExists.name)
+        setValue('categoryId', stableCategoryId, { shouldDirty: true, shouldTouch: true })
+      }
+    }
+  }, [stableCategoryId, currentCategoryId, categories, setValue])
+
+  console.log('🔍 CATEGORIA ATUAL DEBUG:', {
+    currentCategoryId,
+    stableCategoryId,
+    currentCategory: currentCategory ? { id: currentCategory.id, name: currentCategory.name, type: currentCategory.type } : 'NÃO ENCONTRADA',
+    effectiveType,
+    shouldShowCategory: currentCategory?.type === effectiveType,
+    watchedTypeEmpty: watchedType === ''
+  })
 
   // DEBUG: Log para verificar dados do produto
   console.log('🔍 ProductForm useProduct Status:', {
@@ -284,7 +385,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <SelectTrigger className="flex-1">
                         <SelectValue 
                           placeholder={
-                            categories.filter(cat => cat.type === watchedType).length === 0
+                            categories.filter(cat => cat.type === effectiveType).length === 0
                               ? "Nenhuma categoria disponível"
                               : "Selecione a categoria"
                           } 
@@ -292,15 +393,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </SelectTrigger>
                       <SelectContent>
                         {categories
-                          .filter(cat => cat.type === watchedType)
+                          .filter(cat => cat.type === effectiveType)
                           .map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.name}
                             </SelectItem>
                           ))}
-                        {categories.filter(cat => cat.type === watchedType).length === 0 && (
+                        {categories.filter(cat => cat.type === effectiveType).length === 0 && (
                           <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                            Nenhuma categoria encontrada
+                            {categories.length === 0 ? 'Nenhuma categoria carregada' : 'Nenhuma categoria encontrada para este tipo'}
                           </div>
                         )}
                       </SelectContent>
@@ -316,7 +417,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <DialogHeader>
                           <DialogTitle>Nova Categoria</DialogTitle>
                           <DialogDescription>
-                            Criar uma nova categoria para {watchedType === ServiceType.PRODUCT ? 'produtos' : 'serviços'}
+                            Criar uma nova categoria para {effectiveType === ServiceType.PRODUCT ? 'produtos' : 'serviços'}
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
@@ -445,7 +546,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </TabsContent>
 
         <TabsContent value="config" className="space-y-4">
-          {watchedType === ServiceType.SERVICE && (
+          {effectiveType === ServiceType.SERVICE && (
             <Card>
               <CardHeader>
                 <CardTitle>Configurações do Serviço</CardTitle>
@@ -504,7 +605,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             </Card>
           )}
 
-          {watchedType === ServiceType.PRODUCT && (
+          {effectiveType === ServiceType.PRODUCT && (
             <Card>
               <CardHeader>
                 <CardTitle>Controle de Estoque</CardTitle>

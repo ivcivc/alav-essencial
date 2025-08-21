@@ -87,6 +87,34 @@ async function registerPlugins() {
   const notificationsRoutes = await import('./routes/notifications')
   await fastify.register(notificationsRoutes.default, { prefix: '/api/notifications' })
   
+  // Import financial routes
+  const financialRoutes = await import('./routes/financial')
+  await fastify.register(financialRoutes.default, { prefix: '/api/financial' })
+
+  // Import partner settlement routes
+  const partnerSettlementRoutes = await import('./routes/partner-settlement')
+  await fastify.register(partnerSettlementRoutes.default, { prefix: '/api/partner-settlement' })
+  
+  // Import backup routes
+  const backupRoutes = await import('./routes/backup')
+  await fastify.register(backupRoutes.default, { prefix: '/api/backup' })
+
+  // Import clinic settings routes
+  const clinicSettingsRoutes = await import('./routes/clinic-settings')
+  await fastify.register(clinicSettingsRoutes.default, { prefix: '/api/clinic-settings' })
+
+  // Import dashboard routes
+  const dashboardRoutes = await import('./routes/dashboard')
+  await fastify.register(dashboardRoutes.default, { prefix: '/api/dashboard' })
+
+  // Import reports routes
+  const reportsRoutes = await import('./routes/reports')
+  await fastify.register(reportsRoutes.default, { prefix: '/api/reports' })
+
+  // Import financial automation routes
+  const financialAutomationRoutes = await import('./routes/financial/automation')
+  await fastify.register(financialAutomationRoutes.default, { prefix: '/api/financial/automation' })
+  
   await fastify.register(async function (fastify) {
     fastify.get('/health', async () => {
       return { status: 'ok', timestamp: new Date().toISOString() }
@@ -96,6 +124,10 @@ async function registerPlugins() {
   // 🔔 Inicializar agendador de notificações
   const { NotificationSchedulerSingleton } = await import('./services/notification-scheduler')
   NotificationSchedulerSingleton.start(fastify.prisma)
+  
+  // Initialize backup scheduler
+  const { backupScheduler } = await import('./services/backup-scheduler')
+  await backupScheduler.initialize()
 }
 
 // Start server

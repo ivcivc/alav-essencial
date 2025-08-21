@@ -302,7 +302,7 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                       <SelectValue placeholder="Qualquer profissional" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Qualquer profissional</SelectItem>
+                      <SelectItem value="all">Qualquer profissional</SelectItem>
                       {partners.map(partner => (
                         <SelectItem key={partner.id} value={partner.id}>
                           {partner.fullName}

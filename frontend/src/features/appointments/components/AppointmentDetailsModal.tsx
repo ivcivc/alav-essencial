@@ -8,7 +8,7 @@ import { Badge } from '../../../components/ui/badge'
 import { Textarea } from '../../../components/ui/textarea'
 import { Label } from '../../../components/ui/label'
 import { AppointmentForm } from './AppointmentForm'
-import { useAppointment, useCancelAppointment, useCheckInAppointment, useCheckOutAppointment, useUpdateAppointment, useUndoCheckInAppointment, useUndoCheckOutAppointment } from '../../../hooks/useAppointments'
+import { useAppointment, useCancelAppointment, useCheckInAppointment, useCheckOutAppointment, useCheckOutAppointmentWithPayment, useUpdateAppointment, useUndoCheckInAppointment, useUndoCheckOutAppointment, useCancelCheckout } from '../../../hooks/useAppointments'
 import { useToast } from '../../../hooks/useToast'
 import { Appointment, AppointmentStatus } from '../../../types/entities'
 import { 
@@ -26,8 +26,11 @@ import {
   LogOut,
   FileText,
   AlertCircle,
-  Undo2
+  DollarSign,
+  Undo2,
+  CreditCard
 } from 'lucide-react'
+import { CheckoutPaymentModal } from './CheckoutPaymentModal'
 
 interface AppointmentDetailsModalProps {
   appointmentId?: string
@@ -65,8 +68,11 @@ export function AppointmentDetailsModal({
   const [isEditingObservations, setIsEditingObservations] = useState(false)
   const [showCheckInConfirmation, setShowCheckInConfirmation] = useState(false)
   const [showCheckOutConfirmation, setShowCheckOutConfirmation] = useState(false)
+  const [showCheckOutPayment, setShowCheckOutPayment] = useState(false)
   const [showUndoCheckInConfirmation, setShowUndoCheckInConfirmation] = useState(false)
   const [showUndoCheckOutConfirmation, setShowUndoCheckOutConfirmation] = useState(false)
+  const [showCancelCheckout, setShowCancelCheckout] = useState(false)
+  const [cancelCheckoutReason, setCancelCheckoutReason] = useState('')
 
   // Sempre buscar dados atualizados se tivermos um ID
   const effectiveAppointmentId = appointmentId || propAppointment?.id
@@ -82,9 +88,11 @@ export function AppointmentDetailsModal({
   const cancelAppointment = useCancelAppointment()
   const checkInAppointment = useCheckInAppointment()
   const checkOutAppointment = useCheckOutAppointment()
+  const checkOutAppointmentWithPayment = useCheckOutAppointmentWithPayment()
   const undoCheckInAppointment = useUndoCheckInAppointment()
   const undoCheckOutAppointment = useUndoCheckOutAppointment()
   const updateAppointment = useUpdateAppointment()
+  const cancelCheckout = useCancelCheckout()
 
   if (!appointment && isLoading) {
     return (
@@ -126,7 +134,7 @@ export function AppointmentDetailsModal({
       setCancellationReason('')
       toast({
         title: "Agendamento cancelado",
-        description: "O agendamento foi cancelado com sucesso.",
+        description: "O agendamento foi cancelado com sucesso. Lançamentos financeiros relacionados foram automaticamente cancelados.",
         variant: "default",
       })
     } catch (error: any) {
@@ -170,6 +178,22 @@ export function AppointmentDetailsModal({
     } catch (error: any) {
       console.error('Erro no check-out:', error)
       setShowCheckOutConfirmation(false)
+    }
+  }
+
+  const handleCheckOutWithPayment = async (paymentData: any) => {
+    try {
+      await checkOutAppointmentWithPayment.mutateAsync({
+        id: appointment.id,
+        paymentData
+      })
+      setShowCheckOutPayment(false)
+      setTimeout(() => {
+        onOpenChange(false)
+      }, 1500) // Fechar modal após 1.5s para permitir ver o toast
+    } catch (error: any) {
+      console.error('Erro no checkout financeiro:', error)
+      throw error // Re-throw para que o modal possa tratar o erro
     }
   }
 
@@ -229,10 +253,26 @@ export function AppointmentDetailsModal({
     }
   }
 
+  const handleCancelCheckout = async () => {
+    if (!cancelCheckoutReason.trim()) return
+    
+    try {
+      await cancelCheckout.mutateAsync({
+        id: appointment.id,
+        reason: cancelCheckoutReason
+      })
+      setShowCancelCheckout(false)
+      setCancelCheckoutReason('')
+    } catch (error: any) {
+      console.error('Erro ao cancelar checkout:', error)
+    }
+  }
+
   const canCheckIn = appointment.status === 'SCHEDULED' || appointment.status === 'CONFIRMED'
   const canCheckOut = appointment.status === 'IN_PROGRESS'
   const canUndoCheckIn = appointment.status === 'IN_PROGRESS' && appointment.checkIn
   const canUndoCheckOut = appointment.status === 'COMPLETED' && appointment.checkOut
+  const canCancelCheckout = appointment.status === 'COMPLETED' && appointment.checkOut // Pode cancelar checkout se foi finalizado
   const canCancel = ['SCHEDULED', 'CONFIRMED'].includes(appointment.status)
   const canEdit = ['SCHEDULED', 'CONFIRMED'].includes(appointment.status)
 
@@ -535,16 +575,29 @@ export function AppointmentDetailsModal({
                 )}
                 
                 {canCheckOut && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCheckOutClick}
-                    disabled={checkOutAppointment.isPending}
-                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                  >
-                    <LogOut className="w-4 h-4 mr-1" />
-                    {checkOutAppointment.isPending ? 'Fazendo Check-out...' : 'Check-out'}
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCheckOutClick}
+                      disabled={checkOutAppointment.isPending}
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                    >
+                      <LogOut className="w-4 h-4 mr-1" />
+                      {checkOutAppointment.isPending ? 'Fazendo Check-out...' : 'Check-out'}
+                    </Button>
+                    
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setShowCheckOutPayment(true)}
+                      disabled={checkOutAppointmentWithPayment.isPending}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <CreditCard className="w-4 h-4 mr-1" />
+                      {checkOutAppointmentWithPayment.isPending ? 'Processando...' : 'Check-out + Financeiro'}
+                    </Button>
+                  </>
                 )}
 
                 {canUndoCheckIn && (
@@ -570,6 +623,18 @@ export function AppointmentDetailsModal({
                   >
                     <Undo2 className="w-4 h-4 mr-1" />
                     {undoCheckOutAppointment.isPending ? 'Desfazendo...' : 'Desfazer Check-out'}
+                  </Button>
+                )}
+
+                {canCancelCheckout && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowCancelCheckout(true)}
+                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                  >
+                    <DollarSign className="w-4 h-4 mr-1" />
+                    Cancelar Checkout
                   </Button>
                 )}
               </div>
@@ -746,9 +811,21 @@ export function AppointmentDetailsModal({
             <p className="text-sm text-gray-600">
               Confirma que deseja desfazer o check-out do paciente <strong>{appointment?.patient?.fullName}</strong>?
             </p>
-            <p className="text-xs text-purple-600 bg-purple-50 p-3 rounded-lg border border-purple-200">
-              ⚠️ <strong>Atenção:</strong> O status do agendamento voltará para "Em andamento" e o horário de check-out será removido.
-            </p>
+            <div className="text-xs text-purple-600 bg-purple-50 p-3 rounded-lg border border-purple-200">
+              <p className="font-semibold mb-1">⚠️ Atenção:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>O status do agendamento voltará para "Em andamento"</li>
+                <li>O horário de check-out será removido</li>
+              </ul>
+            </div>
+            <div className="text-xs text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+              <p className="font-semibold mb-1">💰 Importante sobre lançamentos financeiros:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li><strong>Os lançamentos financeiros NÃO serão cancelados</strong></li>
+                <li>Se precisar cancelar pagamentos, use "Cancelar Checkout" em vez disso</li>
+                <li>Esta ação apenas desfaz o status do agendamento</li>
+              </ul>
+            </div>
             <p className="text-xs text-gray-500">
               A janela será fechada automaticamente após a confirmação.
             </p>
@@ -771,6 +848,69 @@ export function AppointmentDetailsModal({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal de Checkout com Pagamento */}
+      {/* Modal de Cancelar Checkout */}
+      <Dialog open={showCancelCheckout} onOpenChange={setShowCancelCheckout}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-orange-600" />
+              Cancelar Checkout
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Confirma que deseja cancelar o checkout financeiro do agendamento de <strong>{appointment?.patient?.fullName}</strong>?
+            </p>
+            <div className="text-xs text-orange-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
+              <p className="font-semibold mb-1">⚠️ Atenção:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Todos os lançamentos financeiros relacionados serão cancelados</li>
+                <li>Os saldos das contas bancárias serão ajustados automaticamente</li>
+                <li>O agendamento voltará para o status "Em andamento"</li>
+                <li>Esta ação permite refazer o checkout corretamente</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cancel-checkout-reason">Motivo do cancelamento*</Label>
+              <Textarea
+                id="cancel-checkout-reason"
+                placeholder="Ex: Erro no valor, forma de pagamento incorreta, etc."
+                value={cancelCheckoutReason}
+                onChange={(e) => setCancelCheckoutReason(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCancelCheckout(false)
+                  setCancelCheckoutReason('')
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleCancelCheckout}
+                disabled={!cancelCheckoutReason.trim() || cancelCheckout.isPending}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                {cancelCheckout.isPending ? 'Cancelando...' : 'Confirmar Cancelamento'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <CheckoutPaymentModal
+        appointment={appointment}
+        isOpen={showCheckOutPayment}
+        onClose={() => setShowCheckOutPayment(false)}
+        onSubmit={handleCheckOutWithPayment}
+        isLoading={checkOutAppointmentWithPayment.isPending}
+      />
     </>
   )
 }

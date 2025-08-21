@@ -32,6 +32,11 @@ export function decimalToNumber(decimal: Decimal | null | undefined): number | u
   return decimal ? decimal.toNumber() : undefined
 }
 
+// Convert Prisma Decimal to number (always returns a number, defaulting to 0)
+export function convertPrismaDecimal(decimal: Decimal | null | undefined): number {
+  return decimal ? decimal.toNumber() : 0
+}
+
 // Convert Prisma entities to API entities
 export function convertPrismaPatient(prismaPatient: PrismaPatient): Patient {
   return {
