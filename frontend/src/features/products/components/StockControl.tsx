@@ -289,7 +289,16 @@ export const StockControl: React.FC<StockControlProps> = ({
                         </TableCell>
                         
                         <TableCell>
-                          <Badge variant={stockStatus.color}>
+                          <Badge 
+                            variant={
+                              stockStatus.status === 'ok' ? 'success' : 
+                              stockStatus.status === 'low' ? 'warning' : 'destructive'
+                            }
+                            className={
+                              stockStatus.status === 'ok' ? 'badge-stock-ok' : 
+                              stockStatus.status === 'low' ? 'badge-stock-low' : 'badge-stock-out'
+                            }
+                          >
                             {stockStatus.status === 'out' && <AlertTriangle className="h-3 w-3 mr-1" />}
                             {stockStatus.status === 'low' && <AlertTriangle className="h-3 w-3 mr-1" />}
                             {stockStatus.label}

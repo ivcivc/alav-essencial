@@ -193,12 +193,12 @@ export const RoomsList: React.FC<RoomsListProps> = ({
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {room.resources?.slice(0, 3).map((resource, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
+                            <Badge key={index} variant="info" className="text-xs badge-available">
                               {resource}
                             </Badge>
                           ))}
                           {room.resources && room.resources.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="info" className="text-xs badge-available">
                               +{room.resources.length - 3}
                             </Badge>
                           )}
@@ -209,8 +209,8 @@ export const RoomsList: React.FC<RoomsListProps> = ({
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={room.active ? "default" : "secondary"}
-                          className="flex items-center gap-1 w-fit"
+                          variant={room.active ? "success" : "secondary"}
+                          className={`flex items-center gap-1 w-fit ${room.active ? 'badge-active' : 'badge-inactive'}`}
                         >
                           {room.active ? (
                             <CheckCircle className="h-3 w-3" />

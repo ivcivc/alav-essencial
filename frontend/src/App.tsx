@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
+import { ThemeProvider } from './contexts/ThemeContext'
+
 import { AppLayout } from './components/layout/AppLayout'
 import { Dashboard } from './features/dashboard/Dashboard'
 import { PatientsPage } from './features/patients'
@@ -12,6 +14,7 @@ import { NotificationsPage } from './features/notifications'
 import { FinancialPage } from './features/financial'
 import { BackupPage } from './features/backup'
 import { ReportsPage } from './features/reports'
+import { SettingsPage } from './features/settings'
 import { LoginForm, ProtectedRoute, AdminRoute } from './components/auth'
 import { Toaster } from './components/ui/toaster'
 import { queryClient } from './lib/react-query'
@@ -20,7 +23,8 @@ import './styles/modal-improvements.css'
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginForm />} />
@@ -125,7 +129,7 @@ function App() {
         <Route path="/settings" element={
           <AdminRoute>
             <AppLayout>
-              <div>Configurações</div>
+              <SettingsPage />
             </AppLayout>
           </AdminRoute>
         } />
@@ -133,8 +137,9 @@ function App() {
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-      <Toaster />
-    </AuthProvider>
+              <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

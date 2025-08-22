@@ -219,7 +219,10 @@ export const PatientsList: React.FC<PatientsListProps> = ({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={patient.active ? "default" : "secondary"}>
+                        <Badge 
+                          variant={patient.active ? "success" : "secondary"}
+                          className={patient.active ? 'badge-active' : 'badge-inactive'}
+                        >
                           {patient.active ? 'Ativo' : 'Inativo'}
                         </Badge>
                       </TableCell>

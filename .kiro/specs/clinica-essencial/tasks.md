@@ -307,14 +307,14 @@ Object# Plano de Implementação - Clínica Essencial
     - Implementar exportação de relatórios integrada com backend
     - _Requisitos: 10.3, 10.4, 10.5_
 
-- [ ] 13. Configurações do sistema
-  - [ ] 13.1 Implementar configurações gerais
+- [x] 13. Configurações do sistema
+  - [x] 13.1 Implementar configurações gerais
     - Criar interface para horários de funcionamento da clínica
     - Implementar configurações de regras de agendamento
     - Criar configurações de notificações
     - _Requisitos: 6.1, 6.2, 6.3_
 
-  - [ ] 13.2 Criar sistema de temas e responsividade
+  - [x] 13.2 Criar sistema de temas e responsividade
     - Implementar alternância entre tema claro e escuro
     - Garantir responsividade completa para mobile
     - Criar componentes adaptativos para diferentes tamanhos de tela

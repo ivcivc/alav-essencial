@@ -35,20 +35,37 @@ export const PatientHistory: React.FC<PatientHistoryProps> = ({ patientId }) => 
     return phone
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case 'SCHEDULED':
-        return 'bg-blue-100 text-blue-800'
+        return 'info'
       case 'CONFIRMED':
-        return 'bg-green-100 text-green-800'
+        return 'success'
       case 'IN_PROGRESS':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'warning'
       case 'COMPLETED':
-        return 'bg-gray-100 text-gray-800'
+        return 'success'
       case 'CANCELLED':
-        return 'bg-red-100 text-red-800'
+        return 'destructive'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'secondary'
+    }
+  }
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'badge-available'
+      case 'CONFIRMED':
+        return 'badge-active'
+      case 'IN_PROGRESS':
+        return 'badge-unavailable'
+      case 'COMPLETED':
+        return 'badge-active'
+      case 'CANCELLED':
+        return 'badge-stock-out'
+      default:
+        return 'badge-inactive'
     }
   }
 
@@ -122,7 +139,10 @@ export const PatientHistory: React.FC<PatientHistoryProps> = ({ patientId }) => 
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500">Status</p>
-              <Badge variant={patient.active ? "default" : "secondary"}>
+              <Badge 
+                variant={patient.active ? "success" : "secondary"}
+                className={patient.active ? 'badge-active' : 'badge-inactive'}
+              >
                 {patient.active ? 'Ativo' : 'Inativo'}
               </Badge>
             </div>
@@ -248,7 +268,10 @@ export const PatientHistory: React.FC<PatientHistoryProps> = ({ patientId }) => 
                           {appointment.startTime} - {appointment.endTime}
                         </span>
                       </div>
-                      <Badge className={getStatusColor(appointment.status)}>
+                      <Badge 
+                        variant={getStatusVariant(appointment.status) as any}
+                        className={getStatusClass(appointment.status)}
+                      >
                         {getStatusText(appointment.status)}
                       </Badge>
                     </div>

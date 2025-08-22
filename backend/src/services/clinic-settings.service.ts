@@ -32,19 +32,17 @@ class ClinicSettingsService {
    */
   async getSettings(): Promise<ClinicSettings> {
     try {
-      // Buscar configurações no banco (simulando uma tabela de configurações)
-      let settings = await prisma.$queryRaw<any[]>`
-        SELECT * FROM clinic_settings LIMIT 1
-      `.catch(() => null)
+      // Buscar configurações no banco
+      let settings = await prisma.clinicSettings.findFirst()
 
-      if (!settings || settings.length === 0) {
+      if (!settings) {
         // Criar configurações padrão se não existir
         return this.createDefaultSettings()
       }
 
       return {
-        ...settings[0],
-        hours: JSON.parse(settings[0].hours || '[]')
+        ...settings,
+        hours: settings.hours as ClinicHours[]
       }
     } catch (error) {
       console.error('Erro ao buscar configurações da clínica:', error)
@@ -57,21 +55,48 @@ class ClinicSettingsService {
    */
   async updateSettings(settings: Partial<ClinicSettings>): Promise<ClinicSettings> {
     try {
-      const currentSettings = await this.getSettings()
+      // Verificar se já existe configuração
+      const existingSettings = await prisma.clinicSettings.findFirst()
       
-      const updatedSettings = {
-        ...currentSettings,
-        ...settings,
-        hours: settings.hours ? JSON.stringify(settings.hours) : JSON.stringify(currentSettings.hours),
-        updatedAt: new Date()
+      let updatedSettings
+      
+      if (existingSettings) {
+        // Atualizar configurações existentes
+        updatedSettings = await prisma.clinicSettings.update({
+          where: { id: existingSettings.id },
+          data: {
+            name: settings.name,
+            hours: settings.hours as any,
+            allowWeekendBookings: settings.allowWeekendBookings,
+            advanceBookingDays: settings.advanceBookingDays,
+            minBookingHours: settings.minBookingHours,
+            maxBookingDays: settings.maxBookingDays,
+            allowCancelledMovement: settings.allowCancelledMovement,
+            allowCompletedMovement: settings.allowCompletedMovement,
+          }
+        })
+      } else {
+        // Criar novas configurações
+        const defaultSettings = this.createDefaultSettings()
+        updatedSettings = await prisma.clinicSettings.create({
+          data: {
+            name: settings.name || defaultSettings.name,
+            hours: (settings.hours || defaultSettings.hours) as any,
+            allowWeekendBookings: settings.allowWeekendBookings ?? defaultSettings.allowWeekendBookings,
+            advanceBookingDays: settings.advanceBookingDays ?? defaultSettings.advanceBookingDays,
+            minBookingHours: settings.minBookingHours ?? defaultSettings.minBookingHours,
+            maxBookingDays: settings.maxBookingDays ?? defaultSettings.maxBookingDays,
+            allowCancelledMovement: settings.allowCancelledMovement ?? defaultSettings.allowCancelledMovement,
+            allowCompletedMovement: settings.allowCompletedMovement ?? defaultSettings.allowCompletedMovement,
+          }
+        })
       }
 
-      // Simular update (na prática seria uma tabela real)
       console.log('🏥 Configurações da clínica atualizadas:', updatedSettings)
       
       return {
         ...updatedSettings,
-        hours: JSON.parse(updatedSettings.hours)
+        hours: updatedSettings.hours as ClinicHours[]
       }
     } catch (error) {
       console.error('Erro ao atualizar configurações:', error)

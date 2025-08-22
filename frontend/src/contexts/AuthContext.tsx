@@ -41,7 +41,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(response.user)
       setToken(storedToken)
     } catch (error) {
-      console.error('Failed to initialize auth:', error)
+      // Silenciar erros de rede durante inicialização
+      if (error instanceof TypeError && error.message === 'Load failed') {
+        console.warn('Network error during auth initialization - user may be offline')
+      } else {
+        console.error('Failed to initialize auth:', error)
+      }
       authService.clearToken()
     } finally {
       setIsLoading(false)

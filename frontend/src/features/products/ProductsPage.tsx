@@ -243,7 +243,10 @@ export const ProductsPage: React.FC = () => {
                       <CardTitle className="text-lg">{category.name}</CardTitle>
                       <CardDescription>{category.description}</CardDescription>
                     </div>
-                    <Badge variant={category.type === ServiceType.PRODUCT ? 'default' : 'secondary'}>
+                    <Badge 
+                      variant={category.type === ServiceType.PRODUCT ? 'success' : 'info'}
+                      className={category.type === ServiceType.PRODUCT ? 'badge-product' : 'badge-service'}
+                    >
                       {category.type === ServiceType.PRODUCT ? 'Produto' : 'Serviço'}
                     </Badge>
                   </div>

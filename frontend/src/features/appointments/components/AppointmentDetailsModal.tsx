@@ -567,7 +567,6 @@ export function AppointmentDetailsModal({
                     size="sm"
                     onClick={handleCheckInClick}
                     disabled={checkInAppointment.isPending}
-                    className="text-green-600 border-green-200 hover:bg-green-50"
                   >
                     <LogIn className="w-4 h-4 mr-1" />
                     {checkInAppointment.isPending ? 'Fazendo Check-in...' : 'Check-in'}
@@ -581,7 +580,7 @@ export function AppointmentDetailsModal({
                       size="sm"
                       onClick={handleCheckOutClick}
                       disabled={checkOutAppointment.isPending}
-                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      className="text-blue-700 bg-blue-50 border-blue-300 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30 dark:border-blue-600 dark:hover:bg-blue-900/50 font-semibold"
                     >
                       <LogOut className="w-4 h-4 mr-1" />
                       {checkOutAppointment.isPending ? 'Fazendo Check-out...' : 'Check-out'}
@@ -606,7 +605,7 @@ export function AppointmentDetailsModal({
                     size="sm"
                     onClick={handleUndoCheckInClick}
                     disabled={undoCheckInAppointment.isPending}
-                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                    className="text-orange-700 bg-orange-50 border-orange-300 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30 dark:border-orange-600 dark:hover:bg-orange-900/50 font-semibold"
                   >
                     <Undo2 className="w-4 h-4 mr-1" />
                     {undoCheckInAppointment.isPending ? 'Desfazendo...' : 'Desfazer Check-in'}
@@ -619,7 +618,7 @@ export function AppointmentDetailsModal({
                     size="sm"
                     onClick={handleUndoCheckOutClick}
                     disabled={undoCheckOutAppointment.isPending}
-                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                    className="text-purple-700 bg-purple-50 border-purple-300 hover:bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30 dark:border-purple-600 dark:hover:bg-purple-900/50 font-semibold"
                   >
                     <Undo2 className="w-4 h-4 mr-1" />
                     {undoCheckOutAppointment.isPending ? 'Desfazendo...' : 'Desfazer Check-out'}
@@ -631,7 +630,7 @@ export function AppointmentDetailsModal({
                     variant="outline"
                     size="sm"
                     onClick={() => setShowCancelCheckout(true)}
-                    className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                    className="text-orange-700 bg-orange-50 border-orange-300 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30 dark:border-orange-600 dark:hover:bg-orange-900/50 font-semibold"
                   >
                     <DollarSign className="w-4 h-4 mr-1" />
                     Cancelar Checkout
@@ -645,7 +644,6 @@ export function AppointmentDetailsModal({
                     variant="outline"
                     size="sm"
                     onClick={() => setShowCancelForm(true)}
-                    className="text-red-600 border-red-200 hover:bg-red-50"
                   >
                     <X className="w-4 h-4 mr-1" />
                     Cancelar
@@ -708,6 +706,7 @@ export function AppointmentDetailsModal({
                 variant="outline"
                 onClick={() => setShowCheckInConfirmation(false)}
                 disabled={checkInAppointment.isPending}
+                className="text-gray-700 bg-gray-50 border-gray-300 hover:bg-gray-100 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 font-semibold"
               >
                 Cancelar
               </Button>
@@ -744,6 +743,7 @@ export function AppointmentDetailsModal({
                 variant="outline"
                 onClick={() => setShowCheckOutConfirmation(false)}
                 disabled={checkOutAppointment.isPending}
+                className="text-gray-700 bg-gray-50 border-gray-300 hover:bg-gray-100 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 font-semibold"
               >
                 Cancelar
               </Button>

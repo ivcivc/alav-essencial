@@ -89,40 +89,34 @@ export default async function clinicSettingsRoutes(fastify: FastifyInstance) {
   }>, reply: FastifyReply) => {
     try {
       const { date, startTime, endTime } = request.body
-      const validation = await clinicSettingsService.validateBusinessHours(
-        new Date(date),
-        startTime,
-        endTime
-      )
-      
-      return reply.send(successResponse(validation, 'Validação realizada'))
+      const validation = await clinicSettingsService.validateBusinessHours(new Date(date), startTime, endTime)
+      return reply.send(successResponse(validation, 'Validação de horário realizada'))
     } catch (error) {
       fastify.log.error(error)
       return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro na validação'))
     }
   })
 
-  // POST /api/clinic-settings/validate-advance - Validar antecedência de agendamento
-  fastify.post('/validate-advance', {
+  // POST /api/clinic-settings/validate-movement - Validar movimentação de agendamento
+  fastify.post('/validate-movement', {
     schema: {
       body: {
         type: 'object',
-        required: ['appointmentDate'],
+        required: ['status'],
         properties: {
-          appointmentDate: { type: 'string', format: 'date-time' }
+          status: { type: 'string' }
         }
       }
     }
   }, async (request: FastifyRequest<{
     Body: {
-      appointmentDate: string
+      status: string
     }
   }>, reply: FastifyReply) => {
     try {
-      const { appointmentDate } = request.body
-      const validation = await clinicSettingsService.validateBookingAdvance(new Date(appointmentDate))
-      
-      return reply.send(successResponse(validation, 'Validação de antecedência realizada'))
+      const { status } = request.body
+      const validation = await clinicSettingsService.validateAppointmentMovement(status)
+      return reply.send(successResponse(validation, 'Validação de movimentação realizada'))
     } catch (error) {
       fastify.log.error(error)
       return reply.code(400).send(errorResponse(error instanceof Error ? error.message : 'Erro na validação'))

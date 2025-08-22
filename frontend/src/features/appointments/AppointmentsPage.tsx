@@ -124,8 +124,8 @@ export function AppointmentsPage() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Agendamentos</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Agendamentos</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Gerencie agendamentos, visualize disponibilidade e organize a agenda da clínica
           </p>
         </div>
@@ -138,12 +138,12 @@ export function AppointmentsPage() {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={getActiveFiltersCount() > 0 ? 'border-blue-500 text-blue-600' : ''}
+              className={getActiveFiltersCount() > 0 ? 'border-blue-500 text-blue-600 bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:bg-blue-900/30' : 'border-gray-400 text-gray-800 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'}
             >
               <Filter className="w-4 h-4 mr-2" />
               Filtros
               {getActiveFiltersCount() > 0 && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="info" className="ml-2 badge-available">
                   {getActiveFiltersCount()}
                 </Badge>
               )}
@@ -167,17 +167,29 @@ export function AppointmentsPage() {
       )}
 
       {/* Seletor de modo de visualização */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Visualização</CardTitle>
+      <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                Visualização
+              </CardTitle>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Escolha como visualizar os agendamentos da clínica
+              </p>
+            </div>
             
-            <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
-              <TabsList>
+            <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)} className="w-full sm:w-auto">
+              <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                 {(['calendar', 'rooms', 'partners'] as ViewMode[]).map((mode) => (
-                  <TabsTrigger key={mode} value={mode} className="flex items-center gap-2">
+                  <TabsTrigger 
+                    key={mode} 
+                    value={mode} 
+                    className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-600 dark:text-gray-400 font-medium px-3 py-2 rounded-md transition-all"
+                  >
                     {getViewModeIcon(mode)}
-                    {getViewModeLabel(mode)}
+                    <span className="hidden sm:inline">{getViewModeLabel(mode)}</span>
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -218,23 +230,26 @@ export function AppointmentsPage() {
 
       {/* Informações adicionais baseadas no modo de visualização */}
       {viewMode === 'rooms' && (
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle className="text-lg">Informações das Salas</CardTitle>
+            <CardTitle className="text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
+              Legenda de Ocupação das Salas
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-100 border border-green-300 rounded" />
-                <span>Salas com baixa ocupação (&lt; 40%)</span>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-green-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Baixa ocupação (&lt; 40%)</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-100 border border-yellow-300 rounded" />
-                <span>Salas com média ocupação (40-70%)</span>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-yellow-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Média ocupação (40-70%)</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-100 border border-red-300 rounded" />
-                <span>Salas com alta ocupação (&gt; 70%)</span>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-red-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Alta ocupação (&gt; 70%)</span>
               </div>
             </div>
           </CardContent>
@@ -242,17 +257,35 @@ export function AppointmentsPage() {
       )}
 
       {viewMode === 'partners' && (
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle className="text-lg">Dicas de Disponibilidade</CardTitle>
+            <CardTitle className="text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              Legenda de Disponibilidade dos Profissionais
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-gray-600 space-y-2">
-              <p>• <strong>Verde:</strong> Horários disponíveis para agendamento</p>
-              <p>• <strong>Vermelho:</strong> Horários ocupados com agendamentos</p>
-              <p>• <strong>Amarelo:</strong> Horários bloqueados pelo profissional</p>
-              <p>• <strong>Cinza:</strong> Horários fora do expediente</p>
-              <p className="mt-3 text-blue-600">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-green-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Horários disponíveis para agendamento</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-red-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Horários ocupados com agendamentos</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-yellow-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Horários bloqueados pelo profissional</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="w-4 h-4 rounded-full bg-gray-400" />
+                <span className="font-medium text-gray-700 dark:text-gray-200">Horários fora do expediente</span>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-600 rounded-lg">
+              <p className="text-blue-700 dark:text-blue-200 font-medium flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
                 💡 Clique em um horário verde para criar um novo agendamento
               </p>
             </div>

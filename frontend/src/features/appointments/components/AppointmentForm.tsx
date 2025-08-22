@@ -74,7 +74,7 @@ export function AppointmentForm({
   onSuccess,
   trigger
 }: AppointmentFormProps) {
-  const [isOpen, setIsOpen] = useState(open || false)
+  // Remove estado interno para usar diretamente a prop open
   const [availabilityCheck, setAvailabilityCheck] = useState<{
     checking: boolean
     available: boolean | null
@@ -217,10 +217,9 @@ export function AppointmentForm({
     }
   })
 
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open)
-    onOpenChange?.(open)
-    if (!open) {
+  const handleOpenChange = (newOpen: boolean) => {
+    onOpenChange?.(newOpen)
+    if (!newOpen) {
       form.reset()
       setAvailabilityCheck({
         checking: false,
@@ -236,7 +235,7 @@ export function AppointmentForm({
   const getSelectedRoom = () => rooms.find(r => r.id === form.watch('roomId'))
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={open || false} onOpenChange={handleOpenChange}>
       {trigger && (
         <DialogTrigger asChild>
           {trigger}

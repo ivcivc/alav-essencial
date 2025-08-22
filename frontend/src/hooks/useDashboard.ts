@@ -63,3 +63,49 @@ export function useRevenueChartData(startDate: string, endDate: string, groupBy:
     staleTime: 5 * 60 * 1000, // 5 minutos
   })
 }
+
+// Hook para comparação de períodos
+export function usePeriodComparison(currentPeriod: { startDate: string; endDate: string }) {
+  // Calcular período anterior com mesmo número de dias
+  const calculatePreviousPeriod = () => {
+    const start = new Date(currentPeriod.startDate)
+    const end = new Date(currentPeriod.endDate)
+    const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    
+    const previousStart = new Date(start)
+    previousStart.setDate(previousStart.getDate() - diffDays - 1)
+    
+    const previousEnd = new Date(end)
+    previousEnd.setDate(previousEnd.getDate() - diffDays - 1)
+    
+    return {
+      startDate: previousStart.toISOString().split('T')[0],
+      endDate: previousEnd.toISOString().split('T')[0]
+    }
+  }
+
+  const previousPeriod = calculatePreviousPeriod()
+
+  // Buscar dados do período atual
+  const currentAppointments = useAppointmentMetrics(currentPeriod.startDate, currentPeriod.endDate)
+  const currentRevenue = useRevenueMetrics(currentPeriod.startDate, currentPeriod.endDate)
+  
+  // Buscar dados do período anterior
+  const previousAppointments = useAppointmentMetrics(previousPeriod.startDate, previousPeriod.endDate)
+  const previousRevenue = useRevenueMetrics(previousPeriod.startDate, previousPeriod.endDate)
+
+  return {
+    current: {
+      appointments: currentAppointments.data,
+      revenue: currentRevenue.data,
+      loading: currentAppointments.isLoading || currentRevenue.isLoading
+    },
+    previous: {
+      appointments: previousAppointments.data,
+      revenue: previousRevenue.data,
+      loading: previousAppointments.isLoading || previousRevenue.isLoading
+    },
+    isLoading: currentAppointments.isLoading || currentRevenue.isLoading || 
+               previousAppointments.isLoading || previousRevenue.isLoading
+  }
+}

@@ -23,12 +23,21 @@ const HOUR_SLOTS = Array.from({ length: 14 }, (_, i) => {
 })
 
 const STATUS_COLORS = {
-  SCHEDULED: 'bg-blue-500',
-  CONFIRMED: 'bg-green-500',
-  IN_PROGRESS: 'bg-yellow-500',
-  COMPLETED: 'bg-gray-500',
-  CANCELLED: 'bg-red-500',
-  NO_SHOW: 'bg-orange-500',
+  SCHEDULED: 'badge-available',
+  CONFIRMED: 'badge-active',
+  IN_PROGRESS: 'badge-unavailable',
+  COMPLETED: 'badge-inactive',
+  CANCELLED: 'badge-stock-out',
+  NO_SHOW: 'badge-unavailable',
+}
+
+const STATUS_VARIANTS = {
+  SCHEDULED: 'info',
+  CONFIRMED: 'success',
+  IN_PROGRESS: 'warning',
+  COMPLETED: 'secondary',
+  CANCELLED: 'destructive',
+  NO_SHOW: 'warning',
 }
 
 const STATUS_LABELS = {
@@ -193,8 +202,8 @@ export function RoomTimeline({
         <CardContent>
           {/* Resumo de ocupação das salas */}
           {activeRooms.length === 0 ? (
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800">
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+              <p className="text-yellow-800 dark:text-yellow-200">
                 {isLoading ? 'Carregando salas...' : 'Nenhuma sala ativa encontrada. Verifique se há salas cadastradas e ativas.'}
               </p>
             </div>
@@ -205,15 +214,15 @@ export function RoomTimeline({
               if (!stats) return null
 
               return (
-                <div key={room.id} className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg border">
+                <div key={room.id} className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-sm">{room.name}</div>
+                    <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{room.name}</div>
                     <div className={`text-lg font-bold ${getOccupancyColor(stats.occupancyRate)}`}>
                       {stats.occupancyRate.toFixed(0)}%
                     </div>
                   </div>
                   
-                  <div className="text-xs text-gray-600 mb-2">
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                     {stats.occupied}/{stats.total} horários ocupados
                   </div>
                   
@@ -225,7 +234,7 @@ export function RoomTimeline({
                         <div
                           key={time}
                           className={`w-2 h-2 rounded-sm ${
-                            hasAppointment ? 'bg-blue-500' : 'bg-gray-300'
+                            hasAppointment ? 'bg-blue-500 dark:bg-blue-400' : 'bg-gray-300 dark:bg-gray-600'
                           }`}
                           title={`${time} - ${hasAppointment ? 'Ocupado' : 'Livre'}`}
                         />
@@ -253,23 +262,23 @@ export function RoomTimeline({
           )}
 
           {/* Timeline principal melhorada */}
-          <div className="bg-white border rounded-lg overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
             {/* Cabeçalho das salas com scroll horizontal */}
             <div className="overflow-x-auto">
               <div className="min-w-fit">
-                <div className="bg-gray-50 border-b">
+                <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex">
-                    <div className="w-20 p-3 border-r bg-gray-100 font-medium text-sm text-gray-700 sticky left-0 z-10">
+                    <div className="w-20 p-3 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 font-medium text-sm text-gray-700 dark:text-gray-300 sticky left-0 z-10">
                       Horário
                     </div>
                     {activeRooms.map(room => (
                       <div 
                         key={room.id} 
-                        className="w-40 p-3 border-r last:border-r-0 text-center font-medium text-sm flex-shrink-0"
+                        className="w-40 p-3 border-r border-gray-200 dark:border-gray-700 last:border-r-0 text-center font-medium text-sm flex-shrink-0 bg-gray-50 dark:bg-gray-800"
                       >
-                        <div className="font-semibold text-gray-900 truncate">{room.name}</div>
+                        <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">{room.name}</div>
                         {room.description && (
-                          <div className="text-xs text-gray-500 mt-0.5 truncate">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
                             {room.description}
                           </div>
                         )}
@@ -281,9 +290,9 @@ export function RoomTimeline({
                 {/* Linhas de horários */}
                 <div className="max-h-96 overflow-y-auto">
                   {HOUR_SLOTS.map((time, index) => (
-                    <div key={time} className={`flex border-b last:border-b-0 ${index % 2 === 0 ? 'bg-gray-25' : 'bg-white'}`}>
+                    <div key={time} className={`flex border-b border-gray-200 dark:border-gray-700 last:border-b-0 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-gray-800'}`}>
                       {/* Coluna de horário - sticky */}
-                      <div className="w-20 p-3 border-r bg-gray-50 flex items-center font-medium text-sm text-gray-700 sticky left-0 z-10">
+                      <div className="w-20 p-3 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center font-medium text-sm text-gray-700 dark:text-gray-300 sticky left-0 z-10">
                         <Clock className="w-3 h-3 mr-1.5" />
                         {time}
                       </div>
@@ -296,10 +305,10 @@ export function RoomTimeline({
                         return (
                           <div 
                             key={`${room.id}-${time}`}
-                            className={`w-40 p-3 border-r last:border-r-0 min-h-[70px] cursor-pointer transition-all duration-200 flex-shrink-0 ${
+                            className={`w-40 p-3 border-r border-gray-200 dark:border-gray-700 last:border-r-0 min-h-[70px] cursor-pointer transition-all duration-200 flex-shrink-0 ${
                               hasAppointment 
-                                ? 'bg-blue-50 hover:bg-blue-100 border-l-2 border-l-blue-400' 
-                                : 'hover:bg-green-50 hover:border-l-2 hover:border-l-green-400'
+                                ? 'bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border-l-2 border-l-blue-400 dark:border-l-blue-500' 
+                                : 'hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-l-2 hover:border-l-green-400 dark:hover:border-l-green-500'
                             }`}
                             onClick={(e) => {
                               if (timeSlotAppointments.length === 1) {
@@ -323,22 +332,23 @@ export function RoomTimeline({
                                 {timeSlotAppointments.slice(0, 1).map(appointment => (
                                   <div key={appointment.id} className="space-y-1">
                                     <div className="flex items-center gap-1">
-                                      <div 
-                                        className={`w-2 h-2 rounded-full ${STATUS_COLORS[appointment.status]}`}
+                                      <Badge 
+                                        variant={STATUS_VARIANTS[appointment.status] as any}
+                                        className={`w-2 h-2 p-0 rounded-full ${STATUS_COLORS[appointment.status]}`}
                                         title={STATUS_LABELS[appointment.status]}
                                       />
-                                      <span className="font-medium text-xs truncate">
+                                      <span className="font-medium text-xs truncate dark:text-gray-100">
                                         {appointment.isEncaixe && '📌 '}
                                         {appointment.patient?.fullName}
                                       </span>
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                                    <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                                       <User className="w-3 h-3" />
                                       <span className="truncate">
                                         {appointment.partner?.fullName?.split(' ')[0]}
                                       </span>
                                     </div>
-                                    <div className="text-xs text-gray-500 truncate">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                       {appointment.productService?.name}
                                     </div>
                                   </div>
@@ -417,20 +427,20 @@ export function RoomTimeline({
           
           {/* Popup */}
           <div 
-            className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-2 min-w-64"
+            className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2 min-w-64"
             style={{
               left: `${multipleAppointmentsPosition.x - 128}px`, // 128px = metade da largura mínima
               top: `${multipleAppointmentsPosition.y - 10}px`
             }}
           >
-            <div className="text-sm font-medium text-gray-700 border-b border-gray-200 pb-2 mb-2">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
               Múltiplos agendamentos encontrados:
             </div>
             <div className="space-y-1 max-h-64 overflow-y-auto">
               {multipleAppointments.map(appointment => (
                 <button
                   key={appointment.id}
-                  className="w-full text-left p-2 rounded hover:bg-gray-50 transition-colors"
+                  className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   onClick={() => {
                     setShowMultipleAppointments(false)
                     onAppointmentClick?.(appointment)
@@ -442,14 +452,14 @@ export function RoomTimeline({
                       title={STATUS_LABELS[appointment.status]}
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">
+                      <div className="font-medium text-sm truncate text-gray-900 dark:text-gray-100">
                         {appointment.isEncaixe && '📌 '}
                         {appointment.patient?.fullName}
                       </div>
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
                         {appointment.partner?.fullName} • {appointment.productService?.name}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-500">
                         {appointment.startTime} - {appointment.endTime}
                         {appointment.isEncaixe && ' (Encaixe)'}
                       </div>
@@ -460,9 +470,9 @@ export function RoomTimeline({
             </div>
             
             {/* Opção para criar novo agendamento */}
-            <div className="border-t border-gray-200 pt-2 mt-2">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
               <button
-                className="w-full text-left p-2 rounded hover:bg-green-50 transition-colors text-green-700"
+                className="w-full text-left p-2 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors text-green-700 dark:text-green-400"
                 onClick={() => {
                   setShowMultipleAppointments(false)
                   // Assumir que temos os dados do primeiro slot para pegar sala e horário

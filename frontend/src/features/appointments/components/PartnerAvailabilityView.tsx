@@ -7,7 +7,7 @@ import { Button } from '../../../components/ui/button'
 import { usePartners, usePartnerAvailability, usePartnerBlockedDates } from '../../../hooks/usePartners'
 import { useAppointmentsByDateRange } from '../../../hooks/useAppointments'
 import { Partner, Appointment } from '../../../types/entities'
-import { Users, Clock, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Users, Clock, Calendar, CheckCircle, XCircle, AlertCircle, User, Briefcase } from 'lucide-react'
 
 interface PartnerAvailabilityViewProps {
   selectedDate: Date
@@ -105,17 +105,17 @@ const HOUR_SLOTS = Array.from({ length: 14 }, (_, i) => {
 type SlotStatus = 'available' | 'busy' | 'blocked' | 'unavailable'
 
 const SLOT_COLORS: Record<SlotStatus, string> = {
-  available: 'bg-green-100 border-green-300 hover:bg-green-200 cursor-pointer',
-  busy: 'bg-red-100 border-red-300',
-  blocked: 'bg-yellow-100 border-yellow-300',
-  unavailable: 'bg-gray-100 border-gray-300'
+  available: 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-900/50 cursor-pointer',
+  busy: 'bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700',
+  blocked: 'bg-yellow-100 dark:bg-yellow-900/30 border-yellow-300 dark:border-yellow-700',
+  unavailable: 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600'
 }
 
 const SLOT_ICONS: Record<SlotStatus, React.ReactNode> = {
-  available: <CheckCircle className="w-4 h-4 text-green-600" />,
-  busy: <XCircle className="w-4 h-4 text-red-600" />,
-  blocked: <AlertCircle className="w-4 h-4 text-yellow-600" />,
-  unavailable: <XCircle className="w-4 h-4 text-gray-400" />
+  available: <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />,
+  busy: <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />,
+  blocked: <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />,
+  unavailable: <XCircle className="w-4 h-4 text-gray-400 dark:text-gray-500" />
 }
 
 const SLOT_LABELS: Record<SlotStatus, string> = {
@@ -264,7 +264,7 @@ export function PartnerAvailabilityView({
         <CardTitle className="flex items-center gap-2">
           <Users className="w-5 h-5" />
           Disponibilidade dos Profissionais
-          <Badge variant="outline" className="ml-2">
+          <Badge variant="info" className="ml-2 badge-available">
             {format(selectedDate, "d 'de' MMMM", { locale: ptBR })}
           </Badge>
         </CardTitle>
@@ -280,16 +280,19 @@ export function PartnerAvailabilityView({
             return (
               <div 
                 key={partner.id} 
-                className={`bg-gray-50 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors ${
-                  selectedPartnerId === partner.id ? 'ring-2 ring-blue-500' : ''
+                className={`bg-gray-50 dark:bg-gray-800 p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                  selectedPartnerId === partner.id ? 'ring-2 ring-primary' : ''
                 }`}
                 onClick={() => onPartnerClick?.(partner)}
               >
-                <div className="font-medium text-sm mb-1">{partner.fullName}</div>
+                <div className="flex items-center gap-2 mb-1">
+                  <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <div className="font-medium text-sm dark:text-gray-100">{formatDoctorName(partner.fullName)}</div>
+                </div>
                 <div className={`text-lg font-bold ${getAvailabilityColor(stats.availabilityRate)}`}>
                   {stats.availabilityRate.toFixed(0)}% disponível
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-gray-600 dark:text-gray-400">
                   {stats.available}/{stats.total} slots livres
                 </div>
                 
@@ -315,26 +318,34 @@ export function PartnerAvailabilityView({
 
         {/* Tabela de disponibilidade */}
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-200">
+          <table className="min-w-full border-collapse border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             {/* Cabeçalho */}
             <thead>
               <tr>
-                <th className="p-3 text-left font-medium text-sm text-gray-600 bg-gray-50 border border-gray-200 w-[150px]">
-                  Horário
+                <th className="p-3 text-left font-medium text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 w-[150px]">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Horário
+                  </div>
                 </th>
                 {filteredPartners.map(partner => (
                   <th 
                     key={partner.id}
-                    className="p-3 text-center font-medium text-sm bg-gray-50 border border-gray-200 cursor-pointer hover:bg-gray-100 min-w-[120px]"
+                    className="p-3 text-center font-medium text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 min-w-[120px]"
                     onClick={() => onPartnerClick?.(partner)}
                   >
-                    <div className="font-medium">
-                      {formatDoctorName(partner.fullName)}
-                    </div>
-                    <div className="text-xs text-gray-500 font-normal">
-                      {partner.partnershipType === 'SUBLEASE' ? 'Sublocação' : 
-                       partner.partnershipType === 'PERCENTAGE' ? 'Porcentagem' : 
-                       'Porcentagem + Produtos'}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex items-center gap-1">
+                        <Briefcase className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <div className="font-medium dark:text-gray-100">
+                          {formatDoctorName(partner.fullName)}
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="text-xs">
+                        {partner.partnershipType === 'SUBLEASE' ? 'Sublocação' : 
+                         partner.partnershipType === 'PERCENTAGE' ? 'Porcentagem' : 
+                         'Porcentagem + Produtos'}
+                      </Badge>
                     </div>
                   </th>
                 ))}
@@ -346,7 +357,7 @@ export function PartnerAvailabilityView({
               {HOUR_SLOTS.map(time => (
                 <tr key={time}>
                   {/* Coluna do horário */}
-                  <td className="p-3 text-sm text-gray-600 font-medium bg-gray-50 border border-gray-200">
+                  <td className="p-3 text-sm text-gray-600 dark:text-gray-300 font-medium bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 mr-1" />
                       {time}
@@ -361,7 +372,7 @@ export function PartnerAvailabilityView({
                     return (
                       <td 
                         key={`${partner.id}-${time}`}
-                        className={`p-2 border border-gray-200 transition-colors ${SLOT_COLORS[slotStatus]} h-[60px]`}
+                        className={`p-2 border border-gray-200 dark:border-gray-700 transition-colors ${SLOT_COLORS[slotStatus]} h-[60px]`}
                         onClick={() => {
                           if (slotStatus === 'available') {
                             onTimeSlotClick?.(partner.id, time)
@@ -374,10 +385,10 @@ export function PartnerAvailabilityView({
                         <div className="flex items-center justify-center h-full">
                           {slotStatus === 'busy' && appointment ? (
                             <div className="text-center w-full">
-                              <div className="text-xs font-medium truncate leading-tight">
+                              <div className="text-xs font-medium truncate leading-tight text-gray-900 dark:text-gray-100">
                                 {appointment.patient?.fullName}
                               </div>
-                              <div className="text-xs text-gray-600 leading-tight mt-0.5">
+                              <div className="text-xs text-gray-600 dark:text-gray-300 leading-tight mt-0.5">
                                 {appointment.startTime} - {appointment.endTime}
                               </div>
                             </div>
@@ -386,7 +397,7 @@ export function PartnerAvailabilityView({
                               <div className="flex justify-center mb-1">
                                 {SLOT_ICONS[slotStatus]}
                               </div>
-                              <div className="text-xs leading-tight">
+                              <div className="text-xs leading-tight text-gray-700 dark:text-gray-300">
                                 {SLOT_LABELS[slotStatus]}
                               </div>
                             </div>

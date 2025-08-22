@@ -10,7 +10,8 @@ import {
   Phone,
   FileText,
   Calendar,
-  DollarSign
+  DollarSign,
+  Wallet
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -241,7 +242,7 @@ export function PartnerDetails({ partnerId, onBack, onEdit }: PartnerDetailsProp
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
+                    <Wallet className="h-5 w-5" />
                     Dados Bancários
                   </CardTitle>
                 </CardHeader>
@@ -249,23 +250,23 @@ export function PartnerDetails({ partnerId, onBack, onEdit }: PartnerDetailsProp
                   {partner.bank ? (
                     <>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Banco</label>
-                        <p className="text-gray-900">{partner.bank}</p>
+                        <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Banco</label>
+                        <p className="text-gray-900 dark:text-gray-100">{partner.bank}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm font-medium text-gray-600">Agência</label>
-                          <p className="text-gray-900 font-mono">{partner.agency || 'N/A'}</p>
+                          <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Agência</label>
+                          <p className="text-gray-900 dark:text-gray-100 font-mono">{partner.agency || 'N/A'}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-gray-600">Conta</label>
-                          <p className="text-gray-900 font-mono">{partner.account || 'N/A'}</p>
+                          <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Conta</label>
+                          <p className="text-gray-900 dark:text-gray-100 font-mono">{partner.account || 'N/A'}</p>
                         </div>
                       </div>
                       {partner.pix && (
                         <div>
-                          <label className="text-sm font-medium text-gray-600">Chave PIX</label>
-                          <p className="text-gray-900 font-mono">{partner.pix}</p>
+                          <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Chave PIX</label>
+                          <p className="text-gray-900 dark:text-gray-100 font-mono">{partner.pix}</p>
                         </div>
                       )}
                     </>

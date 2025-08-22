@@ -1,7 +1,1727 @@
 @import "tailwindcss";
 
-@layer base {
+/* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
   body {
-    @apply bg-white text-gray-900;
-  }
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* Tema escuro */
+.dark body {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+/* Força o estilo dos componentes shadcn/ui */
+.rounded-lg {
+  border-radius: 8px !important;
+}
+
+.border {
+  border-width: 1px !important;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* CSS específico para calendário com variáveis CSS */
+:root {
+  --calendar-bg: #ffffff; /* BRANCO PERFEITO PARA TEMA CLARO */
+  --calendar-bg-muted: #f9fafb;
+}
+
+.dark {
+  --calendar-bg: #1f2937;
+  --calendar-bg-muted: #374151;
+}
+
+.calendar-grid {
+  background-color: var(--calendar-bg) !important;
+}
+
+/* ===== SISTEMA DE TEMA GLOBAL COMPLETO ===== */
+
+:root {
+  /* === CORES BASE === */
+  --background: #ffffff;
+  --foreground: #111827;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --input-border: #d1d5db;
+  --input-foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #f8fafc;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --ring: #94a3b8;
+  
+  /* === ELEMENTOS ESPECÍFICOS === */
+  --dialog-bg: #ffffff;
+  --dialog-border: #e2e8f0;
+  --select-bg: #ffffff;
+  --select-border: #d1d5db;
+  --select-trigger-bg: #ffffff;
+  --select-content-bg: #ffffff;
+  --button-outline-bg: #ffffff;
+  --button-outline-border: #d1d5db;
+  --button-outline-text: #1f2937;
+  --button-outline-hover: #f3f4f6;
+  --tabs-bg: #f8fafc;
+  --tabs-active-bg: #ffffff;
+  --tabs-border: #e2e8f0;
+  
+  /* === AGENDAMENTOS === */
+  --appointment-scheduled: #3b82f6;
+  --appointment-confirmed: #10b981;
+  --appointment-progress: #f59e0b;
+  --appointment-completed: #6b7280;
+  --appointment-cancelled: #ef4444;
+  --appointment-noshow: #f97316;
+}
+
+.dark {
+  /* === CORES BASE DARK === */
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --border: #334155;
+  --input: #1e293b;
+  --input-border: #475569;
+  --input-foreground: #f8fafc;
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #dc2626;
+  --destructive-foreground: #f8fafc;
+  --ring: #64748b;
+  
+  /* === ELEMENTOS ESPECÍFICOS DARK === */
+  --dialog-bg: #1e293b;
+  --dialog-border: #334155;
+  --select-bg: #1e293b;
+  --select-border: #475569;
+  --select-trigger-bg: #1e293b;
+  --select-content-bg: #1e293b;
+  --button-outline-bg: #1e293b;
+  --button-outline-border: #475569;
+  --button-outline-text: #e2e8f0;
+  --button-outline-hover: #334155;
+  --tabs-bg: #0f172a;
+  --tabs-active-bg: #1e293b;
+  --tabs-border: #334155;
+  
+  /* === AGENDAMENTOS DARK === */
+  --appointment-scheduled: #1e3a8a;
+  --appointment-confirmed: #065f46;
+  --appointment-progress: #92400e;
+  --appointment-completed: #374151;
+  --appointment-cancelled: #991b1b;
+  --appointment-noshow: #c2410c;
+}
+
+/* === APLICAÇÃO GLOBAL DAS VARIÁVEIS === */
+
+/* Backgrounds e textos base */
+body {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+/* Força texto visível em elementos de texto específicos */
+p, span, div:not([role="button"]):not(button), h1, h2, h3, h4, h5, h6, 
+label:not([for*="button"]), 
+td, th, li {
+  color: var(--foreground) !important;
+}
+
+/* Exceções para elementos com cores específicas */
+.text-white,
+.text-gray-100,
+.text-gray-200,
+button.bg-primary *,
+button.bg-blue-500 *,
+button.bg-blue-600 *,
+.bg-primary *,
+.bg-blue-500 *,
+.bg-blue-600 *,
+.appointment-scheduled,
+.appointment-confirmed,
+.appointment-progress,
+.appointment-completed,
+.appointment-cancelled,
+.appointment-noshow {
+  color: white !important;
+}
+
+/* Força texto escuro em fundos claros */
+.bg-white *,
+.bg-gray-50 *,
+.bg-gray-100 *,
+button.bg-white *,
+button.bg-gray-50 *,
+button.bg-gray-100 * {
+  color: var(--foreground) !important;
+}
+
+/* Dialogs e Modais */
+[data-radix-popper-content-wrapper],
+[role="dialog"],
+.dialog-content {
+  background-color: var(--dialog-bg) !important;
+  border-color: var(--dialog-border) !important;
+  color: var(--foreground) !important;
+}
+
+/* Cards */
+.card,
+[class*="card"] {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+/* Inputs e Forms */
+input,
+textarea,
+.input {
+  background-color: var(--input) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-foreground) !important;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--ring) !important;
+}
+
+/* Selects - Aplicação Universal */
+[role="combobox"],
+[data-radix-select-trigger],
+.select-trigger,
+button[role="combobox"] {
+  background-color: var(--select-trigger-bg) !important;
+  border-color: var(--select-border) !important;
+  color: var(--foreground) !important;
+}
+
+[data-radix-select-content],
+[data-radix-popper-content-wrapper] [role="listbox"],
+.select-content {
+  background-color: var(--select-content-bg) !important;
+  border-color: var(--select-border) !important;
+}
+
+[data-radix-select-item],
+[role="option"] {
+  color: var(--foreground) !important;
+}
+
+[data-radix-select-item]:hover,
+[role="option"]:hover {
+  background-color: var(--muted) !important;
+}
+
+/* === BOTÕES UNIVERSAIS === */
+
+/* Botões Outline */
+button[data-variant="outline"],
+.btn-outline-standard,
+button[variant="outline"],
+.button-outline,
+button.outline {
+  background-color: var(--button-outline-bg) !important;
+  border-color: var(--button-outline-border) !important;
+  color: var(--button-outline-text) !important;
+}
+
+button[data-variant="outline"]:hover,
+.btn-outline-standard:hover,
+button[variant="outline"]:hover,
+.button-outline:hover,
+button.outline:hover {
+  background-color: var(--button-outline-hover) !important;
+  color: var(--button-outline-text) !important;
+}
+
+/* Botões Primary/Default */
+button[data-variant="default"],
+button[variant="default"],
+.button-primary,
+button.primary {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Todos os botões - força texto visível */
+button,
+.button,
+[role="button"] {
+  color: var(--foreground) !important;
+}
+
+/* Botões com classes específicas do shadcn */
+.inline-flex.items-center.justify-center {
+  color: var(--foreground) !important;
+}
+
+/* Força contraste em links */
+a:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow) {
+  color: var(--foreground) !important;
+}
+
+/* Captura específica para botões do shadcn/ui */
+button.bg-primary,
+button.bg-blue-500,
+button.bg-blue-600,
+.bg-primary,
+.bg-blue-500,
+.bg-blue-600 {
+  color: white !important;
+}
+
+/* Botões com fundo claro precisam de texto escuro */
+button.bg-white,
+button.bg-gray-50,
+button.bg-gray-100,
+.bg-white,
+.bg-gray-50,
+.bg-gray-100 {
+  color: var(--foreground) !important;
+}
+
+/* Força texto em elementos de texto com padding */
+p.px-3.py-2,
+p.px-4.py-2,
+span.p-2,
+span.p-3 {
+  color: var(--foreground) !important;
+}
+
+/* Links e elementos interativos */
+a:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow) {
+  color: var(--foreground) !important;
+}
+
+/* === CORREÇÕES ESPECÍFICAS PARA AGENDAMENTOS === */
+
+/* FORÇA MÁXIMA - Botões escuros no tema claro */
+:root button.bg-gray-800,
+:root button.bg-slate-800,
+:root button.bg-gray-900,
+:root button.bg-slate-900,
+:root .bg-gray-800,
+:root .bg-slate-800,
+:root .bg-gray-900,
+:root .bg-slate-900,
+html:not(.dark) button.bg-gray-800,
+html:not(.dark) button.bg-slate-800,
+html:not(.dark) button.bg-gray-900,
+html:not(.dark) button.bg-slate-900,
+html:not(.dark) .bg-gray-800,
+html:not(.dark) .bg-slate-800,
+html:not(.dark) .bg-gray-900,
+html:not(.dark) .bg-slate-900 {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root button.bg-gray-800:hover,
+:root button.bg-slate-800:hover,
+:root button.bg-gray-900:hover,
+:root button.bg-slate-900:hover,
+:root .bg-gray-800:hover,
+:root .bg-slate-800:hover,
+:root .bg-gray-900:hover,
+:root .bg-slate-900:hover,
+html:not(.dark) button.bg-gray-800:hover,
+html:not(.dark) button.bg-slate-800:hover,
+html:not(.dark) button.bg-gray-900:hover,
+html:not(.dark) button.bg-slate-900:hover,
+html:not(.dark) .bg-gray-800:hover,
+html:not(.dark) .bg-slate-800:hover,
+html:not(.dark) .bg-gray-900:hover,
+html:not(.dark) .bg-slate-900:hover {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+  border-color: #9ca3af !important;
+}
+
+/* Tema escuro - mantém aparência original */
+.dark button.bg-gray-800,
+.dark button.bg-slate-800,
+.dark button.bg-gray-900,
+.dark button.bg-slate-900,
+.dark .bg-gray-800,
+.dark .bg-slate-800,
+.dark .bg-gray-900,
+.dark .bg-slate-900 {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+  border-color: #6b7280 !important;
+}
+
+.dark button.bg-gray-800:hover,
+.dark button.bg-slate-800:hover,
+.dark button.bg-gray-900:hover,
+.dark button.bg-slate-900:hover,
+.dark .bg-gray-800:hover,
+.dark .bg-slate-800:hover,
+.dark .bg-gray-900:hover,
+.dark .bg-slate-900:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+/* FORÇA MÁXIMA - Botões claros */
+:root button.bg-gray-100,
+:root button.bg-slate-100,
+:root button.bg-gray-200,
+:root button.bg-slate-200,
+:root .bg-gray-100,
+:root .bg-slate-100,
+:root .bg-gray-200,
+:root .bg-slate-200,
+html:not(.dark) button.bg-gray-100,
+html:not(.dark) button.bg-slate-100,
+html:not(.dark) button.bg-gray-200,
+html:not(.dark) button.bg-slate-200,
+html:not(.dark) .bg-gray-100,
+html:not(.dark) .bg-slate-100,
+html:not(.dark) .bg-gray-200,
+html:not(.dark) .bg-slate-200 {
+  background-color: #f9fafb !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+:root button.bg-gray-100:hover,
+:root button.bg-slate-100:hover,
+:root button.bg-gray-200:hover,
+:root button.bg-slate-200:hover,
+:root .bg-gray-100:hover,
+:root .bg-slate-100:hover,
+:root .bg-gray-200:hover,
+:root .bg-slate-200:hover,
+html:not(.dark) button.bg-gray-100:hover,
+html:not(.dark) button.bg-slate-100:hover,
+html:not(.dark) button.bg-gray-200:hover,
+html:not(.dark) button.bg-slate-200:hover,
+html:not(.dark) .bg-gray-100:hover,
+html:not(.dark) .bg-slate-100:hover,
+html:not(.dark) .bg-gray-200:hover,
+html:not(.dark) .bg-slate-200:hover {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+/* Tema escuro - botões claros */
+.dark button.bg-gray-100,
+.dark button.bg-slate-100,
+.dark button.bg-gray-200,
+.dark button.bg-slate-200,
+.dark .bg-gray-100,
+.dark .bg-slate-100,
+.dark .bg-gray-200,
+.dark .bg-slate-200 {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+.dark button.bg-gray-100:hover,
+.dark button.bg-slate-100:hover,
+.dark button.bg-gray-200:hover,
+.dark button.bg-slate-200:hover,
+.dark .bg-gray-100:hover,
+.dark .bg-slate-100:hover,
+.dark .bg-gray-200:hover,
+.dark .bg-slate-200:hover {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+/* FORÇA MÁXIMA - Texto preto/escuro */
+:root button.text-black,
+:root button.text-gray-900,
+:root button.text-gray-800,
+:root .text-black,
+:root .text-gray-900,
+:root .text-gray-800,
+html:not(.dark) button.text-black,
+html:not(.dark) button.text-gray-900,
+html:not(.dark) button.text-gray-800,
+html:not(.dark) .text-black,
+html:not(.dark) .text-gray-900,
+html:not(.dark) .text-gray-800,
+button[class*="text-black"],
+button[class*="text-gray-900"],
+button[class*="text-gray-800"] {
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+:root button.text-black:hover,
+:root button.text-gray-900:hover,
+:root button.text-gray-800:hover,
+:root .text-black:hover,
+:root .text-gray-900:hover,
+:root .text-gray-800:hover,
+html:not(.dark) button.text-black:hover,
+html:not(.dark) button.text-gray-900:hover,
+html:not(.dark) button.text-gray-800:hover,
+html:not(.dark) .text-black:hover,
+html:not(.dark) .text-gray-900:hover,
+html:not(.dark) .text-gray-800:hover,
+button[class*="text-black"]:hover,
+button[class*="text-gray-900"]:hover,
+button[class*="text-gray-800"]:hover {
+  color: #111827 !important;
+  background-color: #f9fafb !important;
+}
+
+.dark button.text-black,
+.dark button.text-gray-900,
+.dark button.text-gray-800,
+.dark .text-black,
+.dark .text-gray-900,
+.dark .text-gray-800 {
+  color: #e5e7eb !important;
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark button.text-black:hover,
+.dark button.text-gray-900:hover,
+.dark button.text-gray-800:hover,
+.dark .text-black:hover,
+.dark .text-gray-900:hover,
+.dark .text-gray-800:hover {
+  color: #f9fafb !important;
+  background-color: #374151 !important;
+}
+
+/* FORÇA BRUTAL - Para qualquer combinação problemática */
+html:not(.dark) button[class*="bg-gray-8"],
+html:not(.dark) button[class*="bg-gray-9"],
+html:not(.dark) button[class*="bg-slate-8"],
+html:not(.dark) button[class*="bg-slate-9"],
+html:not(.dark) [class*="bg-gray-8"][class*="text-"],
+html:not(.dark) [class*="bg-gray-9"][class*="text-"],
+html:not(.dark) [class*="bg-slate-8"][class*="text-"],
+html:not(.dark) [class*="bg-slate-9"][class*="text-"] {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* Força em elementos inline e flexbox */
+html:not(.dark) .inline-flex[class*="bg-gray-8"],
+html:not(.dark) .inline-flex[class*="bg-gray-9"],
+html:not(.dark) .inline-flex[class*="bg-slate-8"],
+html:not(.dark) .inline-flex[class*="bg-slate-9"],
+html:not(.dark) .flex[class*="bg-gray-8"],
+html:not(.dark) .flex[class*="bg-gray-9"],
+html:not(.dark) .flex[class*="bg-slate-8"],
+html:not(.dark) .flex[class*="bg-slate-9"] {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* === CORREÇÕES ESPECÍFICAS PARA TIMELINE DE SALAS === */
+
+/* Painéis de estatísticas das salas */
+html:not(.dark) .bg-gradient-to-r.from-gray-50.to-gray-100,
+html:not(.dark) [class*="from-gray-"][class*="to-gray-"] {
+  background: linear-gradient(to right, #f8fafc, #f1f5f9) !important;
+  color: #1f2937 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Legenda de status - fundo preto com fonte preta */
+html:not(.dark) .bg-gray-50 {
+  background-color: #f8fafc !important;
+  color: #1f2937 !important;
+}
+
+html:not(.dark) .bg-blue-50 {
+  background-color: #eff6ff !important;
+  color: #1e40af !important;
+}
+
+/* Timeline principal - cabeçalho e células */
+html:not(.dark) .bg-gray-800 {
+  background-color: #f1f5f9 !important;
+  color: #1f2937 !important;
+}
+
+html:not(.dark) .bg-gray-900 {
+  background-color: #f8fafc !important;
+  color: #111827 !important;
+}
+
+/* Células alternadas da timeline */
+html:not(.dark) .bg-gray-50:nth-child(even) {
+  background-color: #f8fafc !important;
+}
+
+html:not(.dark) .bg-white:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+
+/* Texto em elementos escuros */
+html:not(.dark) .text-gray-900 {
+  color: #111827 !important;
+}
+
+html:not(.dark) .text-gray-700 {
+  color: #374151 !important;
+}
+
+html:not(.dark) .text-gray-600 {
+  color: #4b5563 !important;
+}
+
+html:not(.dark) .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+html:not(.dark) .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+html:not(.dark) .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+/* Bordas */
+html:not(.dark) .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) .border-gray-700 {
+  border-color: #d1d5db !important;
+}
+
+/* Hover states para timeline */
+html:not(.dark) .hover\\:bg-gray-50:hover {
+  background-color: #f9fafb !important;
+}
+
+html:not(.dark) .hover\\:bg-gray-700:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* === BADGES DE STATUS NA TIMELINE === */
+
+/* Cores dos badges de status - tema claro */
+html:not(.dark) .badge-available {
+  background-color: #3b82f6 !important;
+}
+
+html:not(.dark) .badge-active {
+  background-color: #10b981 !important;
+}
+
+html:not(.dark) .badge-unavailable {
+  background-color: #f59e0b !important;
+}
+
+html:not(.dark) .badge-inactive {
+  background-color: #6b7280 !important;
+}
+
+html:not(.dark) .badge-stock-out {
+  background-color: #ef4444 !important;
+}
+
+/* Popover de múltiplos agendamentos */
+html:not(.dark) .bg-white.border.border-gray-200 {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) .hover\\:bg-gray-50:hover {
+  background-color: #f9fafb !important;
+}
+
+html:not(.dark) .hover\\:bg-green-50:hover {
+  background-color: #f0fdf4 !important;
+}
+
+/* === CORREÇÕES PARA TEMA ESCURO === */
+
+/* Painéis de estatísticas das salas - tema escuro */
+.dark .bg-gradient-to-r.from-gray-50.to-gray-100,
+.dark [class*="from-gray-"][class*="to-gray-"] {
+  background: linear-gradient(to right, #1f2937, #374151) !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+
+/* Legenda e resumo - tema escuro */
+.dark .bg-gray-50 {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: #1e3a8a !important;
+  color: #dbeafe !important;
+}
+
+/* Timeline principal - cabeçalho e células - tema escuro */
+.dark .bg-gray-800 {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .bg-gray-900 {
+  background-color: #111827 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Células alternadas da timeline - tema escuro */
+.dark .bg-gray-50:nth-child(even) {
+  background-color: #1f2937 !important;
+}
+
+.dark .bg-white:nth-child(odd) {
+  background-color: #111827 !important;
+}
+
+/* Texto em elementos - tema escuro */
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.dark .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+/* Bordas - tema escuro */
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.dark .border-gray-700 {
+  border-color: #4b5563 !important;
+}
+
+/* Hover states para timeline - tema escuro */
+.dark .hover\\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+.dark .hover\\:bg-gray-700:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .hover\\:bg-green-50:hover {
+  background-color: #065f46 !important;
+}
+
+/* Popover de múltiplos agendamentos - tema escuro */
+.dark .bg-white.border.border-gray-200 {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+
+/* Slots vazios - tema escuro */
+.dark .bg-white {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+/* Botões de navegação - tema escuro */
+.dark button[variant="outline"] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+
+.dark button[variant="outline"]:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* === CORREÇÕES ESPECÍFICAS PARA SLOTS E CARDS NO TEMA ESCURO === */
+
+/* Cards e containers principais - tema escuro */
+.dark .bg-white.dark\\:bg-gray-800 {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+/* Timeline cells - tema escuro */
+.dark .bg-blue-50.dark\\:bg-blue-900\\/20 {
+  background-color: rgba(30, 58, 138, 0.3) !important;
+  color: #dbeafe !important;
+}
+
+.dark .hover\\:bg-blue-100.dark\\:hover\\:bg-blue-900\\/30:hover {
+  background-color: rgba(30, 58, 138, 0.4) !important;
+}
+
+.dark .hover\\:bg-green-50.dark\\:hover\\:bg-green-900\\/20:hover {
+  background-color: rgba(6, 95, 70, 0.3) !important;
+}
+
+/* Badges e indicadores - tema escuro */
+.dark .bg-orange-50 {
+  background-color: rgba(154, 52, 18, 0.3) !important;
+  color: #fed7aa !important;
+}
+
+/* Botões de ação (+) - tema escuro */
+.dark .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* Elementos de texto - tema escuro */
+.dark .text-orange-600 {
+  color: #fb923c !important;
+}
+
+/* Sticky elements - tema escuro */
+.dark .bg-gray-50.dark\\:bg-gray-800.sticky {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .bg-gray-100.dark\\:bg-gray-800 {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+/* Border colors específicas - tema escuro */
+.dark .border-l-blue-400 {
+  border-left-color: #60a5fa !important;
+}
+
+.dark .border-l-green-400 {
+  border-left-color: #4ade80 !important;
+}
+
+/* Força elementos brancos para escuros */
+.dark [class*="bg-white"] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark [class*="bg-gray-50"] {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark [class*="bg-gray-100"] {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+/* === CORREÇÃO ESPECÍFICA PARA BOTÕES FILTROS E LISTA DE ESPERA NO TEMA ESCURO === */
+
+/* Botões específicos que estão com hover branco */
+.dark button.bg-gray-800:hover,
+.dark button.bg-slate-800:hover,
+.dark .bg-gray-800:hover,
+.dark .bg-slate-800:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark button.bg-gray-900:hover,
+.dark button.bg-slate-900:hover,
+.dark .bg-gray-900:hover,
+.dark .bg-slate-900:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* Força hover escuro para elementos com classes múltiplas */
+.dark button[class*="bg-gray-8"]:hover,
+.dark button[class*="bg-slate-8"]:hover,
+.dark [class*="bg-gray-8"]:hover,
+.dark [class*="bg-slate-8"]:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark button[class*="bg-gray-9"]:hover,
+.dark button[class*="bg-slate-9"]:hover,
+.dark [class*="bg-gray-9"]:hover,
+.dark [class*="bg-slate-9"]:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* Botões inline-flex específicos no tema escuro */
+.dark .inline-flex.bg-gray-800:hover,
+.dark .inline-flex.bg-slate-800:hover,
+.dark .inline-flex.bg-gray-900:hover,
+.dark .inline-flex.bg-slate-900:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+/* Força hover escuro apenas para botões problemáticos */
+.dark button[class*="text-black"]:hover,
+.dark button[class*="text-gray-9"]:hover,
+.dark button[class*="text-gray-8"]:hover {
+  background-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+/* Exceção para botões primários - mantém hover azul */
+.dark button.bg-blue-500:hover,
+.dark button.bg-blue-600:hover,
+.dark .bg-blue-500:hover,
+.dark .bg-blue-600:hover,
+.dark button[data-variant="default"]:hover,
+.dark button[variant="default"]:hover {
+  background-color: #1d4ed8 !important;
+  color: white !important;
+}
+
+/* Botões outline - mantém hover escuro */
+.dark button[variant="outline"]:hover,
+.dark button[data-variant="outline"]:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* Força contraste em botões pequenos */
+.p-1,
+.px-2.py-1,
+.px-3.py-1 {
+  color: var(--foreground) !important;
+}
+
+/* Botões com ícones */
+button svg,
+.button svg,
+[role="button"] svg {
+  color: inherit !important;
+}
+
+/* Tabs */
+[role="tablist"] {
+  background-color: var(--tabs-bg) !important;
+  border-color: var(--tabs-border) !important;
+}
+
+[role="tab"][data-state="active"] {
+  background-color: var(--tabs-active-bg) !important;
+  color: var(--foreground) !important;
+}
+
+/* Agendamentos */
+/* === TAGS DE AGENDAMENTO COM CORES OTIMIZADAS === */
+
+.appointment-scheduled {
+  background-color: var(--appointment-scheduled) !important;
+  color: white !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2) !important;
+}
+
+.appointment-confirmed {
+  background-color: var(--appointment-confirmed) !important;
+  color: white !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.appointment-progress {
+  background-color: var(--appointment-progress) !important;
+  color: white !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2) !important;
+}
+
+.appointment-completed {
+  background-color: var(--appointment-completed) !important;
+  color: white !important;
+  border-color: rgba(107, 114, 128, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(107, 114, 128, 0.2) !important;
+}
+
+.appointment-cancelled {
+  background-color: var(--appointment-cancelled) !important;
+  color: white !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+.appointment-noshow {
+  background-color: var(--appointment-noshow) !important;
+  color: white !important;
+  border-color: rgba(249, 115, 22, 0.3) !important;
+  box-shadow: 0 1px 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+/* Força texto branco em todas as tags de agendamento */
+.appointment-scheduled *,
+.appointment-confirmed *,
+.appointment-progress *,
+.appointment-completed *,
+.appointment-cancelled *,
+.appointment-noshow * {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* === COMPONENTES SHADCN/UI ESPECÍFICOS === */
+
+
+
+/* Radix Select Components */
+[data-radix-select-trigger] {
+  background-color: var(--select-trigger-bg) !important;
+  border-color: var(--select-border) !important;
+  color: var(--foreground) !important;
+}
+
+[data-radix-select-content] {
+  background-color: var(--select-content-bg) !important;
+  border-color: var(--select-border) !important;
+  color: var(--foreground) !important;
+}
+
+[data-radix-select-item] {
+  color: var(--foreground) !important;
+}
+
+[data-radix-select-item]:hover {
+  background-color: var(--muted) !important;
+}
+
+/* Dialog Content */
+[data-radix-dialog-content] {
+  background-color: var(--dialog-bg) !important;
+  color: var(--foreground) !important;
+  border-color: var(--dialog-border) !important;
+}
+
+/* Tabs */
+[data-radix-tabs-list] {
+  background-color: var(--tabs-bg) !important;
+  border-color: var(--tabs-border) !important;
+}
+
+[data-radix-tabs-trigger][data-state="active"] {
+  background-color: var(--tabs-active-bg) !important;
+  color: var(--foreground) !important;
+}
+
+/* Input e Textarea universais */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea {
+  background-color: var(--input) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-foreground) !important;
+}
+
+/* Labels */
+label {
+  color: var(--foreground) !important;
+}
+
+/* === TABELAS E CABEÇALHOS === */
+
+/* Cabeçalhos de tabela - tema escuro */
+.dark th,
+.dark thead th,
+.dark .table-header,
+.dark [role="columnheader"] {
+  color: #f8fafc !important;
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+/* Células de tabela - tema escuro */
+.dark td,
+.dark tbody td,
+.dark .table-cell {
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* Labels específicas - tema escuro */
+.dark label,
+.dark .label,
+.dark .form-label {
+  color: #f8fafc !important;
+}
+
+/* Texto em cards e containers - tema escuro */
+.dark .card-header,
+.dark .card-title,
+.dark .card-content {
+  color: #f8fafc !important;
+}
+
+/* Headers de seção - tema escuro */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f8fafc !important;
+}
+
+/* Descrições e texto secundário - tema escuro */
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-muted {
+  color: #94a3b8 !important;
+}
+
+/* === ELEMENTOS ESPECÍFICOS DE TABELA === */
+
+/* Table do shadcn/ui - tema escuro */
+.dark .table,
+.dark table {
+  color: #f1f5f9 !important;
+  background-color: #0f172a !important;
+}
+
+/* Table headers com classes específicas - tema escuro */
+.dark .table-header-cell,
+.dark .table-head,
+.dark table thead tr th,
+.dark [class*="table"] thead th {
+  color: #f8fafc !important;
+  background-color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+/* Table rows - tema escuro */
+.dark .table-row,
+.dark tr {
+  border-color: #334155 !important;
+}
+
+/* Table cells com classes específicas - tema escuro */
+.dark .table-cell,
+.dark table tbody tr td,
+.dark [class*="table"] tbody td {
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* === COMPONENTES SHADCN/UI TABELA - TEMA ESCURO === */
+
+/* TableHeader e TableHead específicos */
+.dark [data-testid="table-header"],
+.dark [class*="TableHeader"],
+.dark [class*="table-header"] {
+  background-color: #1e293b !important;
+}
+
+.dark [data-testid="table-head"],
+.dark [class*="TableHead"],
+.dark [class*="table-head"] {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+/* TableCell específicos */
+.dark [data-testid="table-cell"],
+.dark [class*="TableCell"],
+.dark [class*="table-cell"] {
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* TableRow específicos */
+.dark [data-testid="table-row"],
+.dark [class*="TableRow"],
+.dark [class*="table-row"] {
+  border-color: #334155 !important;
+}
+
+/* === BADGES E STATUS - TEMA ESCURO === */
+
+/* Badge default - tema escuro */
+.dark [data-variant="default"],
+.dark .badge[data-variant="default"],
+.dark [class*="badge"]:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow):not(.badge-available):not(.badge-active):not(.badge-inactive):not(.badge-stock-out) {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+/* Badge secondary - tema escuro */
+.dark [data-variant="secondary"],
+.dark .badge[data-variant="secondary"] {
+  background-color: #374151 !important;
+  color: #d1d5db !important;
+  border-color: #6b7280 !important;
+}
+
+/* Badge outline - tema escuro */
+.dark [data-variant="outline"],
+.dark .badge[data-variant="outline"] {
+  background-color: transparent !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+/* Badge info - tema escuro */
+.dark [data-variant="info"],
+.dark .badge[data-variant="info"] {
+  background-color: #1e40af !important;
+  color: #dbeafe !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Badge success - tema escuro */
+.dark [data-variant="success"],
+.dark .badge[data-variant="success"] {
+  background-color: #166534 !important;
+  color: #dcfce7 !important;
+  border-color: #22c55e !important;
+}
+
+/* Badge warning - tema escuro */
+.dark [data-variant="warning"],
+.dark .badge[data-variant="warning"] {
+  background-color: #92400e !important;
+  color: #fef3c7 !important;
+  border-color: #f59e0b !important;
+}
+
+/* Badge destructive - tema escuro */
+.dark [data-variant="destructive"],
+.dark .badge[data-variant="destructive"] {
+  background-color: #991b1b !important;
+  color: #fecaca !important;
+  border-color: #ef4444 !important;
+}
+
+/* === BADGES SHADCN/UI - TEMA ESCURO === */
+
+/* Badge default - força fundo escuro apropriado */
+.dark .inline-flex.items-center.rounded-full.border.px-2\\.5.py-0\\.5.text-xs.font-semibold {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+/* Badge default com bg-gray-100 - corrige fundo branco */
+.dark .bg-gray-100 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Badge secondary com bg-gray-700 - mantém escuro */
+.dark .bg-gray-700 {
+  background-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+/* Força todos os badges inline-flex para tema escuro */
+.dark .inline-flex.items-center.rounded-full:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow) {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+/* Badges com texto branco no fundo escuro */
+.dark .text-white {
+  color: #f8fafc !important;
+}
+
+/* Badges com texto escuro - força claro */
+.dark .text-gray-900 {
+  color: #f8fafc !important;
+}
+
+/* Força texto branco em todos os elementos de texto dentro do tema escuro */
+.dark span:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow),
+.dark p:not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow),
+.dark div:not([role="button"]):not(button):not(.appointment-scheduled):not(.appointment-confirmed):not(.appointment-progress):not(.appointment-completed):not(.appointment-cancelled):not(.appointment-noshow) {
+  color: #f1f5f9 !important;
+}
+
+/* Popover e Dropdown */
+[data-radix-popper-content-wrapper] > div {
+  background-color: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.text-gray-900 {
+  color: #111827 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.text-gray-600 {
+  color: #4b5563 !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.bg-blue-600 {
+  background-color: #2563eb !important;
+}
+
+.hover\\:bg-blue-700:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.dark .bg-blue-600 {
+  background-color: #3b82f6 !important;
+}
+
+.dark .hover\\:bg-blue-700:hover {
+  background-color: #2563eb !important;
+}
+
+/* Cards personalizados */
+[class*="card"], 
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.dark [class*="card"],
+.dark .card {
+  background-color: #1e293b;
+  border-color: #374151;
+  color: #f8fafc;
+}
+
+/* Botões personalizados */
+button[class*="bg-blue"], 
+.btn-primary,
+.bg-blue-600,
+.bg-primary {
+  background-color: var(--color-primary, #2563eb) !important;
+  color: var(--color-primary-foreground, #ffffff) !important;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button[class*="bg-blue"]:hover, 
+.btn-primary:hover,
+.bg-blue-600:hover,
+.bg-primary:hover,
+.hover\\:bg-blue-700:hover {
+  background-color: var(--color-primary-hover, #1d4ed8) !important;
+}
+
+/* Cores primárias dinâmicas */
+.text-primary {
+  color: var(--color-primary, #2563eb) !important;
+}
+
+.border-primary {
+  border-color: var(--color-primary, #2563eb) !important;
+}
+
+.bg-primary {
+  background-color: var(--color-primary, #2563eb) !important;
+  color: var(--color-primary-foreground, #ffffff) !important;
+}
+
+.bg-primary:hover {
+  background-color: var(--color-primary-hover, #1d4ed8) !important;
+}
+
+/* Inputs personalizados */
+input[type="text"], 
+input[type="email"], 
+input[type="password"],
+.custom-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.dark input[type="text"], 
+.dark input[type="email"], 
+.dark input[type="password"],
+.dark .custom-input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Badges/Tags melhoradas */
+.bg-gray-900 {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+.dark .bg-gray-900 {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.bg-gray-700 {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark .bg-gray-700 {
+  background-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+/* Status badges específicos */
+.bg-green-600 {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+.bg-yellow-600 {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.bg-red-600 {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* Melhoria de contraste para badges */
+[class*="badge"], 
+.inline-flex[class*="rounded-full"] {
+  font-weight: 600 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark [class*="badge"],
+.dark .inline-flex[class*="rounded-full"] {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Melhorias para tabelas no tema escuro */
+.dark table {
+  background-color: #1f2937 !important;
+}
+
+.dark td, 
+.dark th {
+  border-color: #374151 !important;
+}
+
+.dark .text-muted-foreground {
+  color: #9ca3af !important;
+}
+
+/* Melhoria geral de contraste de textos */
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Cards no tema escuro */
+.dark .bg-card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Melhoria específica para badges de tipo */
+.badge-service {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+.badge-product {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+.dark .badge-service {
+  background-color: #8b5cf6 !important;
+  color: #ffffff !important;
+}
+
+.dark .badge-product {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+/* Badges de status */
+.badge-active {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+.badge-inactive {
+  background-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .badge-inactive {
+  background-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+.badge-available {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.badge-unavailable {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+/* Badges de estoque */
+.badge-stock-ok {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+.badge-stock-low {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.badge-stock-out {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* Melhorias para abas */
+.tabs-trigger[data-state="active"] {
+  background-color: var(--color-primary, #2563eb) !important;
+  color: var(--color-primary-foreground, #ffffff) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid var(--color-primary, #2563eb) !important;
+}
+
+.tabs-trigger {
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid transparent !important;
+}
+
+.tabs-trigger:hover:not([data-state="active"]) {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #374151 !important;
+}
+
+.dark .tabs-trigger:hover:not([data-state="active"]) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #d1d5db !important;
+}
+
+/* Lista de tabs */
+.tabs-list {
+  background-color: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.dark .tabs-list {
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+}
+
+/* Melhorias específicas para textos no tema escuro */
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.dark p {
+  color: #e5e7eb !important;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f9fafb !important;
+}
+
+/* Bordas e divisores no tema escuro */
+.dark .border {
+  border-color: #374151 !important;
+}
+
+.dark .border-t {
+  border-top-color: #374151 !important;
+}
+
+.dark .border-b {
+  border-bottom-color: #374151 !important;
+}
+
+/* Hover effects melhorados */
+.dark .hover\\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+/* Cards específicos */
+.dark .rounded-lg {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Labels e textos pequenos */
+.dark .text-sm {
+  color: #d1d5db !important;
+}
+
+.dark .text-xs {
+  color: #9ca3af !important;
+}
+
+/* Garantir que ícones apareçam corretamente */
+svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Garantir visibilidade de ícones no tema escuro */
+.dark svg {
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Força cor para ícones em componentes específicos */
+.dark .lucide,
+.dark [class*="lucide"] {
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+/* Títulos de cards com ícones */
+.dark .flex.items-center.gap-2 svg,
+.dark h1 svg,
+.dark h2 svg,
+.dark h3 svg {
+  color: #f9fafb !important;
+}
+
+/* Garantir que ícones em badges sejam visíveis */
+.dark .badge svg,
+.dark [class*="badge"] svg {
+  color: inherit !important;
+}
+
+/* Ícones em botões */
+.dark button svg {
+  color: inherit !important;
 }

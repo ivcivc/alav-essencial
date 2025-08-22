@@ -96,9 +96,21 @@ const mockWaitingList: WaitingListItem[] = [
 ]
 
 const PRIORITY_CONFIG = {
-  LOW: { label: 'Baixa', color: 'bg-gray-100 text-gray-800', icon: Clock },
-  MEDIUM: { label: 'Média', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-  HIGH: { label: 'Alta', color: 'bg-red-100 text-red-800', icon: Bell },
+  LOW: { 
+    label: 'Baixa', 
+    color: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600', 
+    icon: Clock 
+  },
+  MEDIUM: { 
+    label: 'Média', 
+    color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-700', 
+    icon: Clock 
+  },
+  HIGH: { 
+    label: 'Alta', 
+    color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700', 
+    icon: Bell 
+  },
 }
 
 const TYPE_LABELS = {
@@ -221,7 +233,7 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
     <>
       <Dialog open={isOpen && !showScheduleForm} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2 relative border-gray-400 text-gray-800 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
             <Clock className="w-4 h-4" />
             Lista de Espera
             {waitingList.length > 0 && (
@@ -230,18 +242,31 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
           </Button>
         </DialogTrigger>
         
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Lista de Espera
-                <Badge variant="secondary">{waitingList.length} pacientes</Badge>
-              </DialogTitle>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <DialogHeader className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <DialogTitle className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  Lista de Espera
+                </DialogTitle>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-2">
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700"
+                  >
+                    {waitingList.length} {waitingList.length === 1 ? 'paciente' : 'pacientes'}
+                  </Badge>
+                  na fila de espera
+                </p>
+              </div>
               
               <Button
                 onClick={() => setShowAddForm(true)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                size="sm"
               >
                 <Plus className="w-4 h-4" />
                 Adicionar à Lista
@@ -250,8 +275,16 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
           </DialogHeader>
 
           {showAddForm ? (
-            <div className="space-y-4 p-4 border rounded-lg">
-              <h3 className="font-medium">Adicionar Paciente à Lista de Espera</h3>
+            <div className="space-y-6 p-6 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <Plus className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Adicionar Paciente à Lista de Espera</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Preencha as informações para adicionar o paciente à fila</p>
+                </div>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -360,16 +393,18 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
           ) : (
             <div className="space-y-4">
               {sortedWaitingList.length === 0 ? (
-                <div className="text-center py-8">
-                  <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">Nenhum paciente na lista de espera</p>
+                <div className="text-center py-12">
+                  <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <Clock className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Lista de espera vazia</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">Nenhum paciente aguardando agendamento no momento</p>
                   <Button
-                    variant="outline"
-                    className="mt-4"
                     onClick={() => setShowAddForm(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Adicionar Paciente
+                    Adicionar Primeiro Paciente
                   </Button>
                 </div>
               ) : (
@@ -378,24 +413,34 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                     const priorityConfig = PRIORITY_CONFIG[item.priority]
                     
                     return (
-                      <Card key={item.id}>
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div>
-                                <div className="font-medium">{item.patient?.fullName}</div>
-                                <div className="text-sm text-gray-600">
-                                  {TYPE_LABELS[item.type]} • {item.productService?.name}
+                      <Card key={item.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200">
+                        <CardHeader className="pb-4">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div className="flex items-start gap-3">
+                              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
+                                <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+                                  {item.patient?.fullName}
+                                </div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-2">
+                                  <Badge variant="outline" className="text-xs">
+                                    {TYPE_LABELS[item.type]}
+                                  </Badge>
+                                  <span>•</span>
+                                  <span className="font-medium">{item.productService?.name}</span>
                                 </div>
                               </div>
                             </div>
                             
-                            <div className="flex items-center gap-2">
-                              <Badge className={priorityConfig.color}>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <Badge className={`${priorityConfig.color} border`}>
+                                <priorityConfig.icon className="w-3 h-3 mr-1" />
                                 {priorityConfig.label}
                               </Badge>
                               {item.notified && (
-                                <Badge variant="outline" className="text-green-600 border-green-200">
+                                <Badge variant="outline" className="text-green-600 dark:text-green-400 border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20">
                                   <CheckCircle className="w-3 h-3 mr-1" />
                                   Notificado
                                 </Badge>
@@ -404,33 +449,39 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                           </div>
                         </CardHeader>
                         
-                        <CardContent className="space-y-3">
-                          {item.partner && (
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <User className="w-4 h-4" />
-                              <span>Profissional preferido: {item.partner.fullName}</span>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {item.partner && (
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <Briefcase className="w-4 h-4 text-blue-500" />
+                                <span>Dr. {item.partner.fullName}</span>
+                              </div>
+                            )}
+                            
+                            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                              <Calendar className="w-4 h-4 text-green-500" />
+                              <span>
+                                Desde {format(new Date(item.createdAt), "d 'de' MMM", { locale: ptBR })}
+                              </span>
                             </div>
-                          )}
-                          
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="w-4 h-4" />
-                            <span>
-                              Aguardando desde: {format(new Date(item.createdAt), "d 'de' MMMM", { locale: ptBR })}
-                            </span>
                           </div>
 
                           {item.observations && (
-                            <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                            <div className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border-l-4 border-blue-400">
+                              <div className="font-medium text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                                Observações
+                              </div>
                               {item.observations}
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
                               {item.patient?.phone && (
-                                <span className="text-sm text-gray-600">
-                                  📱 {item.patient.phone}
-                                </span>
+                                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
+                                  <span className="text-blue-500">📱</span>
+                                  <span className="font-mono">{item.patient.phone}</span>
+                                </div>
                               )}
                             </div>
                             
@@ -440,7 +491,7 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleNotifyPatient(item.id)}
-                                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                  className="text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                                 >
                                   <Bell className="w-3 h-3 mr-1" />
                                   Notificar
@@ -451,7 +502,7 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleScheduleFromWaitingList(item)}
-                                className="text-green-600 border-green-200 hover:bg-green-50"
+                                className="text-green-600 dark:text-green-400 border-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 font-medium"
                               >
                                 <Calendar className="w-3 h-3 mr-1" />
                                 Agendar
@@ -461,7 +512,7 @@ export function WaitingList({ open, onOpenChange }: WaitingListProps) {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleRemoveFromWaitingList(item.id)}
-                                className="text-red-600 border-red-200 hover:bg-red-50"
+                                className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 px-2"
                               >
                                 <X className="w-3 h-3" />
                               </Button>

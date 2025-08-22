@@ -39,7 +39,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
@@ -115,7 +115,7 @@ export function LoginForm() {
             </Button>
           </form>
           
-          <div className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>Credenciais padrão:</p>
             <p>Email: admin@clinica.com</p>
             <p>Senha: admin123</p>

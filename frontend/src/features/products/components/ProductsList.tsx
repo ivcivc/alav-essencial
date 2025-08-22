@@ -119,7 +119,10 @@ export const ProductsList: React.FC<ProductsListProps> = ({
                     </TableCell>
                     
                     <TableCell>
-                      <Badge variant={product.type === ServiceType.PRODUCT ? 'default' : 'secondary'}>
+                      <Badge 
+                        variant={product.type === ServiceType.PRODUCT ? 'success' : 'info'}
+                        className={product.type === ServiceType.PRODUCT ? 'badge-product' : 'badge-service'}
+                      >
                         {product.type === ServiceType.PRODUCT ? (
                           <>
                             <Package className="h-3 w-3 mr-1" />
@@ -153,11 +156,17 @@ export const ProductsList: React.FC<ProductsListProps> = ({
                     
                     <TableCell>
                       <div className="flex flex-col gap-1">
-                        <Badge variant={product.active ? 'default' : 'secondary'}>
+                        <Badge 
+                          variant={product.active ? 'success' : 'secondary'}
+                          className={product.active ? 'badge-active' : 'badge-inactive'}
+                        >
                           {product.active ? 'Ativo' : 'Inativo'}
                         </Badge>
                         {product.type === ServiceType.SERVICE && (
-                          <Badge variant={product.availableForBooking ? 'default' : 'outline'}>
+                          <Badge 
+                            variant={product.availableForBooking ? 'info' : 'warning'}
+                            className={product.availableForBooking ? 'badge-available' : 'badge-unavailable'}
+                          >
                             {product.availableForBooking ? 'Agendável' : 'Não agendável'}
                           </Badge>
                         )}
@@ -168,7 +177,16 @@ export const ProductsList: React.FC<ProductsListProps> = ({
                       {product.type === ServiceType.PRODUCT ? (
                         <div className="flex flex-col gap-1">
                           {stockStatus && (
-                            <Badge variant={stockStatus.color}>
+                            <Badge 
+                              variant={
+                                stockStatus.status === 'ok' ? 'success' : 
+                                stockStatus.status === 'low' ? 'warning' : 'destructive'
+                              }
+                              className={
+                                stockStatus.status === 'ok' ? 'badge-stock-ok' : 
+                                stockStatus.status === 'low' ? 'badge-stock-low' : 'badge-stock-out'
+                              }
+                            >
                               {stockStatus.status === 'out' && <AlertTriangle className="h-3 w-3 mr-1" />}
                               {stockStatus.status === 'low' && <AlertTriangle className="h-3 w-3 mr-1" />}
                               {stockStatus.label}

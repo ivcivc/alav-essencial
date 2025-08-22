@@ -427,3 +427,19 @@ enum PaymentMethod {
   CHECK
   VOUCHER
 }
+
+model ClinicSettings {
+  id                     String   @id @default(cuid())
+  name                   String   @default("Clínica Essencial")
+  hours                  Json     // Array de horários por dia da semana
+  allowWeekendBookings   Boolean  @default(false)
+  advanceBookingDays     Int      @default(30)
+  minBookingHours        Int      @default(2)
+  maxBookingDays         Int      @default(60)
+  allowCancelledMovement Boolean  @default(false)
+  allowCompletedMovement Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("clinic_settings")
+}

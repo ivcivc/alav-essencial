@@ -56,8 +56,8 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ roomId }) => {
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{room.name}</h1>
             <Badge
-              variant={room.active ? "default" : "secondary"}
-              className="flex items-center gap-1"
+              variant={room.active ? "success" : "secondary"}
+              className={`flex items-center gap-1 ${room.active ? 'badge-active' : 'badge-inactive'}`}
             >
               {room.active ? (
                 <CheckCircle className="h-3 w-3" />
@@ -98,8 +98,8 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ roomId }) => {
             <div className="space-y-2">
               <h3 className="font-medium">Status</h3>
               <Badge
-                variant={room.active ? "default" : "secondary"}
-                className="flex items-center gap-1 w-fit"
+                variant={room.active ? "success" : "secondary"}
+                className={`flex items-center gap-1 w-fit ${room.active ? 'badge-active' : 'badge-inactive'}`}
               >
                 {room.active ? (
                   <CheckCircle className="h-3 w-3" />
@@ -152,7 +152,7 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ roomId }) => {
             {room.resources && room.resources.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {room.resources.map((resource, index) => (
-                  <Badge key={index} variant="outline" className="px-3 py-1">
+                  <Badge key={index} variant="info" className="px-3 py-1 badge-available">
                     {resource}
                   </Badge>
                 ))}
@@ -193,7 +193,7 @@ export const RoomDetails: React.FC<RoomDetailsProps> = ({ roomId }) => {
                       Status: {appointment.status}
                     </p>
                   </div>
-                  <Badge variant="outline">
+                  <Badge variant="info" className="badge-available">
                     {appointment.type === 'NEW' ? 'Nova consulta' : 'Retorno'}
                   </Badge>
                 </div>
