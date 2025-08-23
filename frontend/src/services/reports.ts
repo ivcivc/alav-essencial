@@ -133,7 +133,9 @@ class ReportsService {
     const params = new URLSearchParams()
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     const response = await apiClient.get(`/reports/appointments?${params.toString()}`)
@@ -144,7 +146,9 @@ class ReportsService {
     const params = new URLSearchParams()
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     const response = await apiClient.get(`/reports/financial?${params.toString()}`)
@@ -155,7 +159,9 @@ class ReportsService {
     const params = new URLSearchParams()
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     const response = await apiClient.get(`/reports/partners?${params.toString()}`)
@@ -166,7 +172,9 @@ class ReportsService {
     const params = new URLSearchParams()
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     const response = await apiClient.get(`/reports/summary?${params.toString()}`)
@@ -181,7 +189,9 @@ class ReportsService {
     const params = new URLSearchParams()
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     const response = await apiClient.get(`/reports/performance?${params.toString()}`)
@@ -197,7 +207,9 @@ class ReportsService {
     params.append('format', format)
     
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString())
+      }
     })
 
     if (format === 'csv') {

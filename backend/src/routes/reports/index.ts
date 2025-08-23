@@ -43,11 +43,11 @@ export default async function reportsRoutes(fastify: FastifyInstance) {
           startDate: { type: 'string', format: 'date' },
           endDate: { type: 'string', format: 'date' },
           bankAccountId: { type: 'string' },
-          type: { type: 'string', enum: ['INCOME', 'EXPENSE'] },
-          category: { type: 'string' },
-          partnerId: { type: 'string' },
-          patientId: { type: 'string' },
-          status: { type: 'string', enum: ['PENDING', 'PAID', 'OVERDUE'] }
+          type: { type: 'string', enum: ['INCOME', 'EXPENSE'], nullable: true },
+          category: { type: 'string', nullable: true },
+          partnerId: { type: 'string', nullable: true },
+          patientId: { type: 'string', nullable: true },
+          status: { type: 'string', enum: ['PENDING', 'PAID', 'OVERDUE'], nullable: true }
         }
       }
     }
@@ -72,7 +72,7 @@ export default async function reportsRoutes(fastify: FastifyInstance) {
           startDate: { type: 'string', format: 'date' },
           endDate: { type: 'string', format: 'date' },
           partnerId: { type: 'string' },
-          partnershipType: { type: 'string', enum: ['SUBLEASE', 'PERCENTAGE', 'PERCENTAGE_WITH_PRODUCTS'] }
+          partnershipType: { type: 'string', enum: ['SUBLEASE', 'PERCENTAGE', 'PERCENTAGE_WITH_PRODUCTS'], nullable: true }
         }
       }
     }

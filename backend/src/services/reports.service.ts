@@ -98,8 +98,9 @@ export class ReportsService {
     if (filters.patientId) whereClause.patientId = filters.patientId
     if (filters.roomId) whereClause.roomId = filters.roomId
     if (filters.serviceId) whereClause.productServiceId = filters.serviceId
-    if (filters.status) whereClause.status = filters.status
-    if (filters.type) whereClause.type = filters.type
+    // Ignorar valores 'all' nos filtros
+    if (filters.status && filters.status !== 'all') whereClause.status = filters.status
+    if (filters.type && filters.type !== 'all') whereClause.type = filters.type
 
     // Buscar agendamentos com relacionamentos
     const appointments = await this.prisma.appointment.findMany({
@@ -206,11 +207,11 @@ export class ReportsService {
       ]
     }
     if (filters.bankAccountId) whereClause.bankAccountId = filters.bankAccountId
-    if (filters.type) whereClause.type = filters.type
-    if (filters.category) whereClause.category = filters.category
+    if (filters.type && filters.type !== 'all') whereClause.type = filters.type
+    if (filters.category && filters.category !== 'all') whereClause.category = filters.category
     if (filters.partnerId) whereClause.partnerId = filters.partnerId
     if (filters.patientId) whereClause.patientId = filters.patientId
-    if (filters.status) whereClause.status = filters.status
+    if (filters.status && filters.status !== 'all') whereClause.status = filters.status
 
     // Buscar lançamentos financeiros
     const entries = await this.prisma.financialEntry.findMany({
@@ -234,35 +235,43 @@ export class ReportsService {
       ]
     })
 
+    // Função para converter valores para número
+    const toNumber = (value: any): number => {
+      if (typeof value === 'string') {
+        return parseFloat(value) || 0
+      }
+      return Number(value) || 0
+    }
+
     // Calcular métricas financeiras
     const incomeEntries = entries.filter(e => e.type === 'INCOME')
     const expenseEntries = entries.filter(e => e.type === 'EXPENSE')
 
-    const totalIncome = incomeEntries.reduce((sum, e) => sum + e.amount, 0)
-    const totalExpenses = expenseEntries.reduce((sum, e) => sum + e.amount, 0)
+    const totalIncome = incomeEntries.reduce((sum, e) => sum + toNumber(e.amount), 0)
+    const totalExpenses = expenseEntries.reduce((sum, e) => sum + toNumber(e.amount), 0)
     const netProfit = totalIncome - totalExpenses
 
-    const totalPending = entries.filter(e => e.status === 'PENDING').reduce((sum, e) => sum + e.amount, 0)
-    const totalPaid = entries.filter(e => e.status === 'PAID').reduce((sum, e) => sum + e.amount, 0)
+    const totalPending = entries.filter(e => e.status === 'PENDING').reduce((sum, e) => sum + toNumber(e.amount), 0)
+    const totalPaid = entries.filter(e => e.status === 'PAID').reduce((sum, e) => sum + toNumber(e.amount), 0)
 
     // Agrupar por categoria
     const groupedByCategory = entries.reduce((acc, entry) => {
       const category = entry.category || 'Sem categoria'
-      acc[category] = (acc[category] || 0) + entry.amount
+      acc[category] = (acc[category] || 0) + toNumber(entry.amount)
       return acc
     }, {} as Record<string, number>)
 
     // Agrupar por conta
     const groupedByAccount = entries.reduce((acc, entry) => {
       const accountName = entry.bankAccount?.name || 'Sem conta'
-      acc[accountName] = (acc[accountName] || 0) + entry.amount
+      acc[accountName] = (acc[accountName] || 0) + toNumber(entry.amount)
       return acc
     }, {} as Record<string, number>)
 
     // Agrupar por data
     const groupedByDate = entries.reduce((acc, entry) => {
       const dateKey = (entry.paidDate || entry.dueDate).toISOString().split('T')[0]
-      acc[dateKey] = (acc[dateKey] || 0) + entry.amount
+      acc[dateKey] = (acc[dateKey] || 0) + toNumber(entry.amount)
       return acc
     }, {} as Record<string, number>)
 
@@ -277,9 +286,9 @@ export class ReportsService {
       const dayData = cashFlowMap.get(dateKey)!
       
       if (entry.type === 'INCOME') {
-        dayData.income += entry.amount
+        dayData.income += toNumber(entry.amount)
       } else {
-        dayData.expenses += entry.amount
+        dayData.expenses += toNumber(entry.amount)
       }
     })
 
@@ -292,17 +301,42 @@ export class ReportsService {
       }))
       .sort((a, b) => a.date.localeCompare(b.date))
 
+    // Converter valores string para número
+    const parseNumber = (value: any) => {
+      if (typeof value === 'string') {
+        return parseFloat(value);
+      }
+      return value;
+    };
+
     return {
-      totalIncome,
-      totalExpenses,
-      netProfit,
-      totalPending,
-      totalPaid,
-      entries,
-      groupedByCategory,
-      groupedByAccount,
-      groupedByDate,
-      cashFlow
+      totalIncome: parseNumber(totalIncome),
+      totalExpenses: parseNumber(totalExpenses),
+      netProfit: parseNumber(netProfit),
+      totalPending: parseNumber(totalPending),
+      totalPaid: parseNumber(totalPaid),
+      entries: entries.map(entry => ({
+        ...entry,
+        amount: toNumber(entry.amount)
+      })),
+      groupedByCategory: Object.entries(groupedByCategory).reduce((acc, [key, value]) => {
+        acc[key] = parseNumber(value);
+        return acc;
+      }, {} as Record<string, number>),
+      groupedByAccount: Object.entries(groupedByAccount).reduce((acc, [key, value]) => {
+        acc[key] = parseNumber(value);
+        return acc;
+      }, {} as Record<string, number>),
+      groupedByDate: Object.entries(groupedByDate).reduce((acc, [key, value]) => {
+        acc[key] = parseNumber(value);
+        return acc;
+      }, {} as Record<string, number>),
+      cashFlow: cashFlow.map(flow => ({
+        ...flow,
+        income: parseNumber(flow.income),
+        expenses: parseNumber(flow.expenses),
+        balance: parseNumber(flow.balance)
+      }))
     }
   }
 
@@ -312,7 +346,7 @@ export class ReportsService {
 
     // Aplicar filtros de parceiro
     if (filters.partnerId) whereClause.id = filters.partnerId
-    if (filters.partnershipType) whereClause.partnershipType = filters.partnershipType
+    if (filters.partnershipType && filters.partnershipType !== 'all') whereClause.partnershipType = filters.partnershipType
 
     // Aplicar filtros de data para agendamentos
     if (filters.startDate && filters.endDate) {
@@ -399,14 +433,40 @@ export class ReportsService {
         : 0
     }
 
+    // Converter valores string para número
+    const parseNumber = (value: any) => {
+      if (typeof value === 'string') {
+        return parseFloat(value);
+      }
+      return value;
+    };
+
     return {
       totalPartners,
       activePartners,
       totalAppointments,
-      totalRevenue,
-      partners: partnerMetrics,
+      totalRevenue: parseNumber(totalRevenue),
+      partners: partnerMetrics.map(partner => ({
+        ...partner,
+        revenue: parseNumber(partner.revenue),
+        commission: parseNumber(partner.commission),
+        averageServiceTime: parseNumber(partner.averageServiceTime),
+        completionRate: parseNumber(partner.completionRate)
+      })),
       groupedByType,
-      performanceMetrics
+      performanceMetrics: {
+        ...performanceMetrics,
+        averageAppointmentsPerPartner: parseNumber(performanceMetrics.averageAppointmentsPerPartner),
+        averageRevenuePerPartner: parseNumber(performanceMetrics.averageRevenuePerPartner),
+        averageCompletionRate: parseNumber(performanceMetrics.averageCompletionRate),
+        topPerformer: performanceMetrics.topPerformer ? {
+          ...performanceMetrics.topPerformer,
+          revenue: parseNumber(performanceMetrics.topPerformer.revenue),
+          commission: parseNumber(performanceMetrics.topPerformer.commission),
+          averageServiceTime: parseNumber(performanceMetrics.topPerformer.averageServiceTime),
+          completionRate: parseNumber(performanceMetrics.topPerformer.completionRate)
+        } : null
+      }
     }
   }
 
