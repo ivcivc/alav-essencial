@@ -215,13 +215,13 @@ export function useCancelCheckout() {
       queryClient.invalidateQueries({ queryKey: ['accountsReceivable'] })
       
       toast({
-        title: 'Checkout cancelado',
-        description: `Checkout cancelado com sucesso. ${result.cancelResult.cancelledEntries} lançamentos foram cancelados.`,
+        title: 'Pagamento cancelado',
+        description: `Pagamento cancelado com sucesso. ${result.cancelResult.cancelledEntries} lançamentos foram cancelados.`,
       })
     },
     onError: (error: any) => {
       toast({
-        title: 'Erro ao cancelar checkout',
+        title: 'Erro ao cancelar pagamento',
         description: error.message,
         variant: 'destructive',
       })
@@ -352,7 +352,7 @@ export function useCheckOutAppointmentWithPayment() {
       queryClient.invalidateQueries({ queryKey: ['financial'] })
       
       toast({
-        title: 'Checkout realizado com sucesso!',
+        title: 'Pagamento realizado com sucesso!',
         description: `Receita de R$ ${result.financialResult.totalProcessed.toFixed(2)} lançada automaticamente.`,
       })
     },

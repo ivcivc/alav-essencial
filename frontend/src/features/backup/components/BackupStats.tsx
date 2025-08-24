@@ -109,7 +109,7 @@ export function BackupStats() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Total de Backups</CardTitle>
-      <Database className="h-4 w-4 text-muted-foreground" />
+      <Database className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{stats?.totalBackups || 0}</div>
@@ -122,7 +122,7 @@ export function BackupStats() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Taxa de Sucesso</CardTitle>
-      <CheckCircle className="h-4 w-4 text-muted-foreground" />
+      <CheckCircle className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold ">
@@ -138,7 +138,7 @@ export function BackupStats() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Espaço Total</CardTitle>
-      <HardDrive className="h-4 w-4 text-muted-foreground" />
+      <HardDrive className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{formatBytes(stats?.totalSize || 0)}</div>
@@ -245,8 +245,8 @@ export function BackupStats() {
       <div className="flex justify-between items-center">
        <span className="text-muted-foreground">Status atual:</span>
        <span className={`font-medium ${
-        (stats?.failedBackups || 0) === 0 ? 'text-green-600' :
-        (stats?.failedBackups || 0) < (stats?.successfulBackups || 0) / 10 ? 'text-yellow-600' : 'text-red-600'
+        (stats?.failedBackups || 0) === 0 ? 'text-green-600 dark:text-green-400' :
+        (stats?.failedBackups || 0) < (stats?.successfulBackups || 0) / 10 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'
        }`}>
         {(stats?.failedBackups || 0) === 0 ? 'Excelente' :
          (stats?.failedBackups || 0) < (stats?.successfulBackups || 0) / 10 ? 'Bom' : 'Requer atenção'}

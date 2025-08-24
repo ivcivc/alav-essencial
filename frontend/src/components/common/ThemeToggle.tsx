@@ -108,14 +108,14 @@ export function ThemeToggle() {
        className={cn(
         "relative w-8 h-8 rounded-full border-2 transition-all hover:scale-110",
         primaryColor === color.value 
-         ? "border-border dark:border-border ring-2 ring-primary" 
-         : "border-border "
+         ? "border-border ring-2 ring-primary" 
+         : "border-border"
        )}
-       
+       style={{ backgroundColor: color.color }}
        title={color.label}
       >
        {primaryColor === color.value && (
-        <CheckIcon className="h-4 w-4 text-primary-foreground absolute inset-0 m-auto" />
+        <CheckIcon className="h-4 w-4 text-white absolute inset-0 m-auto" />
        )}
       </button>
      ))}

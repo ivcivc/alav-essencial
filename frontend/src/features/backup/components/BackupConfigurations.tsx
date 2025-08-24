@@ -178,13 +178,13 @@ export function BackupConfigurations() {
     <div className="grid gap-4">
      {configs.map((config) => (
       <Card key={config.id} className={`${
-       config.enabled ? 'border-green-200 bg-green-50/50' : 'border-border'
+       config.enabled ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10' : 'border-border'
       }`}>
        <CardHeader>
         <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg ${
-           config.enabled ? 'bg-green-100 text-green-700' : 'bg-card text-muted-foreground'
+           config.enabled ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-card text-muted-foreground'
           }`}>
            <Database className="h-5 w-5" />
           </div>

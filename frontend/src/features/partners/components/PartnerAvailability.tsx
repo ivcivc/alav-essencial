@@ -260,7 +260,7 @@ export function PartnerAvailabilityComponent({ partnerId }: PartnerAvailabilityP
         key={day.value}
         className={`p-3 rounded-lg border text-center ${
          dayAvailability
-          ? 'bg-green-50 border-green-200'
+          ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
           : 'bg-card border-border'
         }`}
        >

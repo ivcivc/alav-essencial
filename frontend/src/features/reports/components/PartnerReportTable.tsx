@@ -36,7 +36,7 @@ export function PartnerReportTable({ data }: PartnerReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Total de Parceiros</CardTitle>
-      <UsersIcon className="h-4 w-4 text-muted-foreground" />
+      <UsersIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{data.totalPartners}</div>
@@ -49,7 +49,7 @@ export function PartnerReportTable({ data }: PartnerReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-      <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
+      <DollarSignIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">
@@ -67,7 +67,7 @@ export function PartnerReportTable({ data }: PartnerReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Agendamentos</CardTitle>
-      <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+      <TrendingUpIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{data.totalAppointments}</div>
@@ -80,7 +80,7 @@ export function PartnerReportTable({ data }: PartnerReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Taxa Média</CardTitle>
-      <ClockIcon className="h-4 w-4 text-muted-foreground" />
+      <ClockIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">
@@ -99,7 +99,7 @@ export function PartnerReportTable({ data }: PartnerReportTableProps) {
      <Card>
       <CardHeader>
        <CardTitle className="text-lg flex items-center gap-2">
-        <StarIcon className="h-5 w-5 " />
+        <StarIcon className="h-5 w-5 text-primary" />
         Top Performer
        </CardTitle>
        <CardDescription>Parceiro com maior receita no período</CardDescription>

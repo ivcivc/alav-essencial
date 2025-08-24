@@ -149,7 +149,7 @@ export function PartnersList({ onCreatePartner, onEditPartner, onViewPartner }: 
     <Card>
      <CardContent className="p-6">
       <div className="flex items-center">
-       <UserCheck className="h-8 w-8 " />
+       <UserCheck className="h-8 w-8 text-primary" />
        <div className="ml-4">
         <p className="text-2xl font-bold text-muted-foreground">
          {partners.filter(p => p.active).length}
@@ -163,7 +163,7 @@ export function PartnersList({ onCreatePartner, onEditPartner, onViewPartner }: 
     <Card>
      <CardContent className="p-6">
       <div className="flex items-center">
-       <DollarSign className="h-8 w-8 " />
+       <DollarSign className="h-8 w-8 text-primary" />
        <div className="ml-4">
         <p className="text-2xl font-bold text-muted-foreground">
          {partners.filter(p => p.partnershipType === 'SUBLEASE').length}
@@ -177,7 +177,7 @@ export function PartnersList({ onCreatePartner, onEditPartner, onViewPartner }: 
     <Card>
      <CardContent className="p-6">
       <div className="flex items-center">
-       <CalendarCheck className="h-8 w-8 " />
+       <CalendarCheck className="h-8 w-8 text-primary" />
        <div className="ml-4">
         <p className="text-2xl font-bold text-muted-foreground">
          {partners.filter(p => p.partnershipType !== 'SUBLEASE').length}

@@ -300,7 +300,7 @@ export function BackupHistory() {
                     Tem certeza que deseja restaurar este backup? 
                     <strong> Esta ação irá sobrescrever todos os dados atuais.</strong>
                    </p>
-                   <div className="bg-yellow-50 p-3 rounded border ">
+                   <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded border border-yellow-200 dark:border-yellow-800">
                     <p className="text-sm font-medium ">
                      Backup: {backup.filename}
                     </p>

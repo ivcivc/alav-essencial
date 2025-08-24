@@ -122,7 +122,7 @@ export function FinancialReportTable({ data }: FinancialReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Receitas</CardTitle>
-      <TrendingUpIcon className="h-4 w-4 " />
+      <TrendingUpIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold ">
@@ -140,7 +140,7 @@ export function FinancialReportTable({ data }: FinancialReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Despesas</CardTitle>
-      <TrendingDownIcon className="h-4 w-4 " />
+      <TrendingDownIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold ">
@@ -176,7 +176,7 @@ export function FinancialReportTable({ data }: FinancialReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Pendente</CardTitle>
-      <ClockIcon className="h-4 w-4 " />
+      <ClockIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold ">

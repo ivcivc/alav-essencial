@@ -25,14 +25,14 @@
   }
 
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 0 0% 6.9%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    --card: 0 0% 8.5%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 0 0% 8.5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
@@ -43,59 +43,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
-
-  /* Forçar contraste específico para elementos card */
-  .dark .bg-card,
-  .dark [class*="bg-card"] {
-    background-color: #262626 !important;
-  }
-  
-  .dark .bg-muted,
-  .dark [class*="bg-muted"] {
-    background-color: #171717 !important;
-  }
-  
-  /* Corrigir cor primária no tema escuro */
-  .dark .bg-primary {
-    background-color: hsl(210 40% 98%) !important;
-    color: hsl(222.2 47.4% 11.2%) !important;
-  }
-  
-  .dark .text-primary {
-    color: hsl(210 40% 98%) !important;
-  }
-  
-  /* Remover azuis e usar cores do tema */
-  .dark .bg-blue-500,
-  .dark .bg-blue-600,
-  .dark .bg-blue-700,
-  .dark .ring-blue-500,
-  .dark .border-blue-500 {
-    background-color: hsl(210 40% 98%) !important;
-    color: hsl(222.2 47.4% 11.2%) !important;
-    border-color: hsl(210 40% 98%) !important;
-    --tw-ring-color: hsl(210 40% 98%) !important;
-  }
-  
-  .dark .text-blue-500,
-  .dark .text-blue-600,
-  .dark .text-blue-700 {
-    color: hsl(210 40% 98%) !important;
-  }
-  
-  /* Corrigir focus states */
-  .dark *:focus-visible {
-    --tw-ring-color: hsl(212.7 26.8% 83.9%) !important;
-    border-color: hsl(210 40% 98%) !important;
-  }
-  
-  /* Teste direto com cores hexadecimais */
-  .dark [data-testid="card"],
-  .dark .card-test {
-    background-color: #1a1a1a !important;
-    border: 1px solid #333 !important;
+    --ring: 217 91% 60%;
   }
 
   * {
@@ -108,9 +56,42 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Forçar cor de fundo exata do Shadcn oficial */
-  .dark body,
-  .dark html {
-    background-color: #151414 !important;
+  /* Forçar fundos sólidos em modais */
+  [data-radix-dialog-content] {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+    opacity: 1 !important;
+  }
+  
+  [data-radix-dropdown-menu-content] {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Garantir que bg-card seja sempre opaco */
+  .bg-card {
+    background-color: hsl(var(--card)) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Forçar opacidade em elementos do modal */
+  [role="dialog"] {
+    background-color: hsl(var(--card)) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Permitir que cores primárias funcionem */
+  .bg-primary {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  .text-primary {
+    color: hsl(var(--primary)) !important;
+  }
+  
+  .border-primary {
+    border-color: hsl(var(--primary)) !important;
   }
 }

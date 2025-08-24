@@ -253,7 +253,7 @@ export function DREReport({ className }: DREReportProps) {
            {formatCurrency(dreData.revenue.total)}
           </p>
          </div>
-         <TrendingUp className="h-8 w-8 " />
+         <TrendingUp className="h-8 w-8 text-primary" />
         </div>
        </CardContent>
       </Card>
@@ -267,7 +267,7 @@ export function DREReport({ className }: DREReportProps) {
            {formatCurrency(dreData.expenses.total)}
           </p>
          </div>
-         <TrendingDown className="h-8 w-8 " />
+         <TrendingDown className="h-8 w-8 text-primary" />
         </div>
        </CardContent>
       </Card>
@@ -286,9 +286,9 @@ export function DREReport({ className }: DREReportProps) {
          </div>
          <div className="flex flex-col items-center">
           {dreData.netResult >= 0 ? (
-           <CheckCircle className="h-8 w-8 " />
+           <CheckCircle className="h-8 w-8 text-primary" />
           ) : (
-           <AlertTriangle className="h-8 w-8 " />
+           <AlertTriangle className="h-8 w-8 text-primary" />
           )}
           <Badge 
            variant={dreData.netResult >= 0 ? "default" : "destructive"}
@@ -472,7 +472,7 @@ export function DREReport({ className }: DREReportProps) {
         </div>
 
         <div className="text-center p-4 border rounded-lg">
-         <Target className="h-8 w-8 mx-auto mb-2 " />
+         <Target className="h-8 w-8 mx-auto mb-2 text-primary" />
          <p className="text-sm text-muted-foreground">Eficiência Operacional</p>
          <p className="text-xl font-bold text-primary">
           {dreData.revenue.total > 0 ? 
@@ -483,7 +483,7 @@ export function DREReport({ className }: DREReportProps) {
         </div>
 
         <div className="text-center p-4 border rounded-lg">
-         <DollarSign className="h-8 w-8 mx-auto mb-2 " />
+         <DollarSign className="h-8 w-8 mx-auto mb-2 text-primary" />
          <p className="text-sm text-muted-foreground">ROI</p>
          <p className={`text-xl font-bold ${dreData.netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {dreData.expenses.total > 0 ? 
@@ -494,7 +494,7 @@ export function DREReport({ className }: DREReportProps) {
         </div>
 
         <div className="text-center p-4 border rounded-lg">
-         <Calendar className="h-8 w-8 mx-auto mb-2 " />
+         <Calendar className="h-8 w-8 mx-auto mb-2 text-primary" />
          <p className="text-sm text-muted-foreground">Break-even</p>
          <p className="text-xl font-bold ">
           {dreData.netResult >= 0 ? 'Atingido' : 'Não atingido'}

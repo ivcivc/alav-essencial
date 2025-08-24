@@ -438,7 +438,7 @@ export function AccountsDashboard({ className }: AccountsDashboardProps) {
              {formatCurrency(summary.totalReceivable)}
             </p>
            </div>
-           <ArrowUpCircle className="h-8 w-8 " />
+           <ArrowUpCircle className="h-8 w-8 text-primary" />
           </div>
          </CardContent>
         </Card>
@@ -452,7 +452,7 @@ export function AccountsDashboard({ className }: AccountsDashboardProps) {
              {formatCurrency(summary.totalPayable)}
             </p>
            </div>
-           <ArrowDownCircle className="h-8 w-8 " />
+           <ArrowDownCircle className="h-8 w-8 text-primary" />
           </div>
          </CardContent>
         </Card>
@@ -480,7 +480,7 @@ export function AccountsDashboard({ className }: AccountsDashboardProps) {
              {formatCurrency(summary.overdueReceivable + summary.overduePayable)}
             </p>
            </div>
-           <AlertCircle className="h-8 w-8 " />
+           <AlertCircle className="h-8 w-8 text-primary" />
           </div>
          </CardContent>
         </Card>

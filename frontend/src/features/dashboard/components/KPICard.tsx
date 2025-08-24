@@ -49,9 +49,9 @@ export function KPICard({
   if (!trend) return null
   
   if (trend.value > 0) {
-   return <TrendingUp className="h-4 w-4 " />
+   return <TrendingUp className="h-4 w-4 text-primary" />
   } else if (trend.value < 0) {
-   return <TrendingDown className="h-4 w-4 " />
+   return <TrendingDown className="h-4 w-4 text-primary" />
   }
   return <Minus className="h-4 w-4 text-muted-foreground" />
  }
@@ -73,7 +73,7 @@ export function KPICard({
      {title}
     </CardTitle>
     {icon && (
-     <div className="h-4 w-4 text-muted-foreground">
+     <div className="h-4 w-4 text-primary">
       {icon}
      </div>
     )}

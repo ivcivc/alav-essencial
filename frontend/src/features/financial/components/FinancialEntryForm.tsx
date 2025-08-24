@@ -230,23 +230,23 @@ export function FinancialEntryForm({
   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
    {/* Aviso para lançamentos relacionados a agendamentos */}
    {isRelatedToAppointment && (
-    <div className="bg-blue-50 border  rounded-lg p-4">
+    <div className="bg-muted border border-border rounded-lg p-4">
      <div className="flex items-start gap-3">
       <div className="flex items-center gap-2 text-primary">
        <Calendar className="h-5 w-5" />
        <span className="font-semibold">Sincronização com Agendamento</span>
       </div>
      </div>
-     <div className="mt-2 text-sm text-primary">
+     <div className="mt-2 text-sm text-foreground">
       <p>⚠️ <strong>Este lançamento está vinculado a um agendamento.</strong></p>
       <ul className="mt-2 list-disc list-inside space-y-1">
        <li>Alterações no status serão sincronizadas automaticamente com o agendamento</li>
-       <li><strong>PAID/PENDING → Agendamento: COMPLETED/IN_PROGRESS</strong></li>
-       <li><strong>CANCELLED → Agendamento: IN_PROGRESS</strong></li>
+       <li><strong>PAGO/PENDENTE → Agendamento: CONCLUÍDO/EM_ANDAMENTO</strong></li>
+       <li><strong>CANCELADO → Agendamento: EM_ANDAMENTO</strong></li>
       </ul>
-      <p className="mt-2 text-xs  p-2 rounded border">
-       💡 <strong>Dica:</strong> Para cancelar apenas o checkout (mantendo o agendamento ativo), 
-       use a opção "Cancelar Checkout" no próprio agendamento.
+      <p className="mt-2 text-xs bg-card text-muted-foreground p-2 rounded border border-border">
+       💡 <strong>Dica:</strong> Para cancelar apenas o pagamento (mantendo o agendamento ativo), 
+       use a opção "Cancelar Pagamento" no próprio agendamento.
       </p>
      </div>
     </div>

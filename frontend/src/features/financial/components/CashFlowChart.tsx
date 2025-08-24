@@ -294,7 +294,7 @@ export function CashFlowChart({ className }: CashFlowChartProps) {
          {formatCurrency(stats.totalIncome)}
         </p>
        </div>
-       <ArrowUpRight className="h-8 w-8 " />
+       <ArrowUpRight className="h-8 w-8 text-primary" />
       </div>
      </CardContent>
     </Card>
@@ -308,7 +308,7 @@ export function CashFlowChart({ className }: CashFlowChartProps) {
          {formatCurrency(stats.totalExpense)}
         </p>
        </div>
-       <ArrowDownRight className="h-8 w-8 " />
+       <ArrowDownRight className="h-8 w-8 text-primary" />
       </div>
      </CardContent>
     </Card>
@@ -323,9 +323,9 @@ export function CashFlowChart({ className }: CashFlowChartProps) {
         </p>
        </div>
        {stats.netResult >= 0 ? (
-        <TrendingUp className="h-8 w-8 " />
+        <TrendingUp className="h-8 w-8 text-primary" />
        ) : (
-        <TrendingDown className="h-8 w-8 " />
+        <TrendingDown className="h-8 w-8 text-primary" />
        )}
       </div>
      </CardContent>

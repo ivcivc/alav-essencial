@@ -77,7 +77,7 @@ export function BackupPage() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Configurações</CardTitle>
-      <Settings className="h-4 w-4 text-muted-foreground" />
+      <Settings className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{configs?.length || 0}</div>
@@ -90,7 +90,7 @@ export function BackupPage() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Total Backups</CardTitle>
-      <Database className="h-4 w-4 text-muted-foreground" />
+      <Database className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{stats?.totalBackups || 0}</div>
@@ -103,7 +103,7 @@ export function BackupPage() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Tamanho Total</CardTitle>
-      <HardDrive className="h-4 w-4 text-muted-foreground" />
+      <HardDrive className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{formatBytes(stats?.totalSize || 0)}</div>
@@ -116,7 +116,7 @@ export function BackupPage() {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Taxa de Sucesso</CardTitle>
-      <CheckCircle className="h-4 w-4 text-muted-foreground" />
+      <CheckCircle className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">
@@ -137,9 +137,9 @@ export function BackupPage() {
       <Card key={config.id} className={`border-l-4 ${
        config.enabled 
         ? config.lastBackup 
-         ? 'border-l-green-500' 
-         : 'border-l-yellow-500'
-        : 'border-l-gray-300'
+         ? 'border-l-green-500 dark:border-l-green-700' 
+         : 'border-l-yellow-500 dark:border-l-yellow-600'
+        : 'border-l-gray-300 dark:border-l-gray-600'
       }`}>
        <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">

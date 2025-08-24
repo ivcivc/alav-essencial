@@ -166,7 +166,7 @@ export function ReportsPage() {
         <Card>
          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+          <CalendarIcon className="h-4 w-4 text-primary" />
          </CardHeader>
          <CardContent>
           <div className="text-2xl font-bold">{summaryQuery.data.appointments.total}</div>
@@ -179,7 +179,7 @@ export function ReportsPage() {
         <Card>
          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-          <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
+          <DollarSignIcon className="h-4 w-4 text-primary" />
          </CardHeader>
          <CardContent>
           <div className="text-2xl font-bold">
@@ -200,7 +200,7 @@ export function ReportsPage() {
         <Card>
          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Parceiros Ativos</CardTitle>
-          <UsersIcon className="h-4 w-4 text-muted-foreground" />
+          <UsersIcon className="h-4 w-4 text-primary" />
          </CardHeader>
          <CardContent>
           <div className="text-2xl font-bold">{summaryQuery.data.partners.active}</div>
@@ -213,7 +213,7 @@ export function ReportsPage() {
         <Card>
          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
-          <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+          <TrendingUpIcon className="h-4 w-4 text-primary" />
          </CardHeader>
          <CardContent>
           <div className="text-2xl font-bold">

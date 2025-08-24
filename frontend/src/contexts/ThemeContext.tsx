@@ -84,14 +84,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const primaryHSL = hexToHSL(colorConfig.primary)
   const primaryForegroundHSL = hexToHSL(colorConfig.primaryForeground)
   
+  console.log('🎨 Aplicando cor primária:', { 
+    color: primaryColor, 
+    theme: actualTheme, 
+    primaryHSL, 
+    primaryForegroundHSL,
+    colorConfig
+  })
+  
   // Atualizar variáveis CSS do Shadcn/UI
   root.style.setProperty('--primary', primaryHSL)
   root.style.setProperty('--primary-foreground', primaryForegroundHSL)
+  
+  // Debug: verificar se as variáveis foram aplicadas
+  console.log('🔍 Variáveis aplicadas:', {
+    '--primary': root.style.getPropertyValue('--primary'),
+    '--primary-foreground': root.style.getPropertyValue('--primary-foreground')
+  })
   
   // Manter compatibilidade com código legado
   root.style.setProperty('--color-primary', colorConfig.primary)
   root.style.setProperty('--color-primary-hover', colorConfig.primaryHover)
   root.style.setProperty('--color-primary-foreground', colorConfig.primaryForeground)
+  
+  // Forçar atualização visual
+  root.style.setProperty('--ring', primaryHSL)
  }, [primaryColor, actualTheme])
 
  useEffect(() => {
@@ -128,6 +145,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   root.style.setProperty('--color-primary', colorConfig.primary)
   root.style.setProperty('--color-primary-hover', colorConfig.primaryHover)
   root.style.setProperty('--color-primary-foreground', colorConfig.primaryForeground)
+  
+  // Forçar atualização visual
+  root.style.setProperty('--ring', primaryHSL)
 
   const metaThemeColor = document.querySelector('meta[name="theme-color"]')
   if (metaThemeColor) {

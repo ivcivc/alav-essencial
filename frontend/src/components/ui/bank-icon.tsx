@@ -4,7 +4,7 @@ import { Wallet } from 'lucide-react'
 export function BankIcon() {
  return (
   <div className="contas-bancarias-icon">
-   <Wallet className="h-5 w-5" />
+   <Wallet className="h-5 w-5 text-primary" />
   </div>
  )
 }

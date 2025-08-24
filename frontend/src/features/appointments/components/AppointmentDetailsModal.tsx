@@ -633,7 +633,7 @@ export function AppointmentDetailsModal({
           className="text-orange-700 bg-orange-50 border-orange-300 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30 dark:border-orange-600 dark:hover:/50 font-semibold"
          >
           <DollarSign className="w-4 h-4 mr-1" />
-          Cancelar Checkout
+          Cancelar Pagamento
          </Button>
         )}
        </div>
@@ -822,7 +822,7 @@ export function AppointmentDetailsModal({
        <p className="font-semibold mb-1">💰 Importante sobre lançamentos financeiros:</p>
        <ul className="list-disc list-inside space-y-1">
         <li><strong>Os lançamentos financeiros NÃO serão cancelados</strong></li>
-        <li>Se precisar cancelar pagamentos, use "Cancelar Checkout" em vez disso</li>
+        <li>Se precisar cancelar pagamentos, use "Cancelar Pagamento" em vez disso</li>
         <li>Esta ação apenas desfaz o status do agendamento</li>
        </ul>
       </div>
@@ -856,12 +856,12 @@ export function AppointmentDetailsModal({
      <DialogHeader>
       <DialogTitle className="flex items-center gap-2">
        <DollarSign className="w-5 h-5 " />
-       Cancelar Checkout
+       Cancelar Pagamento
       </DialogTitle>
      </DialogHeader>
      <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-       Confirma que deseja cancelar o checkout financeiro do agendamento de <strong>{appointment?.patient?.fullName}</strong>?
+       Confirma que deseja cancelar o pagamento financeiro do agendamento de <strong>{appointment?.patient?.fullName}</strong>?
       </p>
       <div className="text-xs text-orange-600 bg-orange-50 p-3 rounded-lg border ">
        <p className="font-semibold mb-1">⚠️ Atenção:</p>

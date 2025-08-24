@@ -97,7 +97,7 @@ export function CheckoutPaymentModal({
    })
    
    toast({
-    title: "Checkout realizado com sucesso!",
+    title: "Pagamento realizado com sucesso!",
     description: "Lançamentos financeiros foram criados automaticamente.",
    })
    
@@ -120,7 +120,7 @@ export function CheckoutPaymentModal({
     <DialogHeader>
      <DialogTitle className="flex items-center gap-2">
       <Receipt className="h-5 w-5" />
-      Checkout com Processamento Financeiro
+      Pagamento com Processamento Financeiro
      </DialogTitle>
     </DialogHeader>
 

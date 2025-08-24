@@ -87,7 +87,7 @@ export function AppointmentReportTable({ data }: AppointmentReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+      <CalendarIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{data.totalAppointments}</div>
@@ -100,7 +100,7 @@ export function AppointmentReportTable({ data }: AppointmentReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-      <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
+      <DollarSignIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">
@@ -118,7 +118,7 @@ export function AppointmentReportTable({ data }: AppointmentReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Tempo Médio</CardTitle>
-      <ClockIcon className="h-4 w-4 text-muted-foreground" />
+      <ClockIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">{Math.round(data.averageServiceTime)}min</div>
@@ -131,7 +131,7 @@ export function AppointmentReportTable({ data }: AppointmentReportTableProps) {
     <Card>
      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
-      <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+      <TrendingUpIcon className="h-4 w-4 text-primary" />
      </CardHeader>
      <CardContent>
       <div className="text-2xl font-bold">

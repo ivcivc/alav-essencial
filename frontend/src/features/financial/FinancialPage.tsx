@@ -126,7 +126,7 @@ export default function FinancialPage() {
          </p>
         )}
        </div>
-       <TrendingUp className="h-8 w-8 " />
+       <TrendingUp className="h-8 w-8 text-primary" />
       </div>
      </CardContent>
     </Card>
@@ -149,7 +149,7 @@ export default function FinancialPage() {
          </p>
         )}
        </div>
-       <TrendingDown className="h-8 w-8 " />
+       <TrendingDown className="h-8 w-8 text-primary" />
       </div>
      </CardContent>
     </Card>
@@ -311,7 +311,7 @@ export default function FinancialPage() {
             {formatCurrency(summary?.nextWeekReceivable || 0)}
            </p>
           </div>
-          <TrendingUp className="h-5 w-5 " />
+          <TrendingUp className="h-5 w-5 text-primary" />
          </div>
 
          <div className="flex justify-between items-center p-3  rounded-lg">
@@ -321,7 +321,7 @@ export default function FinancialPage() {
             {formatCurrency(summary?.nextWeekPayable || 0)}
            </p>
           </div>
-          <TrendingDown className="h-5 w-5 " />
+          <TrendingDown className="h-5 w-5 text-primary" />
          </div>
 
          <div className="flex justify-between items-center p-3  rounded-lg">
@@ -353,7 +353,7 @@ export default function FinancialPage() {
            <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-3">
              <div className="relative">
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <CreditCard className="h-4 w-4 text-primary" />
               <div 
                className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-background" 
                
