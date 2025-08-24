@@ -1,6 +1,8 @@
 import { Patient } from '@prisma/client'
 import { PatientRepository, PatientFilters } from '../repositories/patient.repository'
 import { Patient as PatientEntity, PatientWithAppointments } from '../types/entities'
+import { cacheService, cacheKeys } from './cacheService'
+import { queryOptimizationService } from './queryOptimizationService'
 
 export interface CreatePatientData {
   fullName: string
@@ -35,24 +37,45 @@ export class PatientService {
   constructor(private patientRepository: PatientRepository) {}
 
   async getAllPatients(filters: PatientFilters = {}): Promise<PatientListResponse> {
-    const { page = 1, limit = 10 } = filters
+    const { page = 1, limit = 10, search, active } = filters
     
-    const [patients, total] = await Promise.all([
-      this.patientRepository.findAll(filters),
-      this.patientRepository.count(filters)
-    ])
+    // Cache key baseado nos filtros
+    const cacheKey = cacheKeys.patients.list(search, page, limit)
+    
+    // Tentar cache primeiro (TTL: 3 minutos)
+    const result = await cacheService.remember(
+      cacheKey,
+      async () => {
+        const [patients, total] = await Promise.all([
+          this.patientRepository.findAll(filters),
+          this.patientRepository.count(filters)
+        ])
 
-    return {
-      patients,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
+        return {
+          patients,
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit)
+        }
+      },
+      180 // 3 minutos
+    )
+
+    return result
   }
 
   async getPatientById(id: string): Promise<PatientWithAppointments> {
-    const patient = await this.patientRepository.findById(id)
+    // Cache individual do paciente (TTL: 5 minutos)
+    const cacheKey = cacheKeys.patients.detail(id)
+    
+    const patient = await cacheService.remember(
+      cacheKey,
+      async () => {
+        return this.patientRepository.findById(id)
+      },
+      300 // 5 minutos
+    )
     
     if (!patient) {
       throw new Error('Paciente não encontrado')
@@ -73,7 +96,13 @@ export class PatientService {
       throw new Error('CPF deve conter exatamente 11 dígitos')
     }
 
-    return this.patientRepository.create(data)
+    const patient = await this.patientRepository.create(data)
+    
+    // Invalidar caches relacionados
+    await cacheService.delPattern('patients:list*')
+    await cacheService.del(cacheKeys.patients.stats())
+
+    return patient
   }
 
   async updatePatient(id: string, data: UpdatePatientData): Promise<Patient> {
@@ -96,7 +125,14 @@ export class PatientService {
       }
     }
 
-    return this.patientRepository.update(id, data)
+    const patient = await this.patientRepository.update(id, data)
+    
+    // Invalidar caches relacionados
+    await cacheService.del(cacheKeys.patients.detail(id))
+    await cacheService.delPattern('patients:list*')
+    await cacheService.del(cacheKeys.patients.stats())
+
+    return patient
   }
 
   async deletePatient(id: string): Promise<void> {
@@ -114,6 +150,11 @@ export class PatientService {
       // Hard delete if no appointments
       await this.patientRepository.delete(id)
     }
+    
+    // Invalidar caches relacionados
+    await cacheService.del(cacheKeys.patients.detail(id))
+    await cacheService.delPattern('patients:list*')
+    await cacheService.del(cacheKeys.patients.stats())
   }
 
   async searchPatients(query: string, filters: Omit<PatientFilters, 'search'> = {}): Promise<PatientListResponse> {

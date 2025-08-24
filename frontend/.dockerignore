@@ -1,0 +1,71 @@
+# Arquivos e diretórios a serem ignorados no build Docker
+
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de ambiente (devem ser passados via ENV)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Diretórios de build
+dist/
+build/
+
+# Arquivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testes
+coverage/
+test-results/
+playwright-report/
+e2e-results/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Vite
+.vite/
+
+# ESLint
+.eslintcache
+
+# TypeScript
+*.tsbuildinfo
+
+# Documentation
+README.md
+docs/
+
+# Public assets que não são necessários no build
+public/mockServiceWorker.js
+
+# Scripts de desenvolvimento
+scripts/
+*.sh

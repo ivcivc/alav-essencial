@@ -321,26 +321,26 @@ Object# Plano de Implementação - Clínica Essencial
     - _Requisitos: 9.2, 9.3_
 
 - [ ] 14. Testes e validação
-  - [ ] 14.1 Implementar testes unitários
+  - [x] 14.1 Implementar testes unitários
     - Criar testes para componentes React críticos
     - Implementar testes para serviços de negócio do backend
     - Criar testes para validações e utilitários
     - _Requisitos: Qualidade do código_
 
-  - [ ] 14.2 Implementar testes de integração
+  - [x] 14.2 Implementar testes de integração
     - Criar testes E2E para fluxos principais
     - Implementar testes de API com cenários reais
     - Criar testes de integração entre módulos
     - _Requisitos: Qualidade do código_
 
 - [ ] 15. Otimização e deploy
-  - [ ] 15.1 Otimizar performance
+  - [x] 15.1 Otimizar performance
     - Implementar code splitting e lazy loading
     - Otimizar queries do banco de dados
     - Implementar cache onde necessário
     - _Requisitos: 9.5_
 
-  - [ ] 15.2 Preparar para produção
+  - [x] 15.2 Preparar para produção
     - Configurar variáveis de ambiente
     - Implementar logging e monitoramento
     - Criar documentação de API

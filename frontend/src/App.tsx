@@ -1,21 +1,25 @@
+import React, { Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 
 import { AppLayout } from './components/layout/AppLayout'
-import { Dashboard } from './features/dashboard/Dashboard'
-import { PatientsPage } from './features/patients'
-import { PartnersPage } from './features/partners'
-import { AppointmentsPage } from './features/appointments'
-import { RoomsPage } from './features/rooms'
-import { ProductsPage } from './features/products'
-import { NotificationsPage } from './features/notifications'
-import { FinancialPage } from './features/financial'
-import { BackupPage } from './features/backup'
-import { ReportsPage } from './features/reports'
-import { SettingsPage } from './features/settings'
 import { LoginForm, ProtectedRoute, AdminRoute } from './components/auth'
 import { Toaster } from './components/ui/toaster'
+import { LazyLoadSpinner } from './components/common/LazyLoadSpinner'
+
+// Lazy loading das páginas principais para otimização de bundle
+const Dashboard = React.lazy(() => import('./features/dashboard/Dashboard').then(module => ({ default: module.Dashboard })))
+const PatientsPage = React.lazy(() => import('./features/patients').then(module => ({ default: module.PatientsPage })))
+const PartnersPage = React.lazy(() => import('./features/partners').then(module => ({ default: module.PartnersPage })))
+const AppointmentsPage = React.lazy(() => import('./features/appointments').then(module => ({ default: module.AppointmentsPage })))
+const RoomsPage = React.lazy(() => import('./features/rooms').then(module => ({ default: module.RoomsPage })))
+const ProductsPage = React.lazy(() => import('./features/products').then(module => ({ default: module.ProductsPage })))
+const NotificationsPage = React.lazy(() => import('./features/notifications').then(module => ({ default: module.NotificationsPage })))
+const FinancialPage = React.lazy(() => import('./features/financial').then(module => ({ default: module.FinancialPage })))
+const BackupPage = React.lazy(() => import('./features/backup').then(module => ({ default: module.BackupPage })))
+const ReportsPage = React.lazy(() => import('./features/reports').then(module => ({ default: module.ReportsPage })))
+const SettingsPage = React.lazy(() => import('./features/settings').then(module => ({ default: module.SettingsPage })))
 
 function App() {
  return (
@@ -37,7 +41,9 @@ function App() {
     <Route path="/dashboard" element={
      <ProtectedRoute>
       <AppLayout>
-       <Dashboard />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Dashboard..." />}>
+        <Dashboard />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -45,7 +51,9 @@ function App() {
     <Route path="/patients" element={
      <ProtectedRoute>
       <AppLayout>
-       <PatientsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Pacientes..." />}>
+        <PatientsPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -53,7 +61,9 @@ function App() {
     <Route path="/partners" element={
      <ProtectedRoute>
       <AppLayout>
-       <PartnersPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Parceiros..." />}>
+        <PartnersPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -61,7 +71,9 @@ function App() {
     <Route path="/appointments" element={
      <ProtectedRoute>
       <AppLayout>
-       <AppointmentsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Agendamentos..." />}>
+        <AppointmentsPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -69,7 +81,9 @@ function App() {
     <Route path="/rooms" element={
      <ProtectedRoute>
       <AppLayout>
-       <RoomsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Salas..." />}>
+        <RoomsPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -77,7 +91,9 @@ function App() {
     <Route path="/products" element={
      <ProtectedRoute>
       <AppLayout>
-       <ProductsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Produtos/Serviços..." />}>
+        <ProductsPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -85,7 +101,9 @@ function App() {
     <Route path="/notifications" element={
      <AdminRoute>
       <AppLayout>
-       <NotificationsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Notificações..." />}>
+        <NotificationsPage />
+       </Suspense>
       </AppLayout>
      </AdminRoute>
     } />
@@ -93,17 +111,19 @@ function App() {
     <Route path="/financial" element={
      <ProtectedRoute>
       <AppLayout>
-       <FinancialPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Financeiro..." />}>
+        <FinancialPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
     
-
-    
     <Route path="/backup" element={
      <AdminRoute>
       <AppLayout>
-       <BackupPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Backup..." />}>
+        <BackupPage />
+       </Suspense>
       </AppLayout>
      </AdminRoute>
     } />
@@ -111,7 +131,9 @@ function App() {
     <Route path="/reports" element={
      <ProtectedRoute>
       <AppLayout>
-       <ReportsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Relatórios..." />}>
+        <ReportsPage />
+       </Suspense>
       </AppLayout>
      </ProtectedRoute>
     } />
@@ -119,7 +141,9 @@ function App() {
     <Route path="/settings" element={
      <AdminRoute>
       <AppLayout>
-       <SettingsPage />
+       <Suspense fallback={<LazyLoadSpinner message="Carregando Configurações..." />}>
+        <SettingsPage />
+       </Suspense>
       </AppLayout>
      </AdminRoute>
     } />

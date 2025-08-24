@@ -6,6 +6,7 @@ import swaggerUi from '@fastify/swagger-ui'
 import { config } from './config'
 import { prismaPlugin } from './plugins/prisma'
 import authPlugin from './plugins/auth'
+import performancePlugin from './plugins/performance'
 import authRoutes from './routes/auth'
 
 const fastify = Fastify({
@@ -24,6 +25,18 @@ async function registerPlugins() {
 
   // Database
   await fastify.register(prismaPlugin)
+
+  // Performance optimizations (after database)
+  await fastify.register(performancePlugin, {
+    enableRateLimit: config.NODE_ENV === 'production',
+    enableCompression: true,
+    enableQueryLogging: config.NODE_ENV !== 'production',
+    enableResponseCaching: true,
+    rateLimit: {
+      max: 100, // 100 requests per minute per user/IP
+      timeWindow: 60000 // 1 minute
+    }
+  })
 
   // JWT
   await fastify.register(jwt, {
@@ -114,12 +127,7 @@ async function registerPlugins() {
   // Import financial automation routes
   const financialAutomationRoutes = await import('./routes/financial/automation')
   await fastify.register(financialAutomationRoutes.default, { prefix: '/api/financial/automation' })
-  
-  await fastify.register(async function (fastify) {
-    fastify.get('/health', async () => {
-      return { status: 'ok', timestamp: new Date().toISOString() }
-    })
-  })
+
 
   // 🔔 Inicializar agendador de notificações
   const { NotificationSchedulerSingleton } = await import('./services/notification-scheduler')
