@@ -224,11 +224,12 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' })
   }
 
-  async post<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
+  async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    const options: RequestInit = { method: 'POST' }
+    if (data !== undefined) {
+      options.body = JSON.stringify(data)
+    }
+    return this.request<T>(endpoint, options)
   }
 
   async put<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
