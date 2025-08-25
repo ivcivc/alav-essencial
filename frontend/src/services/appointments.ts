@@ -6,6 +6,7 @@ import {
   AppointmentFilters,
   AppointmentListResponse 
 } from '../types/entities'
+import { apiClient } from './api'
 
 export interface ConflictDetail {
   type: 'appointment' | 'availability' | 'blocked' | 'break'
@@ -186,62 +187,26 @@ export const appointmentsService = {
 
   // Check-in do agendamento
   async checkInAppointment(id: string): Promise<Appointment> {
-    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/checkin`, {
-      method: 'POST',
-    })
-    
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || error.message || 'Erro ao fazer check-in')
-    }
-
-    const data = await response.json()
-    return data.data
+    const response = await apiClient.post<Appointment>(`/api/appointments/${id}/checkin`)
+    return response.data
   },
 
   // Check-out do agendamento
   async checkOutAppointment(id: string): Promise<Appointment> {
-    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/checkout`, {
-      method: 'POST',
-    })
-    
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || error.message || 'Erro ao fazer check-out')
-    }
-
-    const data = await response.json()
-    return data.data
+    const response = await apiClient.post<Appointment>(`/api/appointments/${id}/checkout`)
+    return response.data
   },
 
   // Desfazer check-in
   async undoCheckInAppointment(id: string): Promise<Appointment> {
-    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/undo-checkin`, {
-      method: 'POST',
-    })
-    
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || error.message || 'Erro ao desfazer check-in')
-    }
-
-    const data = await response.json()
-    return data.data
+    const response = await apiClient.post<Appointment>(`/api/appointments/${id}/undo-checkin`)
+    return response.data
   },
 
   // Desfazer check-out
   async undoCheckOutAppointment(id: string): Promise<Appointment> {
-    const response = await fetch(`${API_BASE_URL}/api/appointments/${id}/undo-checkout`, {
-      method: 'POST',
-    })
-    
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || error.message || 'Erro ao desfazer check-out')
-    }
-
-    const data = await response.json()
-    return data.data
+    const response = await apiClient.post<Appointment>(`/api/appointments/${id}/undo-checkout`)
+    return response.data
   },
 
   // Check-out com processamento financeiro

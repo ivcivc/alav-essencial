@@ -242,6 +242,35 @@ export default async function appointmentsRoutes(fastify: FastifyInstance) {
     }
   })
 
+  // GET /api/appointments/:id/debug - Debug appointment info (temporary)
+  fastify.get('/:id/debug', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string' }
+        }
+      }
+    }
+  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    try {
+      const appointment = await appointmentService.findById(request.params.id)
+      return reply.send(successResponse({
+        id: appointment.id,
+        status: appointment.status,
+        date: appointment.date,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        patientId: appointment.patientId,
+        partnerId: appointment.partnerId
+      }, 'Debug info'))
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.code(404).send(errorResponse(error instanceof Error ? error.message : 'Agendamento não encontrado'))
+    }
+  })
+
   // POST /api/appointments/:id/checkin - Check-in appointment
   fastify.post('/:id/checkin', {
     schema: {
