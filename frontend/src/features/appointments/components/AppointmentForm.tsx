@@ -121,12 +121,48 @@ export function AppointmentForm({
   }
  })
 
+
+
  // Watch specific fields to avoid unnecessary re-renders
  const watchedProductServiceId = form.watch('productServiceId')
  const watchedStartTime = form.watch('startTime')
  const watchedPartnerId = form.watch('partnerId')
  const watchedDate = form.watch('date')
  const watchedEndTime = form.watch('endTime')
+
+ // Resetar formulário quando dados iniciais mudarem
+ useEffect(() => {
+  if (open) {
+   const formData = {
+    patientId: appointment?.patientId || initialData.patientId || '',
+    partnerId: appointment?.partnerId || initialData.partnerId || initialPartnerId || '',
+    productServiceId: appointment?.productServiceId || initialData.productServiceId || '',
+    roomId: appointment?.roomId || initialData.roomId || '',
+    date: appointment?.date ? format(new Date(appointment.date), 'yyyy-MM-dd') : 
+          initialDate ? format(initialDate, 'yyyy-MM-dd') : 
+          initialData.date || '',
+    startTime: appointment?.startTime || initialData.startTime || initialTime || '',
+    endTime: appointment?.endTime || initialData.endTime || '',
+    type: appointment?.type || initialData.type || 'CONSULTATION',
+    observations: appointment?.observations || initialData.observations || '',
+   }
+   
+   // Reset do formulário com os novos dados
+   form.reset(formData)
+  }
+ }, [open, appointment, initialData, initialDate, initialTime, initialPartnerId, form])
+
+ // Auto-selecionar primeira sala disponível se não houver uma pré-selecionada
+ useEffect(() => {
+  const currentRoomId = form.getValues('roomId')
+  if (!currentRoomId && rooms.length > 0 && !isEditing) {
+   // Se não há sala selecionada e não estamos editando, selecionar a primeira sala ativa
+   const firstActiveRoom = rooms.find(room => room.active)
+   if (firstActiveRoom) {
+    form.setValue('roomId', firstActiveRoom.id)
+   }
+  }
+ }, [rooms, form, isEditing])
 
  // Auto calcular endTime baseado no serviço selecionado
  useEffect(() => {

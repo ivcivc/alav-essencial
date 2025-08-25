@@ -165,6 +165,30 @@ export function AppointmentDetailsModal({
   } catch (error: any) {
    console.error('Erro no check-in:', error)
    setShowCheckInConfirmation(false)
+   
+   // Mostrar mensagem de erro clara para o usuário
+   let errorMessage = 'Ocorreu um erro inesperado ao fazer check-in.'
+   
+   if (error?.message) {
+    const msg = error.message.toLowerCase()
+    if (msg.includes('bad request') || msg.includes('400')) {
+     errorMessage = 'Não é possível fazer check-in neste agendamento. Verifique se o agendamento está no status correto.'
+    } else if (msg.includes('not found') || msg.includes('404')) {
+     errorMessage = 'Agendamento não encontrado. Tente recarregar a página.'
+    } else if (msg.includes('conflict') || msg.includes('409')) {
+     errorMessage = 'Check-in já foi realizado para este agendamento.'
+    } else if (msg.includes('unauthorized') || msg.includes('forbidden')) {
+     errorMessage = 'Você não tem permissão para fazer check-in neste agendamento.'
+    } else if (msg.includes('network') || msg.includes('fetch')) {
+     errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+   }
+   
+   toast({
+    title: 'Erro no Check-in',
+    description: errorMessage,
+    variant: 'destructive',
+   })
   }
  }
 
@@ -178,6 +202,30 @@ export function AppointmentDetailsModal({
   } catch (error: any) {
    console.error('Erro no check-out:', error)
    setShowCheckOutConfirmation(false)
+   
+   // Mostrar mensagem de erro clara para o usuário
+   let errorMessage = 'Ocorreu um erro inesperado ao fazer check-out.'
+   
+   if (error?.message) {
+    const msg = error.message.toLowerCase()
+    if (msg.includes('bad request') || msg.includes('400')) {
+     errorMessage = 'Não é possível fazer check-out neste agendamento. Verifique se o check-in foi realizado.'
+    } else if (msg.includes('not found') || msg.includes('404')) {
+     errorMessage = 'Agendamento não encontrado. Tente recarregar a página.'
+    } else if (msg.includes('conflict') || msg.includes('409')) {
+     errorMessage = 'Check-out já foi realizado para este agendamento.'
+    } else if (msg.includes('unauthorized') || msg.includes('forbidden')) {
+     errorMessage = 'Você não tem permissão para fazer check-out neste agendamento.'
+    } else if (msg.includes('network') || msg.includes('fetch')) {
+     errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+   }
+   
+   toast({
+    title: 'Erro no Check-out',
+    description: errorMessage,
+    variant: 'destructive',
+   })
   }
  }
 

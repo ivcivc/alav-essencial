@@ -438,12 +438,37 @@ export class AppointmentService {
       throw new Error('Agendamento não encontrado')
     }
 
-    // Only allow check-in for scheduled appointments
-    if (existingAppointment.status !== 'SCHEDULED') {
-      throw new Error('Apenas agendamentos "AGENDADOS" podem fazer check-in')
+    // Only allow check-in for scheduled or confirmed appointments
+    if (!['SCHEDULED', 'CONFIRMED'].includes(existingAppointment.status)) {
+      throw new Error('Apenas agendamentos "AGENDADOS" ou "CONFIRMADOS" podem fazer check-in')
+    }
+
+    // Check if already checked in
+    if (existingAppointment.status === 'IN_PROGRESS') {
+      throw new Error('Check-in já foi realizado para este agendamento')
+    }
+
+    // Check if appointment is in the past and too late for check-in
+    const appointmentDateTime = new Date(`${existingAppointment.date}T${existingAppointment.startTime}`)
+    const now = new Date()
+    const timeDiff = now.getTime() - appointmentDateTime.getTime()
+    const hoursDiff = timeDiff / (1000 * 60 * 60)
+
+    // Allow check-in up to 2 hours after scheduled time
+    if (hoursDiff > 2) {
+      throw new Error('Não é possível fazer check-in. O agendamento passou do horário limite (2 horas)')
+    }
+
+    // Allow check-in up to 30 minutes before scheduled time
+    if (hoursDiff < -0.5) {
+      throw new Error('Check-in só pode ser feito a partir de 30 minutos antes do horário agendado')
     }
 
     const checkedInAppointment = await this.appointmentRepository.checkIn(id)
+    
+    // Invalidate cache
+    await this.cacheService.flush()
+    
     return convertPrismaAppointment(checkedInAppointment)
   }
 
@@ -459,7 +484,16 @@ export class AppointmentService {
       throw new Error('Apenas agendamentos "EM ANDAMENTO" podem fazer check-out')
     }
 
+    // Check if already completed
+    if (existingAppointment.status === 'COMPLETED') {
+      throw new Error('Check-out já foi realizado para este agendamento')
+    }
+
     const checkedOutAppointment = await this.appointmentRepository.checkOut(id)
+    
+    // Invalidate cache
+    await this.cacheService.flush()
+    
     return convertPrismaAppointment(checkedOutAppointment)
   }
 

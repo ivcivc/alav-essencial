@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { format } from 'date-fns'
 import { AppointmentCalendar } from './components/AppointmentCalendar'
 import { AppointmentFilters } from './components/AppointmentFilters'
 import { RoomTimeline } from './components/RoomTimeline'
@@ -36,6 +37,7 @@ export function AppointmentsPage() {
   date?: Date
   partnerId?: string
   time?: string
+  roomId?: string
  }>({})
 
  // Handlers para eventos
@@ -48,18 +50,20 @@ export function AppointmentsPage() {
   setSelectedDate(date)
  }
 
- const handleTimeSlotClick = (dateOrRoomId: Date | string, time?: string) => {
+ const handleTimeSlotClick = (dateOrRoomId: Date | string, time?: string, roomId?: string) => {
   if (dateOrRoomId instanceof Date) {
    // Clique em slot de tempo do calendário
    setAppointmentFormData({
     date: dateOrRoomId,
-    time
+    time,
+    roomId // Pode vir como terceiro parâmetro
    })
   } else {
-   // Clique em slot de sala (roomId)
+   // Clique em slot de sala (roomId é o primeiro parâmetro)
    setAppointmentFormData({
     date: selectedDate,
-    time
+    time,
+    roomId: dateOrRoomId // dateOrRoomId é na verdade roomId neste caso
    })
   }
   setShowAppointmentForm(true)
@@ -297,6 +301,12 @@ export function AppointmentsPage() {
    <AppointmentForm
     open={showAppointmentForm}
     onOpenChange={setShowAppointmentForm}
+    initialData={{
+     roomId: appointmentFormData.roomId,
+     date: appointmentFormData.date ? format(appointmentFormData.date, 'yyyy-MM-dd') : undefined,
+     startTime: appointmentFormData.time,
+     partnerId: appointmentFormData.partnerId
+    }}
     initialDate={appointmentFormData.date}
     initialPartnerId={appointmentFormData.partnerId}
     initialTime={appointmentFormData.time}
