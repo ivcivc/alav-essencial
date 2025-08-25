@@ -97,9 +97,9 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    // Add cache-busting timestamp
+    // Add cache-busting timestamp with extra randomness
     const separator = endpoint.includes('?') ? '&' : '?'
-    const cacheBuster = `${separator}_t=${Date.now()}`
+    const cacheBuster = `${separator}_t=${Date.now()}&_r=${Math.random()}&_v=2`
     const url = getApiUrl(`${endpoint}${cacheBuster}`)
     
     // Debug: Log the URL being used
@@ -229,6 +229,7 @@ class ApiClient {
     if (data !== undefined) {
       options.body = JSON.stringify(data)
     }
+    console.log('🚀 POST Request:', { endpoint, hasData: data !== undefined, options })
     return this.request<T>(endpoint, options)
   }
 
@@ -254,5 +255,5 @@ class ApiClient {
 // Create API client instance
 export const apiClient = new ApiClient(API_BASE_URL)
 
-// Debug: Log the final configuration
-console.log('🚀 API Client created:', { API_BASE_URL, timestamp: new Date().toISOString() })
+// Debug: Log the final configuration - VERSION 2.0 FIXED
+console.log('🚀 API Client created v2.0 - POST FIXED:', { API_BASE_URL, timestamp: new Date().toISOString() })
