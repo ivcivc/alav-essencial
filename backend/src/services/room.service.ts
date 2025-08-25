@@ -148,13 +148,43 @@ export class RoomService {
     const dayEnd = new Date(date)
     dayEnd.setHours(23, 59, 59, 999)
 
+    console.log('🔍 ROOM AVAILABILITY DEBUG:', {
+      roomId,
+      requestedDate: date.toISOString(),
+      dayStart: dayStart.toISOString(),
+      dayEnd: dayEnd.toISOString(),
+      totalAppointments: room.appointments?.length || 0
+    })
+
     const occupiedSlots = room.appointments
       ?.filter(appointment => {
         const appointmentDate = new Date(appointment.date)
-        return appointmentDate >= dayStart && appointmentDate <= dayEnd &&
-               appointment.status !== 'CANCELLED'
+        const isInDateRange = appointmentDate >= dayStart && appointmentDate <= dayEnd
+        const isNotCancelled = appointment.status !== 'CANCELLED'
+        const shouldInclude = isInDateRange && isNotCancelled
+        
+        console.log('🔍 APPOINTMENT CHECK:', {
+          appointmentId: appointment.id,
+          appointmentDate: appointmentDate.toISOString(),
+          appointmentDateOnly: appointmentDate.toISOString().split('T')[0],
+          requestedDateOnly: date.toISOString().split('T')[0],
+          status: appointment.status,
+          startTime: appointment.startTime,
+          endTime: appointment.endTime,
+          isInDateRange,
+          isNotCancelled,
+          shouldInclude
+        })
+        
+        return shouldInclude
       })
       .map(appointment => `${appointment.startTime}-${appointment.endTime}`) || []
+
+    console.log('✅ OCCUPIED SLOTS RESULT:', {
+      roomId,
+      requestedDate: date.toISOString().split('T')[0],
+      occupiedSlots
+    })
 
     return {
       available: true,

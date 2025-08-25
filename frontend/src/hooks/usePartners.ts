@@ -19,7 +19,9 @@ export function usePartners(filters: PartnerFilters = {}) {
   return useQuery({
     queryKey: partnerKeys.list(filters),
     queryFn: () => partnersService.getPartners(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,        // 🔥 SEM CACHE LOCAL
+    gcTime: 0,           // 🔥 SEM GARBAGE COLLECTION
+    refetchOnMount: true, // 🚀 SEMPRE BUSCAR DADOS FRESCOS
   })
 }
 
@@ -71,11 +73,13 @@ export function useCreatePartner() {
   return useMutation({
     mutationFn: (data: CreatePartnerData) => partnersService.createPartner(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: partnerKeys.lists() })
-      toast({
-        title: 'Sucesso',
-        description: 'Parceiro criado com sucesso',
-      })
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
+      
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
     onError: (error: any) => {
       toast({
@@ -94,13 +98,14 @@ export function useUpdatePartner() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdatePartnerData }) =>
       partnersService.updatePartner(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: partnerKeys.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: partnerKeys.lists() })
-      toast({
-        title: 'Sucesso',
-        description: 'Parceiro atualizado com sucesso',
-      })
+    onSuccess: (updatedPartner, variables) => {
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
+      
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
     onError: (error: any) => {
       toast({
@@ -151,13 +156,48 @@ export function useCreatePartnerAvailability() {
         description: 'Disponibilidade criada com sucesso',
       })
     },
-    onError: (error: any) => {
+    // Remover onError para permitir tratamento customizado no componente
+  })
+}
+
+export function useUpdatePartnerAvailability() {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
+
+  return useMutation({
+    mutationFn: ({ availabilityId, data }: { availabilityId: string; data: any }) =>
+      partnersService.updatePartnerAvailability(availabilityId, data),
+    onSuccess: (updatedAvailability) => {
+      // Invalidar cache da disponibilidade do parceiro
+      const partnerId = updatedAvailability.partnerId
+      queryClient.invalidateQueries({ queryKey: partnerKeys.availability(partnerId) })
+      queryClient.invalidateQueries({ queryKey: partnerKeys.detail(partnerId) })
       toast({
-        title: 'Erro',
-        description: error.message || 'Erro ao criar disponibilidade',
-        variant: 'destructive',
+        title: 'Sucesso',
+        description: 'Disponibilidade atualizada com sucesso',
       })
     },
+    // Remover onError para permitir tratamento customizado no componente
+  })
+}
+
+export function useDeletePartnerAvailability() {
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
+
+  return useMutation({
+    mutationFn: ({ availabilityId, partnerId }: { availabilityId: string; partnerId: string }) =>
+      partnersService.deletePartnerAvailability(availabilityId),
+    onSuccess: (_, variables) => {
+      // Invalidar cache da disponibilidade do parceiro
+      queryClient.invalidateQueries({ queryKey: partnerKeys.availability(variables.partnerId) })
+      queryClient.invalidateQueries({ queryKey: partnerKeys.detail(variables.partnerId) })
+      toast({
+        title: 'Sucesso',
+        description: 'Disponibilidade removida com sucesso',
+      })
+    },
+    // onError removido temporariamente para debug - o erro será tratado no componente
   })
 }
 

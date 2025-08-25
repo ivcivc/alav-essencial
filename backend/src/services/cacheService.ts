@@ -30,7 +30,6 @@ class CacheService {
 
       this.redis = new Redis({
         ...finalConfig,
-        retryDelayOnFailover: 100,
         maxRetriesPerRequest: 3,
         lazyConnect: true,
       })
@@ -132,6 +131,23 @@ class CacheService {
     } catch (error) {
       console.warn('Cache delPattern error:', error)
       return 0
+    }
+  }
+
+  /**
+   * 💥 FLUSH TOTAL - Limpar TUDO do Redis
+   */
+  async flush(): Promise<boolean> {
+    if (!this.isEnabled || !this.redis) return false
+
+    try {
+      console.log('💥 FLUSH TOTAL: Limpando TUDO do Redis...')
+      await this.redis.flushdb()
+      console.log('✅ FLUSH TOTAL: Redis completamente limpo!')
+      return true
+    } catch (error) {
+      console.warn('❌ Cache flush error:', error)
+      return false
     }
   }
 
@@ -242,8 +258,8 @@ export const cacheKeys = {
     stats: (date?: string) => `appointments:stats${date ? `:${date}` : ''}`
   },
   partners: {
-    list: (page?: number, limit?: number) => 
-      `partners:list${page ? `:page:${page}` : ''}${limit ? `:limit:${limit}` : ''}`,
+    list: (page?: number, limit?: number, search?: string, active?: boolean, partnershipType?: string) => 
+      `partners:list${page ? `:page:${page}` : ''}${limit ? `:limit:${limit}` : ''}${search ? `:search:${search}` : ''}${active !== undefined ? `:active:${active}` : ''}${partnershipType ? `:type:${partnershipType}` : ''}`,
     detail: (id: string) => `partners:detail:${id}`,
     stats: () => 'partners:stats'
   },

@@ -118,5 +118,17 @@
     "startedAt": "2025-08-23T19:06:27.727Z",
     "completedAt": "2025-08-23T19:06:27.742Z",
     "checksum": "78016cbc03743e6cc82aaf191fc1582d5e2c077fa6449c9da2a8914d68e2db67"
+  },
+  {
+    "id": "backup-1756063621080",
+    "configId": "default-daily",
+    "filename": "clinica-db-2025-08-24-16-27-01.sql",
+    "filepath": "/Users/ivancoliveira/Documents/Projetos/alav/alav-essencial/backend/backups/clinica-db-2025-08-24-16-27-01.sql",
+    "size": 265,
+    "type": "DATABASE",
+    "status": "SUCCESS",
+    "startedAt": "2025-08-24T19:27:01.080Z",
+    "completedAt": "2025-08-24T19:27:01.098Z",
+    "checksum": "285e8051c3f835bdfc6e152a3cee02143e6255447f8d27e7ae7f588923a14fbf"
   }
 ]

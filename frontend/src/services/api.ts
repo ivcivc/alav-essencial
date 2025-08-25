@@ -111,12 +111,13 @@ class ApiClient {
     const config: RequestInit = {
       headers: {
         'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0',
         'X-Requested-With': 'XMLHttpRequest',
         ...(token && { Authorization: `Bearer ${token}` }),
+        // Só setar Content-Type se houver body
+        ...(options.body && { 'Content-Type': 'application/json' }),
         ...options.headers,
       },
       cache: 'no-store',

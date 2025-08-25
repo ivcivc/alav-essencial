@@ -6,6 +6,7 @@ import {
   BankAccountRepository 
 } from '../repositories'
 import { AppointmentStatus, FinancialEntryType } from '../types/shared'
+import { cacheService, cacheKeys } from './cacheService'
 
 export interface DashboardKPIs {
   totalPatients: number
@@ -126,6 +127,27 @@ export class DashboardService {
     const endOfWeek = new Date(startOfWeek.getTime() + (7 * 24 * 60 * 60 * 1000) - 1)
 
     const range = dateRange || { startDate: startOfMonth, endDate: endOfMonth }
+
+    // Cache key para KPIs (TTL: 5 minutos para dados do dashboard)
+    const cacheKey = cacheKeys.dashboard.stats()
+    
+    return cacheService.remember(
+      cacheKey,
+      async () => this.calculateKPIs(range, now, startOfToday, endOfToday, startOfWeek, endOfWeek, startOfMonth, endOfMonth),
+      300 // 5 minutos
+    )
+  }
+
+  private async calculateKPIs(
+    range: DateRange,
+    now: Date,
+    startOfToday: Date,
+    endOfToday: Date,
+    startOfWeek: Date,
+    endOfWeek: Date,
+    startOfMonth: Date,
+    endOfMonth: Date
+  ): Promise<DashboardKPIs> {
 
     // Buscar dados em paralelo
     const [
@@ -268,7 +290,7 @@ export class DashboardService {
       endDate: dateRange.endDate
     })
 
-    const revenues = entries.filter(e => e.type === FinancialEntryType.REVENUE)
+    const revenues = entries.filter(e => e.type === FinancialEntryType.INCOME)
     const expenses = entries.filter(e => e.type === FinancialEntryType.EXPENSE)
 
     const totalRevenue = revenues.reduce((sum, entry) => sum + Number(entry.amount), 0)
@@ -407,7 +429,7 @@ export class DashboardService {
 
   private async getRevenueInPeriod(startDate: Date, endDate: Date): Promise<number> {
     const entries = await this.financialEntryRepository.findAll({
-      type: FinancialEntryType.REVENUE,
+      type: FinancialEntryType.INCOME,
       startDate: startDate,
       endDate: endDate,
       paid: true
@@ -429,7 +451,7 @@ export class DashboardService {
 
   private async getPendingReceivables(): Promise<number> {
     const entries = await this.financialEntryRepository.findAll({
-      type: FinancialEntryType.REVENUE,
+      type: FinancialEntryType.INCOME,
       paid: false
     })
 
@@ -470,7 +492,7 @@ export class DashboardService {
       })
 
       const revenue = monthEntries
-        .filter(e => e.type === FinancialEntryType.REVENUE)
+        .filter(e => e.type === FinancialEntryType.INCOME)
         .reduce((sum, entry) => sum + Number(entry.amount), 0)
 
       const expenses = monthEntries
@@ -507,7 +529,7 @@ export class DashboardService {
       })
 
       const revenue = dayEntries
-        .filter(e => e.type === FinancialEntryType.REVENUE)
+        .filter(e => e.type === FinancialEntryType.INCOME)
         .reduce((sum, entry) => sum + Number(entry.amount), 0)
 
       const expenses = dayEntries

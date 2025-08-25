@@ -184,9 +184,29 @@ export function AppointmentForm({
  const handleSubmit = form.handleSubmit(async (data) => {
   try {
    if (isEditing && appointment) {
+    // 🎯 ESTRATÉGIA SIMPLIFICADA: Se apenas observations mudou, enviar só ela
+    const onlyObservationsChanged = (
+      data.patientId === appointment.patientId &&
+      data.partnerId === appointment.partnerId &&
+      data.productServiceId === appointment.productServiceId &&
+      data.roomId === appointment.roomId &&
+      data.startTime === appointment.startTime &&
+      data.endTime === appointment.endTime &&
+      data.type === appointment.type &&
+      data.isEncaixe === appointment.isEncaixe &&
+      data.observations !== (appointment.observations || '')
+    )
+    
+    const updateData = onlyObservationsChanged 
+      ? { observations: data.observations }
+      : data
+    
+    console.log('🔄 Tipo de edição:', onlyObservationsChanged ? 'APENAS OBSERVAÇÕES' : 'COMPLETA')
+    console.log('🔄 Dados enviados:', updateData)
+    
     const result = await updateAppointment.mutateAsync({
      id: appointment.id,
-     data
+     data: updateData
     })
     toast({
      title: "Agendamento atualizado",
@@ -205,7 +225,6 @@ export function AppointmentForm({
    }
    
    form.reset()
-   setIsOpen(false)
    onOpenChange?.(false)
   } catch (error: any) {
    console.error('Erro ao salvar agendamento:', error)

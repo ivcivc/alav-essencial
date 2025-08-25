@@ -8,9 +8,15 @@ import './index.css'
 const queryClient = new QueryClient({
  defaultOptions: {
   queries: {
-   staleTime: 5 * 60 * 1000, // 5 minutes
+   staleTime: 0,          // 🔥 SEM CACHE - SEMPRE BUSCAR DADOS FRESCOS
+   gcTime: 0,             // 🔥 SEM GARBAGE COLLECTION - REMOVE IMEDIATAMENTE
+   refetchOnMount: true,   // 🚀 SEMPRE REFAZER BUSCA AO MONTAR COMPONENTE
+   refetchOnWindowFocus: true, // 🚀 REFAZER BUSCA AO FOCAR JANELA
    retry: 1,
   },
+  mutations: {
+   retry: 0,              // 🔥 SEM RETRY EM MUTATIONS
+  }
  },
 })
 

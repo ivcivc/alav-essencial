@@ -56,54 +56,61 @@ export function PartnersPage() {
   )
  }
 
- // Render based on current view mode
- switch (viewState.mode) {
-  case 'create':
-   return (
-    <PartnerForm
-     onSubmit={handleSubmitCreate}
-     onCancel={handleBackToList}
-     isLoading={createPartner.isPending}
-    />
-   )
+ const renderContent = () => {
+  switch (viewState.mode) {
+   case 'create':
+    return (
+     <PartnerForm
+      onSubmit={handleSubmitCreate}
+      onCancel={handleBackToList}
+      isLoading={createPartner.isPending}
+     />
+    )
 
-  case 'edit':
-   if (!viewState.selectedPartner) {
-    setViewState({ mode: 'list' })
-    return null
-   }
-   
-   return (
-    <PartnerForm
-     partner={viewState.selectedPartner}
-     onSubmit={handleSubmitEdit}
-     onCancel={handleBackToList}
-     isLoading={updatePartner.isPending}
-    />
-   )
+   case 'edit':
+    if (!viewState.selectedPartner) {
+     setViewState({ mode: 'list' })
+     return null
+    }
+    
+    return (
+     <PartnerForm
+      partner={viewState.selectedPartner}
+      onSubmit={handleSubmitEdit}
+      onCancel={handleBackToList}
+      isLoading={updatePartner.isPending}
+     />
+    )
 
-  case 'view':
-   if (!viewState.selectedPartner) {
-    setViewState({ mode: 'list' })
-    return null
-   }
+   case 'view':
+    if (!viewState.selectedPartner) {
+     setViewState({ mode: 'list' })
+     return null
+    }
 
-   return (
-    <PartnerDetails
-     partnerId={viewState.selectedPartner.id}
-     onBack={handleBackToList}
-     onEdit={handleEditPartner}
-    />
-   )
+    return (
+     <PartnerDetails
+      partnerId={viewState.selectedPartner.id}
+      onBack={handleBackToList}
+      onEdit={handleEditPartner}
+     />
+    )
 
-  case 'list':
-  default:
-   return (
-    <PartnersList
-     onCreatePartner={handleCreatePartner}
-     onEditPartner={handleEditPartner}
-     onViewPartner={handleViewPartner}
-    />
-   )
+   case 'list':
+   default:
+    return (
+     <PartnersList
+      onCreatePartner={handleCreatePartner}
+      onEditPartner={handleEditPartner}
+      onViewPartner={handleViewPartner}
+     />
+    )
+  }
  }
+
+ return (
+  <div className="container mx-auto px-4 py-6">
+   {renderContent()}
+  </div>
+ )
 }

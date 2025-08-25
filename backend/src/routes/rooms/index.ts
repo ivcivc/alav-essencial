@@ -145,7 +145,23 @@ const roomsRoutes: FastifyPluginAsync = async (fastify) => {
       const { id } = request.params as { id: string }
       const { date } = request.query as { date: string }
       
-      const targetDate = new Date(date)
+      console.log('🔍 BACKEND - Room Availability Request:', {
+        roomId: id,
+        dateString: date,
+        dateType: typeof date
+      })
+      
+      // 🎯 CORREÇÃO: Criar data local sem conversão de fuso horário
+      const [year, month, day] = date.split('-').map(Number)
+      const targetDate = new Date(year, month - 1, day) // month is 0-based
+      
+      console.log('🔍 BACKEND - Date Conversion:', {
+        inputString: date,
+        parsedDate: targetDate.toISOString(),
+        localDateString: targetDate.toLocaleDateString(),
+        year, month: month - 1, day
+      })
+      
       if (isNaN(targetDate.getTime())) {
         return errorResponse(reply, 'Data inválida', 400)
       }

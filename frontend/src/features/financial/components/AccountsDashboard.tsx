@@ -39,6 +39,7 @@ import {
  useBankAccounts
 } from '../../../hooks/useFinancial'
 import { FinancialEntryForm } from './FinancialEntryForm'
+import { BankAccountsList } from './BankAccountsList'
 import type { FinancialEntry } from '../../../services/financial'
 
 interface AccountsDashboardProps {
@@ -417,8 +418,9 @@ export function AccountsDashboard({ className }: AccountsDashboardProps) {
  return (
   <div className={className}>
    <Tabs value={activeTab} onValueChange={setActiveTab}>
-    <TabsList className="grid w-full grid-cols-3">
+    <TabsList className="grid w-full grid-cols-4">
      <TabsTrigger value="summary">Resumo</TabsTrigger>
+     <TabsTrigger value="bank-accounts">Contas Bancárias</TabsTrigger>
      <TabsTrigger value="receivable">Contas a Receber</TabsTrigger>
      <TabsTrigger value="payable">Contas a Pagar</TabsTrigger>
     </TabsList>
@@ -522,6 +524,11 @@ export function AccountsDashboard({ className }: AccountsDashboardProps) {
        </div>
       </>
      )}
+    </TabsContent>
+
+    {/* Contas Bancárias */}
+    <TabsContent value="bank-accounts" className="space-y-6">
+     <BankAccountsList />
     </TabsContent>
 
     {/* Contas a Receber */}

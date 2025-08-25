@@ -83,11 +83,16 @@ export const partnersService = {
   // Partners CRUD
   getPartners: async (filters: PartnerFilters = {}): Promise<PartnerListResponse> => {
     const params = new URLSearchParams()
-    if (filters.search) params.append('search', filters.search)
+    if (filters.search) params.append('q', filters.search)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
     if (filters.partnershipType) params.append('partnershipType', filters.partnershipType)
     if (filters.page) params.append('page', filters.page.toString())
     if (filters.limit) params.append('limit', filters.limit.toString())
+
+    // 🔥 TRIPLE CACHE BUST: timestamp + random + no-cache header
+    params.append('_t', Date.now().toString())
+    params.append('_r', Math.random().toString(36).substr(2, 9))
+    params.append('_cb', 'force-no-cache')
 
     const response = await apiClient.get<PartnerListResponse>(`/api/partners?${params.toString()}`)
     return response.data

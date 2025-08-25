@@ -124,7 +124,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       }
     })
 
-    return appointment as AppointmentWithRelations | null
+    return appointment as any | null
   }
 
   async findByPatientId(patientId: string, filters: AppointmentFilters = {}): Promise<Appointment[]> {
@@ -163,7 +163,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       take: limit
     })
 
-    return appointments as AppointmentWithRelations[]
+    return appointments as any
   }
 
   async findConflicts(

@@ -16,7 +16,9 @@ export const usePatients = (filters: PatientFilters = {}) => {
   return useQuery({
     queryKey: patientKeys.list(filters),
     queryFn: () => patientsApi.getPatients(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,        // 🔥 SEM CACHE LOCAL
+    gcTime: 0,           // 🔥 SEM GARBAGE COLLECTION
+    refetchOnMount: true, // 🚀 SEMPRE BUSCAR DADOS FRESCOS
   })
 }
 
@@ -36,8 +38,13 @@ export const useCreatePatient = () => {
   return useMutation({
     mutationFn: (data: CreatePatientData) => patientsApi.createPatient(data),
     onSuccess: () => {
-      // Invalidate and refetch patients list
-      queryClient.invalidateQueries({ queryKey: patientKeys.lists() })
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
+      
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
   })
 }
@@ -50,10 +57,13 @@ export const useUpdatePatient = () => {
     mutationFn: ({ id, data }: { id: string; data: UpdatePatientData }) =>
       patientsApi.updatePatient(id, data),
     onSuccess: (updatedPatient, { id }) => {
-      // Update the patient in the cache
-      queryClient.setQueryData(patientKeys.detail(id), updatedPatient)
-      // Invalidate patients list to refresh
-      queryClient.invalidateQueries({ queryKey: patientKeys.lists() })
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
+      
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
   })
 }

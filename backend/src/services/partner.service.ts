@@ -3,6 +3,7 @@ import { PartnerRepository, PartnerFilters } from '../repositories/partner.repos
 import { Partner as PartnerEntity, PartnerWithRelations } from '../types/entities'
 import { PartnershipType } from '../types/shared'
 import { convertPrismaPartners, convertPrismaPartner } from '../utils/typeConverters'
+import { cacheService, cacheKeys } from './cacheService'
 
 export interface CreatePartnerData {
   fullName: string
@@ -81,39 +82,58 @@ export class PartnerService {
   constructor(private partnerRepository: PartnerRepository) {}
 
   async getAllPartners(filters: PartnerFilters = {}): Promise<PartnerListResponse> {
-    const { page = 1, limit = 10 } = filters
+    const { page = 1, limit = 10, search, active, partnershipType } = filters
     
-    const [partners, total] = await Promise.all([
-      this.partnerRepository.findAll(filters),
-      this.partnerRepository.count(filters)
-    ])
+    // Cache key baseado em TODOS os filtros
+    const cacheKey = cacheKeys.partners.list(page, limit, search, active, partnershipType)
+    
+    // Cache por 5 minutos para parceiros (dados mais estáticos)
+    return cacheService.remember(
+      cacheKey,
+      async () => {
+        const [partners, total] = await Promise.all([
+          this.partnerRepository.findAll(filters),
+          this.partnerRepository.count(filters)
+        ])
 
-    return {
-      partners: convertPrismaPartners(partners),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
+        return {
+          partners: convertPrismaPartners(partners),
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit)
+        }
+      },
+      300 // 5 minutos
+    )
   }
 
   async getPartnerById(id: string): Promise<PartnerWithRelations> {
-    const partner = await this.partnerRepository.findById(id)
+    // Cache individual do parceiro (TTL: 5 minutos)
+    const cacheKey = cacheKeys.partners.detail(id)
     
-    if (!partner) {
-      throw new Error('Parceiro não encontrado')
-    }
+    return cacheService.remember(
+      cacheKey,
+      async () => {
+        const partner = await this.partnerRepository.findById(id)
+        
+        if (!partner) {
+          throw new Error('Parceiro não encontrado')
+        }
 
-    // Note: PartnerWithRelations includes nested objects, so we need a more complex conversion
-    // For now, let's convert the main partner data and keep relations as-is
-    const convertedPartner = convertPrismaPartner(partner)
-    return {
-      ...convertedPartner,
-      availability: partner.availability,
-      blockedDates: partner.blockedDates,
-      partnerServices: partner.partnerServices,
-      appointments: partner.appointments
-    } as PartnerWithRelations
+        // Note: PartnerWithRelations includes nested objects, so we need a more complex conversion
+        // For now, let's convert the main partner data and keep relations as-is
+        const convertedPartner = convertPrismaPartner(partner)
+        return {
+          ...convertedPartner,
+          availability: partner.availability,
+          blockedDates: partner.blockedDates,
+          partnerServices: partner.partnerServices,
+          appointments: partner.appointments
+        } as PartnerWithRelations
+      },
+      300 // 5 minutos
+    )
   }
 
   async createPartner(data: CreatePartnerData): Promise<Partner> {
@@ -138,6 +158,18 @@ export class PartnerService {
     this.validatePartnershipTypeData(data)
 
     const createdPartner = await this.partnerRepository.create(data)
+    
+    // Invalidar caches relacionados - CORREÇÃO TOTAL
+    await Promise.all([
+      cacheService.delPattern('partners:list*'),  // Listas com parâmetros
+      cacheService.delPattern('partners:*'),      // TODOS os caches de partners
+      cacheService.del(cacheKeys.partners.stats()),
+      cacheService.del(cacheKeys.dashboard.stats()),   // Dashboard também afetado
+      // Invalidar também possíveis caches relacionados
+      cacheService.delPattern('dashboard:*'),     // Dashboard pode ter cache de parceiros
+      cacheService.delPattern('financial:*')      // Financeiro pode ser afetado
+    ])
+    
     return convertPrismaPartner(createdPartner)
   }
 
@@ -176,6 +208,24 @@ export class PartnerService {
     }
 
     const updatedPartner = await this.partnerRepository.update(id, data)
+
+    // Invalidar caches relacionados - CORREÇÃO TOTAL
+    await Promise.all([
+      cacheService.delPattern('partners:list*'),  // Listas com parâmetros
+      cacheService.delPattern('partners:*'),      // TODOS os caches de partners
+      cacheService.del(cacheKeys.partners.detail(id)),
+      cacheService.del(cacheKeys.partners.stats()),
+      cacheService.del(cacheKeys.dashboard.stats()),   // Dashboard também afetado
+      // Invalidar também possíveis caches relacionados
+      cacheService.delPattern('dashboard:*'),     // Dashboard pode ter cache de parceiros
+      cacheService.delPattern('financial:*'),     // Financeiro pode ser afetado
+      // 🔥 INVALIDAR CACHE DE RESPONSE HTTP TAMBÉM
+      cacheService.delPattern('response:/api/partners*'),
+      cacheService.del('response:/api/partners'),
+      // 💥 EMERGÊNCIA: FLUSH TOTAL (apenas para debug - remover em produção final)
+      cacheService.flush(),
+    ])
+
     return convertPrismaPartner(updatedPartner)
   }
 

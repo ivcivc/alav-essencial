@@ -102,6 +102,7 @@ export function convertPrismaAppointment(prismaAppointment: PrismaAppointment): 
     endTime: prismaAppointment.endTime,
     type: prismaAppointment.type as AppointmentType,
     status: prismaAppointment.status as AppointmentStatus,
+    isEncaixe: prismaAppointment.isEncaixe,
     observations: prismaAppointment.observations || undefined,
     checkIn: prismaAppointment.checkIn || undefined,
     checkOut: prismaAppointment.checkOut || undefined,

@@ -1,15 +1,16 @@
-import { Appointment, PrismaClient } from '@prisma/client'
+import { Appointment, PrismaClient, AppointmentStatus, AppointmentType } from '@prisma/client'
 import { AppointmentRepository, AppointmentFilters } from '../repositories/appointment.repository'
 import { PartnerRepository } from '../repositories/partner.repository'
 import { PatientRepository } from '../repositories/patient.repository'
 import { RoomRepository } from '../repositories/room.repository'
 import { ProductServiceRepository } from '../repositories/product-service.repository'
 import { Appointment as AppointmentEntity, AppointmentWithRelations } from '../types/entities'
-import { AppointmentStatus, AppointmentType, NotificationReminderType } from '../types/shared'
+import { NotificationReminderType } from '../types/shared'
 import { convertPrismaAppointments, convertPrismaAppointment, convertPrismaProductService } from '../utils/typeConverters'
 import { NotificationService } from './notification.service'
 import { appointmentFinancialService, type CheckoutFinancialData } from './appointment-financial.service'
 import { clinicSettingsService } from './clinic-settings.service'
+import { cacheService, cacheKeys } from './cacheService'
 
 const prisma = new PrismaClient()
 
@@ -84,38 +85,58 @@ export class AppointmentService {
   ) {}
 
   async getAllAppointments(filters: AppointmentFilters = {}): Promise<AppointmentListResponse> {
-    const { page = 1, limit = 50 } = filters
+    const { page = 1, limit = 50, startDate, endDate, partnerId } = filters
     
-    const [appointments, total] = await Promise.all([
-      this.appointmentRepository.findAll(filters),
-      this.appointmentRepository.count(filters)
-    ])
+    // Cache key baseado nos filtros mais importantes
+    const dateKey = startDate ? startDate.toISOString().split('T')[0] : undefined
+    const cacheKey = cacheKeys.appointments.list(dateKey, partnerId, page, limit)
+    
+    // Cache por 2 minutos para agendamentos (dados dinâmicos)
+    return cacheService.remember(
+      cacheKey,
+      async () => {
+        const [appointments, total] = await Promise.all([
+          this.appointmentRepository.findAll(filters),
+          this.appointmentRepository.count(filters)
+        ])
 
-    return {
-      appointments: convertPrismaAppointments(appointments),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
+        return {
+          appointments: convertPrismaAppointments(appointments),
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit)
+        }
+      },
+      120 // 2 minutos
+    )
   }
 
   async getAppointmentById(id: string): Promise<AppointmentWithRelations> {
-    const appointment = await this.appointmentRepository.findById(id)
+    // Cache individual do agendamento (TTL: 3 minutos)
+    const cacheKey = cacheKeys.appointments.detail(id)
     
-    if (!appointment) {
-      throw new Error('Agendamento não encontrado')
-    }
+    return cacheService.remember(
+      cacheKey,
+      async () => {
+        const appointment = await this.appointmentRepository.findById(id)
+        
+        if (!appointment) {
+          throw new Error('Agendamento não encontrado')
+        }
 
-    // Convert the main appointment data and relations
-    const convertedAppointment = convertPrismaAppointment(appointment)
-    return {
-      ...convertedAppointment,
-      patient: appointment.patient,
-      partner: appointment.partner,
-      productService: appointment.productService ? convertPrismaProductService(appointment.productService) : undefined,
-      room: appointment.room
-    } as AppointmentWithRelations
+        // Convert the main appointment data and relations
+        const convertedAppointment = convertPrismaAppointment(appointment)
+        return {
+          ...convertedAppointment,
+          patient: appointment.patient,
+          partner: appointment.partner,
+          productService: appointment.productService ? convertPrismaProductService(appointment.productService) : undefined,
+          room: appointment.room
+        } as AppointmentWithRelations
+      },
+      180 // 3 minutos
+    )
   }
 
   async createAppointment(data: CreateAppointmentData): Promise<AppointmentEntity> {
@@ -150,7 +171,7 @@ export class AppointmentService {
 
     const createdAppointment = await this.appointmentRepository.create({
       ...data,
-      status: 'SCHEDULED',
+      status: AppointmentStatus.SCHEDULED,
       isEncaixe: data.isEncaixe || false
     })
 
@@ -165,6 +186,19 @@ export class AppointmentService {
         // Não falhar a criação do agendamento por causa de erro nas notificações
       }
     }
+
+    // Invalidar caches relacionados - CORREÇÃO COMPLETA
+    await Promise.all([
+      cacheService.delPattern('appointments:list*'),  // Listas com parâmetros
+      cacheService.del('appointments:list'),          // Lista base sem parâmetros
+      cacheService.del(cacheKeys.appointments.stats()),
+      cacheService.del(cacheKeys.dashboard.stats()),   // Dashboard também afetado
+      // 🔥 INVALIDAR CACHE DE RESPONSE HTTP TAMBÉM
+      cacheService.delPattern('response:/api/appointments*'),
+      cacheService.del('response:/api/appointments'),
+      // 💥 EMERGÊNCIA: FLUSH TOTAL (apenas para debug - remover em produção final)
+      cacheService.flush(),
+    ])
 
     return convertPrismaAppointment(createdAppointment)
   }
@@ -198,9 +232,9 @@ export class AppointmentService {
     }
 
     // Validate entities if they are being changed
-    if (data.patientId || data.partnerId || data.productServiceId || data.roomId !== undefined) {
+    if (data.partnerId || data.productServiceId || data.roomId !== undefined) {
       await this.validateAppointmentEntities({
-        patientId: data.patientId || existingAppointment.patientId,
+        patientId: existingAppointment.patientId,
         partnerId: data.partnerId || existingAppointment.partnerId,
         productServiceId: data.productServiceId || existingAppointment.productServiceId,
         roomId: data.roomId !== undefined ? data.roomId : existingAppointment.roomId,
@@ -223,6 +257,20 @@ export class AppointmentService {
         console.warn(`⚠️ Falha ao reagendar lembretes para agendamento ${id}:`, error)
       }
     }
+
+    // Invalidar caches relacionados - CORREÇÃO COMPLETA
+    await Promise.all([
+      cacheService.del(cacheKeys.appointments.detail(id)),
+      cacheService.delPattern('appointments:list*'),  // Listas com parâmetros
+      cacheService.del('appointments:list'),          // Lista base sem parâmetros
+      cacheService.del(cacheKeys.appointments.stats()),
+      cacheService.del(cacheKeys.dashboard.stats()),   // Dashboard também afetado
+      // 🔥 INVALIDAR CACHE DE RESPONSE HTTP TAMBÉM
+      cacheService.delPattern('response:/api/appointments*'),
+      cacheService.del('response:/api/appointments'),
+      // 💥 EMERGÊNCIA: FLUSH TOTAL (apenas para debug - remover em produção final)
+      cacheService.flush(),
+    ])
 
     return convertPrismaAppointment(updatedAppointment)
   }
@@ -250,6 +298,13 @@ export class AppointmentService {
         console.warn(`⚠️ Falha ao cancelar lembretes para agendamento ${id}:`, error)
       }
     }
+
+    // Invalidar caches relacionados - CORREÇÃO COMPLETA
+    await cacheService.del(cacheKeys.appointments.detail(id))
+    await cacheService.delPattern('appointments:list*')  // Listas com parâmetros
+    await cacheService.del('appointments:list')          // Lista base sem parâmetros
+    await cacheService.del(cacheKeys.appointments.stats())
+    await cacheService.del(cacheKeys.dashboard.stats())   // Dashboard também afetado
   }
 
   async cancelAppointment(id: string, reason: string): Promise<AppointmentEntity> {
@@ -465,7 +520,7 @@ export class AppointmentService {
     // Retornar agendamento para IN_PROGRESS (antes do checkout)
     const updatedAppointment = await this.appointmentRepository.update(id, {
       status: AppointmentStatus.IN_PROGRESS,
-      checkOut: null
+      checkOut: undefined
     })
 
     console.log(`🔄 Checkout cancelado para agendamento ${id}: ${cancelResult.cancelledEntries} lançamentos, R$ ${cancelResult.totalAmount}`)
@@ -494,8 +549,8 @@ export class AppointmentService {
 
     // Update appointment back to SCHEDULED status and clear check-in
     const updatedAppointment = await this.appointmentRepository.update(id, {
-      status: 'SCHEDULED',
-      checkIn: null
+      status: AppointmentStatus.SCHEDULED,
+      checkIn: undefined
     })
 
     return convertPrismaAppointment(updatedAppointment)
@@ -519,8 +574,8 @@ export class AppointmentService {
 
     // Update appointment back to IN_PROGRESS status and clear check-out
     const updatedAppointment = await this.appointmentRepository.update(id, {
-      status: 'IN_PROGRESS',
-      checkOut: null
+      status: AppointmentStatus.IN_PROGRESS,
+      checkOut: undefined
     })
 
     return convertPrismaAppointment(updatedAppointment)
@@ -823,8 +878,20 @@ export class AppointmentService {
       throw new Error(`Movimentação não permitida: ${movementValidation.reason}`)
     }
 
-    // Se está mudando data/horário, validar regras de negócio
-    if (newData.date || newData.startTime || newData.endTime) {
+    // Se está REALMENTE mudando data/horário (não apenas enviando os mesmos valores), validar regras de negócio
+    // 🎯 COMPARAÇÃO SEGURA DE DATAS usando ISO string
+    let dateChanged = false
+    if (newData.date) {
+      const newDateStr = typeof newData.date === 'string' ? newData.date.split('T')[0] : newData.date.toISOString().split('T')[0]
+      const currentDateStr = typeof appointment.date === 'string' ? appointment.date.split('T')[0] : appointment.date.toISOString().split('T')[0]
+      dateChanged = newDateStr !== currentDateStr
+    }
+    
+    const startTimeChanged = newData.startTime && newData.startTime !== appointment.startTime
+    const endTimeChanged = newData.endTime && newData.endTime !== appointment.endTime
+    
+    if (dateChanged || startTimeChanged || endTimeChanged) {
+      console.log('🔄 Data/hora realmente mudaram - validando regras de negócio...')
       const validationData = {
         ...appointment,
         ...newData,
@@ -834,6 +901,8 @@ export class AppointmentService {
       } as CreateAppointmentData
 
       await this.validateBusinessRules(validationData)
+    } else {
+      console.log('📝 Apenas editando outros campos (observações, etc.) - pulando validação de antecedência')
     }
 
     console.log('✅ Movimentação validada com sucesso')

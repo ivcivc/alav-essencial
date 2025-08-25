@@ -406,11 +406,34 @@ const partnersRoutes: FastifyPluginAsync = async (fastify) => {
   }, async (request, reply) => {
     try {
       const { availabilityId } = request.params as { availabilityId: string }
+      
+      // 🔍 DEBUG: Log da requisição
+      fastify.log.info(`🗑️ DELETE availability request - ID: ${availabilityId}`)
+      
+      // Verificar se availability existe antes de deletar
+      const existingAvailability = await fastify.prisma.partnerAvailability.findUnique({
+        where: { id: availabilityId }
+      })
+      
+      if (!existingAvailability) {
+        fastify.log.warn(`❌ Availability not found: ${availabilityId}`)
+        return errorResponse(reply, 'Disponibilidade não encontrada', 404)
+      }
+      
+      fastify.log.info(`✅ Found availability: ${JSON.stringify(existingAvailability)}`)
+      
       await partnerService.deletePartnerAvailability(availabilityId)
+      
+      fastify.log.info(`🎯 Successfully deleted availability: ${availabilityId}`)
       
       return successResponse(null, 'Disponibilidade excluída com sucesso')
     } catch (error: any) {
-      fastify.log.error(error)
+      fastify.log.error(`💥 Error deleting availability: ${error.message}`)
+      
+      if (error.code === 'P2025') {
+        return errorResponse(reply, 'Disponibilidade não encontrada', 404)
+      }
+      
       return errorResponse(reply, 'Erro ao excluir disponibilidade', 500)
     }
   })

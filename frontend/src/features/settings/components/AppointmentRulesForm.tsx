@@ -112,13 +112,18 @@ export function AppointmentRulesForm({ settings, onChange }: AppointmentRulesFor
        </p>
       </div>
       <div className="flex items-center space-x-2">
-       <Switch
-        checked={settings.allowWeekendBookings || false}
-        onCheckedChange={(checked) => onChange('allowWeekendBookings', checked)}
-       />
-       <Badge variant={settings.allowWeekendBookings ? "default" : "secondary"}>
-        {settings.allowWeekendBookings ? "Permitido" : "Bloqueado"}
-       </Badge>
+                     <Switch
+         checked={settings.allowWeekendBookings || false}
+         onCheckedChange={(checked) => onChange('allowWeekendBookings', checked)}
+        />
+      <Badge 
+       className={settings.allowWeekendBookings 
+        ? "bg-green-600 text-white hover:bg-green-700" 
+        : "bg-red-600 text-white hover:bg-red-700"
+       }
+      >
+       {settings.allowWeekendBookings ? "Permitido" : "Bloqueado"}
+      </Badge>
       </div>
      </div>
     </CardContent>
@@ -149,7 +154,12 @@ export function AppointmentRulesForm({ settings, onChange }: AppointmentRulesFor
          checked={settings.allowCancelledMovement || false}
          onCheckedChange={(checked) => onChange('allowCancelledMovement', checked)}
         />
-        <Badge variant={settings.allowCancelledMovement ? "default" : "secondary"}>
+        <Badge 
+         className={settings.allowCancelledMovement 
+          ? "bg-green-600 text-white hover:bg-green-700" 
+          : "bg-red-600 text-white hover:bg-red-700"
+         }
+        >
          {settings.allowCancelledMovement ? "Permitido" : "Bloqueado"}
         </Badge>
        </div>
@@ -167,7 +177,12 @@ export function AppointmentRulesForm({ settings, onChange }: AppointmentRulesFor
          checked={settings.allowCompletedMovement || false}
          onCheckedChange={(checked) => onChange('allowCompletedMovement', checked)}
         />
-        <Badge variant={settings.allowCompletedMovement ? "default" : "secondary"}>
+        <Badge 
+         className={settings.allowCompletedMovement 
+          ? "bg-green-600 text-white hover:bg-green-700" 
+          : "bg-red-600 text-white hover:bg-red-700"
+         }
+        >
          {settings.allowCompletedMovement ? "Permitido" : "Bloqueado"}
         </Badge>
        </div>
@@ -200,19 +215,34 @@ export function AppointmentRulesForm({ settings, onChange }: AppointmentRulesFor
       </div>
       <div className="flex justify-between">
        <span>Finais de semana:</span>
-       <Badge variant={settings.allowWeekendBookings ? "default" : "secondary"}>
+       <Badge 
+        className={settings.allowWeekendBookings 
+         ? "bg-green-600 text-white hover:bg-green-700" 
+         : "bg-red-600 text-white hover:bg-red-700"
+        }
+       >
         {settings.allowWeekendBookings ? "Permitido" : "Bloqueado"}
        </Badge>
       </div>
       <div className="flex justify-between">
        <span>Reagendar cancelados:</span>
-       <Badge variant={settings.allowCancelledMovement ? "default" : "secondary"}>
+       <Badge 
+        className={settings.allowCancelledMovement 
+         ? "bg-green-600 text-white hover:bg-green-700" 
+         : "bg-red-600 text-white hover:bg-red-700"
+        }
+       >
         {settings.allowCancelledMovement ? "Sim" : "Não"}
        </Badge>
       </div>
       <div className="flex justify-between">
        <span>Reagendar concluídos:</span>
-       <Badge variant={settings.allowCompletedMovement ? "default" : "secondary"}>
+       <Badge 
+        className={settings.allowCompletedMovement 
+         ? "bg-green-600 text-white hover:bg-green-700" 
+         : "bg-red-600 text-white hover:bg-red-700"
+        }
+       >
         {settings.allowCompletedMovement ? "Sim" : "Não"}
        </Badge>
       </div>

@@ -119,26 +119,27 @@ export const partnerSchema = baseEntitySchema.extend({
 })
 
 export const createPartnerSchema = z.object({
-  fullName: z.string().min(1, 'Nome completo é obrigatório'),
-  document: z.string().min(1, 'CPF/CNPJ é obrigatório'),
-  phone: z.string().min(1, 'Telefone é obrigatório'),
-  email: z.string().email('Email inválido'),
-  street: z.string().optional(),
-  number: z.string().optional(),
-  complement: z.string().optional(),
-  neighborhood: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zipCode: z.string().optional(),
-  bank: z.string().optional(),
-  agency: z.string().optional(),
-  account: z.string().optional(),
-  pix: z.string().optional(),
-  partnershipType: z.nativeEnum(PartnershipType),
-  subleaseAmount: z.number().optional(),
-  subleasePaymentDay: z.number().min(1).max(31).optional(),
-  percentageAmount: z.number().optional(),
-  percentageRate: z.number().min(0).max(100).optional()
+ fullName: z.string().min(1, 'Nome completo é obrigatório'),
+ document: z.string().min(1, 'CPF/CNPJ é obrigatório'),
+ phone: z.string().min(1, 'Telefone é obrigatório'),
+ email: z.string().email('Email inválido'),
+ street: z.string().optional(),
+ number: z.string().optional(),
+ complement: z.string().optional(),
+ neighborhood: z.string().optional(),
+ city: z.string().optional(),
+ state: z.string().optional(),
+ zipCode: z.string().optional(),
+ bank: z.string().optional(),
+ agency: z.string().optional(),
+ account: z.string().optional(),
+ pix: z.string().optional(),
+ partnershipType: z.nativeEnum(PartnershipType),
+ subleaseAmount: z.number().optional(),
+ subleasePaymentDay: z.number().min(1).max(31).optional(),
+ percentageAmount: z.number().optional(),
+ percentageRate: z.number().min(0).max(100).optional(),
+ active: z.boolean().optional()
 })
 
 export const updatePartnerSchema = createPartnerSchema.partial()

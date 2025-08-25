@@ -113,9 +113,7 @@ export function useDeleteBankAccount() {
       queryClient.invalidateQueries({ queryKey: financialKeys.bankAccounts() })
       showToast('Conta bancária excluída com sucesso', 'success')
     },
-    onError: (error: any) => {
-      showToast(error.message || 'Erro ao excluir conta bancária', 'error')
-    },
+    // Remover onError para permitir tratamento customizado no componente
   })
 }
 

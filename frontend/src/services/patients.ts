@@ -46,6 +46,11 @@ export const patientsApi = {
     if (filters.limit) params.append('limit', filters.limit.toString())
     if (filters.q) params.append('q', filters.q)
     if (filters.active !== undefined) params.append('active', filters.active.toString())
+    
+    // 🔥 TRIPLE CACHE BUST: timestamp + random + no-cache header
+    params.append('_t', Date.now().toString())
+    params.append('_r', Math.random().toString(36).substr(2, 9))
+    params.append('_cb', 'force-no-cache')
 
     const response = await apiClient.get<PatientListResponse>(`/api/patients?${params.toString()}`)
     return response.data

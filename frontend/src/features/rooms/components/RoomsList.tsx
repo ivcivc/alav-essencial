@@ -13,6 +13,7 @@ import {
  TableHeader,
  TableRow,
 } from '@/components/ui/table'
+import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal'
 import { useRooms, useDeleteRoom } from '@/hooks/useRooms'
 import { useToast } from '@/hooks/useToast'
 import { Room } from '@/types/entities'
@@ -31,6 +32,10 @@ export const RoomsList: React.FC<RoomsListProps> = ({
  const [searchQuery, setSearchQuery] = useState('')
  const [currentPage, setCurrentPage] = useState(1)
  const [showInactive, setShowInactive] = useState(false)
+ const [deleteModal, setDeleteModal] = useState<{ open: boolean; room: Room | null }>({
+  open: false,
+  room: null,
+ })
 
  const { toast } = useToast()
  const deleteRoomMutation = useDeleteRoom()
@@ -52,21 +57,26 @@ export const RoomsList: React.FC<RoomsListProps> = ({
   setCurrentPage(1) // Reset to first page when searching
  }
 
- const handleDeleteRoom = async (room: Room) => {
-  if (window.confirm(`Tem certeza que deseja remover a sala "${room.name}"?`)) {
-   try {
-    await deleteRoomMutation.mutateAsync(room.id)
-    toast({
-     title: 'Sala removida',
-     description: `A sala "${room.name}" foi removida com sucesso.`,
-    })
-   } catch (error) {
-    toast({
-     title: 'Erro ao remover sala',
-     description: error instanceof Error ? error.message : 'Ocorreu um erro inesperado.',
-     variant: 'destructive',
-    })
-   }
+ const handleDeleteRoom = (room: Room) => {
+  setDeleteModal({ open: true, room })
+ }
+
+ const handleConfirmDelete = async () => {
+  if (!deleteModal.room) return
+
+  try {
+   await deleteRoomMutation.mutateAsync(deleteModal.room.id)
+   setDeleteModal({ open: false, room: null })
+   toast({
+    title: 'Sala removida',
+    description: `A sala "${deleteModal.room.name}" foi removida com sucesso.`,
+   })
+  } catch (error) {
+   toast({
+    title: 'Erro ao remover sala',
+    description: error instanceof Error ? error.message : 'Ocorreu um erro inesperado.',
+    variant: 'destructive',
+   })
   }
  }
 
@@ -297,11 +307,27 @@ export const RoomsList: React.FC<RoomsListProps> = ({
           Próxima
          </Button>
         </div>
-       )}
-      </>
-     )}
-    </CardContent>
-   </Card>
-  </div>
- )
+             )}
+     </>
+    )}
+   </CardContent>
+  </Card>
+
+  {/* Modal de Confirmação de Exclusão */}
+  <ConfirmDeleteModal
+   open={deleteModal.open}
+   onOpenChange={(open) => setDeleteModal({ open, room: deleteModal.room })}
+   onConfirm={handleConfirmDelete}
+   itemName={deleteModal.room?.name || ''}
+   itemType="sala"
+   isLoading={deleteRoomMutation.isPending}
+   description={`Tem certeza que deseja excluir a sala "${deleteModal.room?.name}"?`}
+   warnings={[
+    'Todos os agendamentos associados a esta sala serão mantidos no histórico',
+    'Esta ação remove permanentemente o cadastro da sala',
+    'A sala não poderá mais ser utilizada para novos agendamentos'
+   ]}
+  />
+ </div>
+)
 }

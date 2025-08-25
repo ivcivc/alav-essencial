@@ -12,6 +12,8 @@ import {
  TableHeader,
  TableRow,
 } from '@/components/ui/table'
+import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal'
+import { StatusBadge } from '@/components/ui/StatusBadge'
 import { usePatients, useDeletePatient } from '@/hooks/usePatients'
 import { useToast } from '@/hooks/useToast'
 import { Patient } from '@/types/entities'
@@ -36,6 +38,10 @@ export const PatientsList: React.FC<PatientsListProps> = ({
   q: '',
   active: true
  })
+ const [deleteModal, setDeleteModal] = useState<{
+  open: boolean
+  patient: Patient | null
+ }>({ open: false, patient: null })
 
  const { toast } = useToast()
  const { data: patientsData, isLoading, error } = usePatients(filters)
@@ -49,22 +55,27 @@ export const PatientsList: React.FC<PatientsListProps> = ({
   setFilters(prev => ({ ...prev, page }))
  }
 
- const handleDeletePatient = async (patient: Patient) => {
-  if (window.confirm(`Tem certeza que deseja excluir o paciente ${patient.fullName}?`)) {
-   try {
-    await deletePatientMutation.mutateAsync(patient.id)
-    toast({
-     title: "Sucesso!",
-     description: "Paciente excluído com sucesso.",
-     variant: "success",
-    })
-   } catch (error) {
-    toast({
-     title: "Erro",
-     description: error instanceof Error ? error.message : "Erro ao excluir paciente. Tente novamente.",
-     variant: "destructive",
-    })
-   }
+ const handleDeletePatient = (patient: Patient) => {
+  setDeleteModal({ open: true, patient })
+ }
+
+ const handleConfirmDelete = async () => {
+  if (!deleteModal.patient) return
+
+  try {
+   await deletePatientMutation.mutateAsync(deleteModal.patient.id)
+   toast({
+    title: "Sucesso!",
+    description: "Paciente excluído com sucesso.",
+    variant: "success",
+   })
+   setDeleteModal({ open: false, patient: null })
+  } catch (error) {
+   toast({
+    title: "Erro",
+    description: error instanceof Error ? error.message : "Erro ao excluir paciente. Tente novamente.",
+    variant: "destructive",
+   })
   }
  }
 
@@ -219,12 +230,7 @@ export const PatientsList: React.FC<PatientsListProps> = ({
             </div>
            </TableCell>
            <TableCell>
-            <Badge 
-             variant={patient.active ? "success" : "secondary"}
-             className={patient.active ? 'badge-active' : 'badge-inactive'}
-            >
-             {patient.active ? 'Ativo' : 'Inativo'}
-            </Badge>
+            <StatusBadge active={patient.active} />
            </TableCell>
            <TableCell className="text-right">
             <div className="flex justify-end gap-1">
@@ -290,6 +296,22 @@ export const PatientsList: React.FC<PatientsListProps> = ({
      )}
     </CardContent>
    </Card>
+
+   {/* Modal de Confirmação de Exclusão */}
+   <ConfirmDeleteModal
+    open={deleteModal.open}
+    onOpenChange={(open) => setDeleteModal({ open, patient: deleteModal.patient })}
+    onConfirm={handleConfirmDelete}
+    itemName={deleteModal.patient?.fullName || ''}
+    itemType="paciente"
+    isLoading={deletePatientMutation.isPending}
+    description={`Tem certeza que deseja excluir o paciente "${deleteModal.patient?.fullName}"?`}
+    warnings={[
+      'Todos os agendamentos associados a este paciente serão mantidos no histórico',
+      'Os dados financeiros relacionados não serão alterados',
+      'Esta ação remove permanentemente o cadastro do paciente'
+    ]}
+   />
   </div>
  )
 }

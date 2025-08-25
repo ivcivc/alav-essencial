@@ -98,9 +98,17 @@ export class PatientService {
 
     const patient = await this.patientRepository.create(data)
     
-    // Invalidar caches relacionados
-    await cacheService.delPattern('patients:list*')
-    await cacheService.del(cacheKeys.patients.stats())
+    // Invalidar caches relacionados - CORREÇÃO TOTAL
+    await Promise.all([
+      cacheService.delPattern('patients:list*'),  // Listas com parâmetros
+      cacheService.del('patients:list'),          // Lista base sem parâmetros
+      cacheService.del(cacheKeys.patients.stats()),
+      // 🔥 INVALIDAR CACHE DE RESPONSE HTTP TAMBÉM
+      cacheService.delPattern('response:/api/patients*'),
+      cacheService.del('response:/api/patients'),
+      // 💥 EMERGÊNCIA: FLUSH TOTAL (apenas para debug - remover em produção final)
+      cacheService.flush(),
+    ])
 
     return patient
   }
@@ -127,10 +135,18 @@ export class PatientService {
 
     const patient = await this.patientRepository.update(id, data)
     
-    // Invalidar caches relacionados
-    await cacheService.del(cacheKeys.patients.detail(id))
-    await cacheService.delPattern('patients:list*')
-    await cacheService.del(cacheKeys.patients.stats())
+    // Invalidar caches relacionados - CORREÇÃO TOTAL
+    await Promise.all([
+      cacheService.del(cacheKeys.patients.detail(id)),
+      cacheService.delPattern('patients:list*'),  // Listas com parâmetros
+      cacheService.del('patients:list'),          // Lista base sem parâmetros
+      cacheService.del(cacheKeys.patients.stats()),
+      // 🔥 INVALIDAR CACHE DE RESPONSE HTTP TAMBÉM
+      cacheService.delPattern('response:/api/patients*'),
+      cacheService.del('response:/api/patients'),
+      // 💥 EMERGÊNCIA: FLUSH TOTAL (apenas para debug - remover em produção final)
+      cacheService.flush(),
+    ])
 
     return patient
   }
@@ -151,9 +167,10 @@ export class PatientService {
       await this.patientRepository.delete(id)
     }
     
-    // Invalidar caches relacionados
+    // Invalidar caches relacionados - CORREÇÃO COMPLETA
     await cacheService.del(cacheKeys.patients.detail(id))
-    await cacheService.delPattern('patients:list*')
+    await cacheService.delPattern('patients:list*')  // Listas com parâmetros
+    await cacheService.del('patients:list')          // Lista base sem parâmetros
     await cacheService.del(cacheKeys.patients.stats())
   }
 

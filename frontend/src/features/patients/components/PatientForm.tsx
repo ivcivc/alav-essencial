@@ -61,9 +61,13 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   defaultValues: patient ? {
    fullName: patient.fullName,
    cpf: patient.cpf,
-   birthDate: patient.birthDate instanceof Date 
-    ? patient.birthDate.toISOString().split('T')[0] 
-    : patient.birthDate,
+   birthDate: patient.birthDate ? (
+    patient.birthDate instanceof Date 
+     ? patient.birthDate.toISOString().split('T')[0] 
+     : typeof patient.birthDate === 'string' 
+      ? new Date(patient.birthDate).toISOString().split('T')[0]
+      : patient.birthDate
+   ) : '',
    whatsapp: patient.whatsapp || '',
    phone: patient.phone || '',
    email: patient.email || '',
@@ -97,13 +101,10 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   setIsSubmitting(true)
   setApiErrors([]) // Limpar erros anteriores
   
-  try {
-   await onSubmit(data)
-   toast({
-    title: "Sucesso!",
-    description: patient ? "Paciente atualizado com sucesso." : "Paciente cadastrado com sucesso.",
-    variant: "success",
-   })
+    try {
+    await onSubmit(data)
+    // ⚠️ TOAST REMOVIDO - O HOOK JÁ FAZ RELOAD DA PÁGINA
+    // O usuário verá os dados atualizados após o reload
   } catch (error: any) {
    console.error('Erro ao salvar paciente:', error)
    

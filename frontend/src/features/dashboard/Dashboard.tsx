@@ -78,7 +78,7 @@ export function Dashboard() {
    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
     <KPICard
      title="Agendamentos Semana"
-     value={kpis?.appointmentsThisWeek || 166}
+     value={kpis?.appointmentsThisWeek || 0}
      icon={<CalendarDays className="h-4 w-4" />}
      isLoading={overviewLoading}
      description="agendamentos nesta semana"
@@ -86,7 +86,7 @@ export function Dashboard() {
     
     <KPICard
      title="Saldo Total"
-     value={kpis?.totalBalance || 81737.82}
+     value={kpis?.totalBalance || 0}
      format="currency"
      icon={<TrendingUp className="h-4 w-4" />}
      isLoading={overviewLoading}
@@ -95,7 +95,7 @@ export function Dashboard() {
     
     <KPICard
      title="A Receber"
-     value={kpis?.pendingReceivables || 17858.54}
+     value={kpis?.pendingReceivables || 0}
      format="currency"
      icon={<Clock className="h-4 w-4" />}
      isLoading={overviewLoading}
@@ -104,7 +104,7 @@ export function Dashboard() {
     
     <KPICard
      title="A Pagar"
-     value={kpis?.pendingPayables || 40838.10}
+     value={kpis?.pendingPayables || 0}
      format="currency"
      icon={<AlertCircle className="h-4 w-4" />}
      isLoading={overviewLoading}

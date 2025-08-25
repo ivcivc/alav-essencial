@@ -26,6 +26,12 @@ export interface FinancialEntryRepository {
     startDate?: Date
     endDate?: Date
   }): Promise<number>
+  getTotalByTypeExcludingCancelled(type: FinancialEntryType, filters?: {
+    bankAccountId?: string
+    status?: FinancialEntryStatus
+    startDate?: Date
+    endDate?: Date
+  }): Promise<number>
 }
 
 export class PrismaFinancialEntryRepository implements FinancialEntryRepository {
@@ -42,6 +48,7 @@ export class PrismaFinancialEntryRepository implements FinancialEntryRepository 
       appointmentId,
       startDate,
       endDate,
+      excludeCancelled,
       page = 1,
       limit = 50
     } = filters
@@ -55,6 +62,15 @@ export class PrismaFinancialEntryRepository implements FinancialEntryRepository 
     if (partnerId) where.partnerId = partnerId
     if (patientId) where.patientId = patientId
     if (appointmentId) where.appointmentId = appointmentId
+
+    // Excluir lançamentos cancelados se solicitado
+    if (excludeCancelled) {
+      where.status = { not: 'CANCELLED' }
+      // Se um status específico foi fornecido, combinar com exclusão de cancelados
+      if (status) {
+        where.status = status
+      }
+    }
 
     if (startDate || endDate) {
       where.dueDate = {}
@@ -261,7 +277,8 @@ export class PrismaFinancialEntryRepository implements FinancialEntryRepository 
       patientId,
       appointmentId,
       startDate,
-      endDate
+      endDate,
+      excludeCancelled
     } = filters
 
     const where: Prisma.FinancialEntryWhereInput = {}
@@ -273,6 +290,15 @@ export class PrismaFinancialEntryRepository implements FinancialEntryRepository 
     if (partnerId) where.partnerId = partnerId
     if (patientId) where.patientId = patientId
     if (appointmentId) where.appointmentId = appointmentId
+
+    // Excluir lançamentos cancelados se solicitado
+    if (excludeCancelled) {
+      where.status = { not: 'CANCELLED' }
+      // Se um status específico foi fornecido, combinar com exclusão de cancelados
+      if (status) {
+        where.status = status
+      }
+    }
 
     if (startDate || endDate) {
       where.dueDate = {}
@@ -298,6 +324,45 @@ export class PrismaFinancialEntryRepository implements FinancialEntryRepository 
 
     if (bankAccountId) where.bankAccountId = bankAccountId
     if (status) where.status = status
+
+    if (startDate || endDate) {
+      where.dueDate = {}
+      if (startDate) where.dueDate.gte = startDate
+      if (endDate) where.dueDate.lte = endDate
+    }
+
+    const result = await this.prisma.financialEntry.aggregate({
+      where,
+      _sum: {
+        amount: true
+      }
+    })
+
+    return Number(result._sum.amount) || 0
+  }
+
+  async getTotalByTypeExcludingCancelled(
+    type: FinancialEntryType,
+    filters: {
+      bankAccountId?: string
+      status?: FinancialEntryStatus
+      startDate?: Date
+      endDate?: Date
+    } = {}
+  ): Promise<number> {
+    const { bankAccountId, status, startDate, endDate } = filters
+
+    const where: Prisma.FinancialEntryWhereInput = { 
+      type,
+      status: { not: 'CANCELLED' } // Sempre excluir cancelados
+    }
+
+    if (bankAccountId) where.bankAccountId = bankAccountId
+    
+    // Se um status específico foi fornecido, combinar com exclusão de cancelados
+    if (status) {
+      where.status = status
+    }
 
     if (startDate || endDate) {
       where.dueDate = {}

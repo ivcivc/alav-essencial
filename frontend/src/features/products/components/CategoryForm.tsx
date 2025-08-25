@@ -37,9 +37,24 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 }) => {
  const isEditing = !!categoryId
  
- const { data: categoryData } = useCategory(categoryId || '')
+ const { data: categoryData, isLoading: categoryLoading, error: categoryError } = useCategory(categoryId || '')
  const createCategory = useCreateCategory()
  const updateCategory = useUpdateCategory()
+
+ // 🔍 DEBUG: Log para debugging
+ console.log('🔍 CategoryForm DEBUG:', {
+  categoryId,
+  isEditing,
+  categoryData,
+  categoryLoading,
+  categoryError,
+  hasData: !!categoryData?.data,
+  categoryContent: categoryData?.data,
+  // 🔍 INVESTIGAR ESTRUTURA REAL
+  categoryDataKeys: categoryData ? Object.keys(categoryData) : 'N/A',
+  categoryDataType: typeof categoryData,
+  fullCategoryStructure: categoryData
+ })
 
  const form = useForm<CategoryFormData>({
   resolver: zodResolver(categoryFormSchema),
@@ -53,16 +68,59 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = form
 
- // Load category data for editing
+ // Load category data for editing - VERSÃO ADAPTATIVA
  useEffect(() => {
-  if (isEditing && categoryData?.data) {
-   const category = categoryData.data
-   setValue('name', category.name)
-   setValue('type', category.type)
-   setValue('description', category.description || '')
-   setValue('active', category.active)
+  console.log('🔄 useEffect EXECUTANDO - DETALHADO:', { 
+   isEditing, 
+   categoryData_exists: !!categoryData,
+   categoryData_data_exists: !!categoryData?.data,
+   categoryData_full: categoryData,
+   categoryLoading
+  })
+  
+  if (isEditing && categoryData && !categoryLoading) {
+   // 🔍 DETECTAR ESTRUTURA: categoryData.data OU categoryData diretamente
+   let category = null
+   
+   if (categoryData.data) {
+    // Estrutura: { data: {...} }
+    category = categoryData.data
+    console.log('🔄 ESTRUTURA TIPO A - categoryData.data:', category)
+   } else if (categoryData.id) {
+    // Estrutura: {...} diretamente  
+    category = categoryData
+    console.log('🔄 ESTRUTURA TIPO B - categoryData diretamente:', category)
+   }
+   
+   if (category && category.name) {
+    console.log('🔄 POPULANDO CAMPOS - DADOS ENCONTRADOS:', category)
+    
+    // Reset form primeiro para garantir limpeza
+    form.reset({
+     name: category.name,
+     type: category.type,
+     description: category.description || '',
+     active: category.active
+    })
+    
+    console.log('✅ FORM RESETADO COM DADOS:', {
+     name: category.name,
+     type: category.type,
+     description: category.description || '',
+     active: category.active
+    })
+   } else {
+    console.log('❌ DADOS INVÁLIDOS:', { category, categoryData })
+   }
+  } else {
+   console.log('❌ CONDIÇÕES NÃO ATENDIDAS:', { 
+    isEditing, 
+    hasCategoryData: !!categoryData,
+    hasCategoryDataData: !!categoryData?.data,
+    categoryLoading
+   })
   }
- }, [isEditing, categoryData, setValue])
+ }, [isEditing, categoryData, categoryLoading, form])
 
  const onSubmit = async (data: CategoryFormData) => {
   try {

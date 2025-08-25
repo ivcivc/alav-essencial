@@ -56,7 +56,7 @@ export class PrismaBankAccountRepository implements BankAccountRepository {
       ],
       skip,
       take: limit
-    })
+    }) as any
   }
 
   async findById(id: string): Promise<BankAccountWithRelations | null> {
@@ -76,7 +76,7 @@ export class PrismaBankAccountRepository implements BankAccountRepository {
           orderBy: { createdAt: 'desc' }
         }
       }
-    })
+    }) as any
   }
 
   async findByName(name: string): Promise<BankAccount | null> {

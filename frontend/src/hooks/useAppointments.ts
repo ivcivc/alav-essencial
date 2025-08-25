@@ -84,15 +84,14 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: (data: CreateAppointmentData) => appointmentsService.createAppointment(data),
-    onSuccess: (appointment) => {
-      // Invalidar todas as listas de agendamentos
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.all })
+    onSuccess: () => {
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
       
-      toast({
-        title: 'Agendamento criado',
-        description: 'O agendamento foi criado com sucesso.',
-      })
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
     onError: (error: any) => {
       toast({
@@ -112,16 +111,14 @@ export function useUpdateAppointment() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateAppointmentData }) =>
       appointmentsService.updateAppointment(id, data),
-    onSuccess: (appointment) => {
-      // Invalidar cache específico e listas
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.detail(appointment.id) })
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.all })
+    onSuccess: () => {
+      // 🔥 SOLUÇÃO RADICAL: LIMPAR TUDO E RECARREGAR PÁGINA
+      queryClient.clear()
       
-      toast({
-        title: 'Agendamento atualizado',
-        description: 'O agendamento foi atualizado com sucesso.',
-      })
+      // 🚀 RELOAD COMPLETO PARA GARANTIR DADOS FRESCOS
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     },
     onError: (error: any) => {
       toast({

@@ -48,7 +48,9 @@ export class AccountsPayableReceivableService {
   } = {}): Promise<{ data: FinancialEntryWithRelations[]; total: number }> {
     const combinedFilters = {
       ...filters,
-      type: FinancialEntryType.INCOME
+      type: FinancialEntryType.INCOME,
+      // Excluir lançamentos cancelados dos resultados
+      excludeCancelled: true
     }
     
     const [data, total] = await Promise.all([
@@ -186,7 +188,9 @@ export class AccountsPayableReceivableService {
   } = {}): Promise<{ data: FinancialEntryWithRelations[]; total: number }> {
     const combinedFilters = {
       ...filters,
-      type: FinancialEntryType.EXPENSE
+      type: FinancialEntryType.EXPENSE,
+      // Excluir lançamentos cancelados dos resultados
+      excludeCancelled: true
     }
     
     const [data, total] = await Promise.all([
@@ -318,44 +322,44 @@ export class AccountsPayableReceivableService {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
 
-    // Contas a receber
-    const totalReceivable = await this.financialEntryRepository.getTotalByType(
+    // Contas a receber - excluindo lançamentos cancelados
+    const totalReceivable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.INCOME,
       { status: FinancialEntryStatus.PENDING }
     )
 
-    const overdueReceivable = await this.financialEntryRepository.getTotalByType(
+    const overdueReceivable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.INCOME,
       { status: FinancialEntryStatus.PENDING, endDate: now }
     )
 
-    const nextWeekReceivable = await this.financialEntryRepository.getTotalByType(
+    const nextWeekReceivable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.INCOME,
       { status: FinancialEntryStatus.PENDING, startDate: now, endDate: nextWeek }
     )
 
-    const thisMonthReceivable = await this.financialEntryRepository.getTotalByType(
+    const thisMonthReceivable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.INCOME,
       { status: FinancialEntryStatus.PENDING, startDate: startOfMonth, endDate: endOfMonth }
     )
 
-    // Contas a pagar
-    const totalPayable = await this.financialEntryRepository.getTotalByType(
+    // Contas a pagar - excluindo lançamentos cancelados
+    const totalPayable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.EXPENSE,
       { status: FinancialEntryStatus.PENDING }
     )
 
-    const overduePayable = await this.financialEntryRepository.getTotalByType(
+    const overduePayable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.EXPENSE,
       { status: FinancialEntryStatus.PENDING, endDate: now }
     )
 
-    const nextWeekPayable = await this.financialEntryRepository.getTotalByType(
+    const nextWeekPayable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.EXPENSE,
       { status: FinancialEntryStatus.PENDING, startDate: now, endDate: nextWeek }
     )
 
-    const thisMonthPayable = await this.financialEntryRepository.getTotalByType(
+    const thisMonthPayable = await this.financialEntryRepository.getTotalByTypeExcludingCancelled(
       FinancialEntryType.EXPENSE,
       { status: FinancialEntryStatus.PENDING, startDate: startOfMonth, endDate: endOfMonth }
     )

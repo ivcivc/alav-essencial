@@ -393,4 +393,5 @@ export interface FinancialEntryFilters {
   endDate?: Date
   page?: number
   limit?: number
+  excludeCancelled?: boolean
 }

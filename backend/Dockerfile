@@ -40,6 +40,9 @@ COPY --from=dependencies --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # Copiar código da aplicação
 COPY --chown=nodejs:nodejs . .
+
+# Copiar arquivos compilados e Prisma Client
+COPY --from=build --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=build --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 
 # Gerar Prisma Client para produção

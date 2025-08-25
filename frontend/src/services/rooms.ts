@@ -53,10 +53,22 @@ export const roomsApi = {
 
   // Get room availability for a specific date
   getRoomAvailability: async (id: string, date: string): Promise<RoomAvailability> => {
+    console.log('🔍 FRONTEND - getRoomAvailability:', {
+      roomId: id,
+      dateInput: date,
+      dateType: typeof date
+    })
+    
     const params = new URLSearchParams()
     params.append('date', date)
 
-    const response = await apiClient.get<RoomAvailability>(`/api/rooms/${id}/availability?${params.toString()}`)
+    const url = `/api/rooms/${id}/availability?${params.toString()}`
+    console.log('🔍 FRONTEND - API URL:', url)
+
+    const response = await apiClient.get<RoomAvailability>(url)
+    
+    console.log('🔍 FRONTEND - API Response:', response.data)
+    
     return response.data
   },
 

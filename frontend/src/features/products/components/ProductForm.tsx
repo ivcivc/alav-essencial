@@ -184,34 +184,58 @@ export const ProductForm: React.FC<ProductFormProps> = ({
  }, [categoriesData, tempCategories.length])
 
  const handleCreateNewCategory = async () => {
-  if (!newCategoryName.trim()) return
+ if (!newCategoryName.trim()) return
 
-  try {
-   const response = await createCategory.mutateAsync({
-    name: newCategoryName.trim(),
-    type: effectiveType,
-    description: newCategoryDescription.trim() || undefined
-   })
+ try {
+  console.log('🔄 Criando categoria:', {
+   name: newCategoryName.trim(),
+   type: effectiveType,
+   description: newCategoryDescription.trim() || undefined
+  })
+  
+  const response = await createCategory.mutateAsync({
+   name: newCategoryName.trim(),
+   type: effectiveType,
+   description: newCategoryDescription.trim() || undefined
+  })
 
-   if (response.data) {
-    // Add the new category to temp list immediately
-    setTempCategories(prev => [...prev, response.data])
-    
-    // Force refetch categories to ensure the new category appears
-    await refetchCategories()
-    
-    // Set the new category as selected
-    setValue('categoryId', response.data.id)
-    
-    // Close dialog and reset form
-    setShowNewCategoryDialog(false)
-    setNewCategoryName('')
-    setNewCategoryDescription('')
-   }
-  } catch (error) {
-   console.error('Error creating category:', error)
+  console.log('✅ Categoria criada - resposta:', response)
+
+  // 🔍 DETECTAR ESTRUTURA: response.data OU response diretamente
+  let newCategory = null
+  if (response.data) {
+   newCategory = response.data
+   console.log('📂 Estrutura: response.data')
+  } else if (response.id) {
+   newCategory = response
+   console.log('📂 Estrutura: response diretamente')
   }
+
+  if (newCategory && newCategory.id) {
+   console.log('✅ Nova categoria válida:', newCategory)
+   
+   // Add the new category to temp list immediately
+   setTempCategories(prev => [...prev, newCategory])
+   
+   // Force refetch categories to ensure the new category appears
+   await refetchCategories()
+   
+   // Set the new category as selected
+   setValue('categoryId', newCategory.id)
+   
+   console.log('🔄 Fechando modal e limpando campos...')
+  }
+  
+  // 🎯 SEMPRE FECHAR O MODAL em caso de sucesso (sem erro)
+  setShowNewCategoryDialog(false)
+  setNewCategoryName('')
+  setNewCategoryDescription('')
+  console.log('✅ Modal fechado com sucesso!')
+  
+ } catch (error) {
+  console.error('❌ Error creating category:', error)
  }
+}
 
  const onSubmit = async (data: ProductFormData) => {
   try {
