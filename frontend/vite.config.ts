@@ -86,10 +86,12 @@ export default defineConfig({
             console.log('Sending Request to the Target:', req.method, req.url);
             // Forçar headers corretos
             proxyReq.setHeader('Accept', 'application/json');
-            // Só setar Content-Type para métodos que têm body
-            if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+            // Só setar Content-Type se houver body de verdade
+            const hasBody = req.headers['content-length'] && req.headers['content-length'] !== '0';
+            if (hasBody && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
               proxyReq.setHeader('Content-Type', 'application/json');
             }
+            console.log('📝 Proxy headers:', { method: req.method, hasBody, contentType: hasBody ? 'application/json' : 'none' });
           });
           proxy.on('proxyRes', (proxyRes, req, res) => {
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
